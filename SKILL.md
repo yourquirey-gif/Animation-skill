@@ -281,3 +281,10 @@ For character-driven stories, prefer detailed licensed/approved rigged GLB/glTF 
 ### Believable hand-held prop continuity
 
 When a character picks up, holds, carries, throws or hands over an object, prefer a bone-attached prop using the renderer's `attach_to` support. Inspect the imported rig and use its exact hand/finger bone names; author local offsets and rotations from preview renders. Animate the prop's release/transfer as an explicit state change. Do not fake a grip by leaving the prop floating near the hand. Bone parenting makes the prop follow the hand, but does not itself create finger closure, collision or contact physics; author those actions with the rig's real controls and validate them visually.
+
+
+### Audio-aligned mouth animation and render integrity
+
+For speaking characters, use the renderer's `viseme_map` + `viseme_keyframes` when the imported face has corresponding shape keys. Generate event timestamps from a real phoneme/viseme alignment process against the supplied master audio, or author them carefully from actual dialogue timing. The bundled renderer applies these events but does not perform speech recognition or forced alignment by itself. Never invent phoneme timing or claim verified lip-sync without inspecting close-up renders against the actual audio. Account for coarticulation and natural rests; use real model blendshape names only.
+
+Before marking any render complete, require the renderer's per-shot PNG count/signature/dimension checks and final MP4 video/duration/audio checks to pass. Review `shot_frame_qc` duplicate-frame warnings in `final_report.json`; they are candidates, not automatic failures because intentional holds can repeat frames. Still visually inspect for black frames, freezes, flicker, framing, rig deformation, hand contact and audio-mouth sync. A technical PASS is not a cinematic quality PASS.
