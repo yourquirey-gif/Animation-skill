@@ -1,0 +1,2642 @@
+{
+  "project": {
+    "title": "The Last Light on the Bridge",
+    "fps": 30,
+    "resolution": "shorts"
+  },
+  "shots": [
+    {
+      "id": "sunset-crowd-wide",
+      "duration_seconds": 3,
+      "environment": {
+        "world_color": [
+          0.22,
+          0.075,
+          0.055
+        ],
+        "objects": [
+          {
+            "name": "Bridge deck",
+            "primitive": "cube",
+            "location": [
+              0,
+              2,
+              0
+            ],
+            "scale": [
+              18,
+              52,
+              0.45
+            ],
+            "material": {
+              "color": [
+                0.2,
+                0.23,
+                0.27
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "River surface",
+            "primitive": "plane",
+            "location": [
+              0,
+              17,
+              -1.2
+            ],
+            "scale": [
+              95,
+              100,
+              1
+            ],
+            "material": {
+              "color": [
+                0.035,
+                0.16,
+                0.23
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Left bridge railing",
+            "primitive": "cube",
+            "location": [
+              -8.5,
+              2,
+              1.15
+            ],
+            "scale": [
+              0.22,
+              52,
+              0.22
+            ],
+            "material": {
+              "color": [
+                0.12,
+                0.15,
+                0.19
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Right bridge railing",
+            "primitive": "cube",
+            "location": [
+              8.5,
+              2,
+              1.15
+            ],
+            "scale": [
+              0.22,
+              52,
+              0.22
+            ],
+            "material": {
+              "color": [
+                0.12,
+                0.15,
+                0.19
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post -8.5 -22",
+            "primitive": "cube",
+            "location": [
+              -8.5,
+              -22,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post 8.5 -22",
+            "primitive": "cube",
+            "location": [
+              8.5,
+              -22,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post -8.5 -18",
+            "primitive": "cube",
+            "location": [
+              -8.5,
+              -18,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post 8.5 -18",
+            "primitive": "cube",
+            "location": [
+              8.5,
+              -18,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post -8.5 -14",
+            "primitive": "cube",
+            "location": [
+              -8.5,
+              -14,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post 8.5 -14",
+            "primitive": "cube",
+            "location": [
+              8.5,
+              -14,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post -8.5 -10",
+            "primitive": "cube",
+            "location": [
+              -8.5,
+              -10,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post 8.5 -10",
+            "primitive": "cube",
+            "location": [
+              8.5,
+              -10,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post -8.5 -6",
+            "primitive": "cube",
+            "location": [
+              -8.5,
+              -6,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post 8.5 -6",
+            "primitive": "cube",
+            "location": [
+              8.5,
+              -6,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post -8.5 -2",
+            "primitive": "cube",
+            "location": [
+              -8.5,
+              -2,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post 8.5 -2",
+            "primitive": "cube",
+            "location": [
+              8.5,
+              -2,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post -8.5 2",
+            "primitive": "cube",
+            "location": [
+              -8.5,
+              2,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post 8.5 2",
+            "primitive": "cube",
+            "location": [
+              8.5,
+              2,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post -8.5 6",
+            "primitive": "cube",
+            "location": [
+              -8.5,
+              6,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post 8.5 6",
+            "primitive": "cube",
+            "location": [
+              8.5,
+              6,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post -8.5 10",
+            "primitive": "cube",
+            "location": [
+              -8.5,
+              10,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post 8.5 10",
+            "primitive": "cube",
+            "location": [
+              8.5,
+              10,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post -8.5 14",
+            "primitive": "cube",
+            "location": [
+              -8.5,
+              14,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post 8.5 14",
+            "primitive": "cube",
+            "location": [
+              8.5,
+              14,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post -8.5 18",
+            "primitive": "cube",
+            "location": [
+              -8.5,
+              18,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post 8.5 18",
+            "primitive": "cube",
+            "location": [
+              8.5,
+              18,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post -8.5 22",
+            "primitive": "cube",
+            "location": [
+              -8.5,
+              22,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post 8.5 22",
+            "primitive": "cube",
+            "location": [
+              8.5,
+              22,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post -8.5 26",
+            "primitive": "cube",
+            "location": [
+              -8.5,
+              26,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post 8.5 26",
+            "primitive": "cube",
+            "location": [
+              8.5,
+              26,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Sun",
+            "primitive": "uv_sphere",
+            "location": [
+              0,
+              48,
+              14
+            ],
+            "scale": [
+              3.3,
+              3.3,
+              3.3
+            ],
+            "material": {
+              "color": [
+                1,
+                0.38,
+                0.09
+              ],
+              "roughness": 0.2,
+              "emission_strength": 1.5
+            }
+          },
+          {
+            "name": "Person 1 torso",
+            "primitive": "cylinder",
+            "location": [
+              -6.1499999999999995,
+              -9,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.754
+            ],
+            "material": {
+              "color": [
+                0.12,
+                0.18,
+                0.28
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 1 head",
+            "primitive": "uv_sphere",
+            "location": [
+              -6.1499999999999995,
+              -9,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 1 legs",
+            "primitive": "cube",
+            "location": [
+              -6.1499999999999995,
+              -9,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 2 torso",
+            "primitive": "cylinder",
+            "location": [
+              -4.1,
+              -9,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.7904
+            ],
+            "material": {
+              "color": [
+                0.28,
+                0.16,
+                0.13
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 2 head",
+            "primitive": "uv_sphere",
+            "location": [
+              -4.1,
+              -9,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 2 legs",
+            "primitive": "cube",
+            "location": [
+              -4.1,
+              -9,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 3 torso",
+            "primitive": "cylinder",
+            "location": [
+              -2.05,
+              -9,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.8268
+            ],
+            "material": {
+              "color": [
+                0.16,
+                0.25,
+                0.21
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 3 head",
+            "primitive": "uv_sphere",
+            "location": [
+              -2.05,
+              -9,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 3 legs",
+            "primitive": "cube",
+            "location": [
+              -2.05,
+              -9,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 4 torso",
+            "primitive": "cylinder",
+            "location": [
+              0,
+              -9,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.8632
+            ],
+            "material": {
+              "color": [
+                0.32,
+                0.28,
+                0.24
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 4 head",
+            "primitive": "uv_sphere",
+            "location": [
+              0,
+              -9,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 4 legs",
+            "primitive": "cube",
+            "location": [
+              0,
+              -9,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 5 torso",
+            "primitive": "cylinder",
+            "location": [
+              2.05,
+              -9,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.754
+            ],
+            "material": {
+              "color": [
+                0.12,
+                0.13,
+                0.18
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 5 head",
+            "primitive": "uv_sphere",
+            "location": [
+              2.05,
+              -9,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 5 legs",
+            "primitive": "cube",
+            "location": [
+              2.05,
+              -9,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 6 torso",
+            "primitive": "cylinder",
+            "location": [
+              4.1,
+              -9,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.7904
+            ],
+            "material": {
+              "color": [
+                0.12,
+                0.18,
+                0.28
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 6 head",
+            "primitive": "uv_sphere",
+            "location": [
+              4.1,
+              -9,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 6 legs",
+            "primitive": "cube",
+            "location": [
+              4.1,
+              -9,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 7 torso",
+            "primitive": "cylinder",
+            "location": [
+              6.1499999999999995,
+              -9,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.8268
+            ],
+            "material": {
+              "color": [
+                0.28,
+                0.16,
+                0.13
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 7 head",
+            "primitive": "uv_sphere",
+            "location": [
+              6.1499999999999995,
+              -9,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 7 legs",
+            "primitive": "cube",
+            "location": [
+              6.1499999999999995,
+              -9,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 8 torso",
+            "primitive": "cylinder",
+            "location": [
+              -5.699999999999999,
+              -4.4,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.8632
+            ],
+            "material": {
+              "color": [
+                0.16,
+                0.25,
+                0.21
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 8 head",
+            "primitive": "uv_sphere",
+            "location": [
+              -5.699999999999999,
+              -4.4,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 8 legs",
+            "primitive": "cube",
+            "location": [
+              -5.699999999999999,
+              -4.4,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 9 torso",
+            "primitive": "cylinder",
+            "location": [
+              -3.6499999999999995,
+              -4.4,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.754
+            ],
+            "material": {
+              "color": [
+                0.32,
+                0.28,
+                0.24
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 9 head",
+            "primitive": "uv_sphere",
+            "location": [
+              -3.6499999999999995,
+              -4.4,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 9 legs",
+            "primitive": "cube",
+            "location": [
+              -3.6499999999999995,
+              -4.4,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 10 torso",
+            "primitive": "cylinder",
+            "location": [
+              -1.5999999999999999,
+              -4.4,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.7904
+            ],
+            "material": {
+              "color": [
+                0.12,
+                0.13,
+                0.18
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 10 head",
+            "primitive": "uv_sphere",
+            "location": [
+              -1.5999999999999999,
+              -4.4,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 10 legs",
+            "primitive": "cube",
+            "location": [
+              -1.5999999999999999,
+              -4.4,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 11 torso",
+            "primitive": "cylinder",
+            "location": [
+              0.45,
+              -4.4,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.8268
+            ],
+            "material": {
+              "color": [
+                0.12,
+                0.18,
+                0.28
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 11 head",
+            "primitive": "uv_sphere",
+            "location": [
+              0.45,
+              -4.4,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 11 legs",
+            "primitive": "cube",
+            "location": [
+              0.45,
+              -4.4,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 12 torso",
+            "primitive": "cylinder",
+            "location": [
+              2.5,
+              -4.4,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.8632
+            ],
+            "material": {
+              "color": [
+                0.28,
+                0.16,
+                0.13
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 12 head",
+            "primitive": "uv_sphere",
+            "location": [
+              2.5,
+              -4.4,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 12 legs",
+            "primitive": "cube",
+            "location": [
+              2.5,
+              -4.4,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 13 torso",
+            "primitive": "cylinder",
+            "location": [
+              4.55,
+              -4.4,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.754
+            ],
+            "material": {
+              "color": [
+                0.16,
+                0.25,
+                0.21
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 13 head",
+            "primitive": "uv_sphere",
+            "location": [
+              4.55,
+              -4.4,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 13 legs",
+            "primitive": "cube",
+            "location": [
+              4.55,
+              -4.4,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 14 torso",
+            "primitive": "cylinder",
+            "location": [
+              6.6,
+              -4.4,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.7904
+            ],
+            "material": {
+              "color": [
+                0.32,
+                0.28,
+                0.24
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 14 head",
+            "primitive": "uv_sphere",
+            "location": [
+              6.6,
+              -4.4,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 14 legs",
+            "primitive": "cube",
+            "location": [
+              6.6,
+              -4.4,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 15 torso",
+            "primitive": "cylinder",
+            "location": [
+              -6.1499999999999995,
+              0.1999999999999993,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.8268
+            ],
+            "material": {
+              "color": [
+                0.12,
+                0.13,
+                0.18
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 15 head",
+            "primitive": "uv_sphere",
+            "location": [
+              -6.1499999999999995,
+              0.1999999999999993,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 15 legs",
+            "primitive": "cube",
+            "location": [
+              -6.1499999999999995,
+              0.1999999999999993,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 16 torso",
+            "primitive": "cylinder",
+            "location": [
+              -4.1,
+              0.1999999999999993,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.8632
+            ],
+            "material": {
+              "color": [
+                0.12,
+                0.18,
+                0.28
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 16 head",
+            "primitive": "uv_sphere",
+            "location": [
+              -4.1,
+              0.1999999999999993,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 16 legs",
+            "primitive": "cube",
+            "location": [
+              -4.1,
+              0.1999999999999993,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 17 torso",
+            "primitive": "cylinder",
+            "location": [
+              -2.05,
+              0.1999999999999993,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.754
+            ],
+            "material": {
+              "color": [
+                0.28,
+                0.16,
+                0.13
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 17 head",
+            "primitive": "uv_sphere",
+            "location": [
+              -2.05,
+              0.1999999999999993,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 17 legs",
+            "primitive": "cube",
+            "location": [
+              -2.05,
+              0.1999999999999993,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 18 torso",
+            "primitive": "cylinder",
+            "location": [
+              0,
+              0.1999999999999993,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.7904
+            ],
+            "material": {
+              "color": [
+                0.16,
+                0.25,
+                0.21
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 18 head",
+            "primitive": "uv_sphere",
+            "location": [
+              0,
+              0.1999999999999993,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 18 legs",
+            "primitive": "cube",
+            "location": [
+              0,
+              0.1999999999999993,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 19 torso",
+            "primitive": "cylinder",
+            "location": [
+              2.05,
+              0.1999999999999993,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.8268
+            ],
+            "material": {
+              "color": [
+                0.32,
+                0.28,
+                0.24
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 19 head",
+            "primitive": "uv_sphere",
+            "location": [
+              2.05,
+              0.1999999999999993,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 19 legs",
+            "primitive": "cube",
+            "location": [
+              2.05,
+              0.1999999999999993,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 20 torso",
+            "primitive": "cylinder",
+            "location": [
+              4.1,
+              0.1999999999999993,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.8632
+            ],
+            "material": {
+              "color": [
+                0.12,
+                0.13,
+                0.18
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 20 head",
+            "primitive": "uv_sphere",
+            "location": [
+              4.1,
+              0.1999999999999993,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 20 legs",
+            "primitive": "cube",
+            "location": [
+              4.1,
+              0.1999999999999993,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 21 torso",
+            "primitive": "cylinder",
+            "location": [
+              6.1499999999999995,
+              0.1999999999999993,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.754
+            ],
+            "material": {
+              "color": [
+                0.12,
+                0.18,
+                0.28
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 21 head",
+            "primitive": "uv_sphere",
+            "location": [
+              6.1499999999999995,
+              0.1999999999999993,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 21 legs",
+            "primitive": "cube",
+            "location": [
+              6.1499999999999995,
+              0.1999999999999993,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 22 torso",
+            "primitive": "cylinder",
+            "location": [
+              -5.699999999999999,
+              4.799999999999999,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.7904
+            ],
+            "material": {
+              "color": [
+                0.28,
+                0.16,
+                0.13
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 22 head",
+            "primitive": "uv_sphere",
+            "location": [
+              -5.699999999999999,
+              4.799999999999999,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 22 legs",
+            "primitive": "cube",
+            "location": [
+              -5.699999999999999,
+              4.799999999999999,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 23 torso",
+            "primitive": "cylinder",
+            "location": [
+              -3.6499999999999995,
+              4.799999999999999,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.8268
+            ],
+            "material": {
+              "color": [
+                0.16,
+                0.25,
+                0.21
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 23 head",
+            "primitive": "uv_sphere",
+            "location": [
+              -3.6499999999999995,
+              4.799999999999999,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 23 legs",
+            "primitive": "cube",
+            "location": [
+              -3.6499999999999995,
+              4.799999999999999,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 24 torso",
+            "primitive": "cylinder",
+            "location": [
+              -1.5999999999999999,
+              4.799999999999999,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.8632
+            ],
+            "material": {
+              "color": [
+                0.32,
+                0.28,
+                0.24
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 24 head",
+            "primitive": "uv_sphere",
+            "location": [
+              -1.5999999999999999,
+              4.799999999999999,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 24 legs",
+            "primitive": "cube",
+            "location": [
+              -1.5999999999999999,
+              4.799999999999999,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 25 torso",
+            "primitive": "cylinder",
+            "location": [
+              0.45,
+              4.799999999999999,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.754
+            ],
+            "material": {
+              "color": [
+                0.12,
+                0.13,
+                0.18
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 25 head",
+            "primitive": "uv_sphere",
+            "location": [
+              0.45,
+              4.799999999999999,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 25 legs",
+            "primitive": "cube",
+            "location": [
+              0.45,
+              4.799999999999999,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 26 torso",
+            "primitive": "cylinder",
+            "location": [
+              2.5,
+              4.799999999999999,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.7904
+            ],
+            "material": {
+              "color": [
+                0.12,
+                0.18,
+                0.28
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 26 head",
+            "primitive": "uv_sphere",
+            "location": [
+              2.5,
+              4.799999999999999,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 26 legs",
+            "primitive": "cube",
+            "location": [
+              2.5,
+              4.799999999999999,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          }
+        ]
+      },
+      "subjects": [],
+      "props": [],
+      "camera": {
+        "location": [
+          0,
+          -27,
+          9
+        ],
+        "target": [
+          0,
+          2,
+          3.2
+        ],
+        "lens": 38,
+        "keyframes": [
+          {
+            "time_seconds": 0,
+            "location": [
+              0,
+              -27,
+              9
+            ],
+            "target": [
+              0,
+              2,
+              3.2
+            ],
+            "lens": 38
+          },
+          {
+            "time_seconds": 3,
+            "location": [
+              0,
+              -23,
+              8
+            ],
+            "target": [
+              0,
+              5,
+              3
+            ],
+            "lens": 40
+          }
+        ]
+      },
+      "lighting": [
+        {
+          "type": "SUN",
+          "location": [
+            -8,
+            -10,
+            18
+          ],
+          "energy": 1.4,
+          "color": [
+            1,
+            0.52,
+            0.27
+          ]
+        },
+        {
+          "type": "AREA",
+          "location": [
+            0,
+            -8,
+            10
+          ],
+          "energy": 1800,
+          "size": 12,
+          "color": [
+            1,
+            0.58,
+            0.34
+          ]
+        },
+        {
+          "type": "AREA",
+          "location": [
+            0,
+            20,
+            8
+          ],
+          "energy": 900,
+          "size": 18,
+          "color": [
+            0.28,
+            0.42,
+            0.75
+          ]
+        }
+      ]
+    }
+  ]
+}
