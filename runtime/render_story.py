@@ -178,18 +178,18 @@ def main():
             raise ValueError("--auto-lip-sync found no storyboard subject with a viseme_map. Add exact facial shape-key names to the character subject.")
         # Keep relative asset paths anchored to the original storyboard directory.
         for shot in shots:
-            for group in ("subjects", "props"):
-                for entry in shot.get(group, []):
-                    for path_key in ("asset_file",):
-                        if entry.get(path_key):
-                            pth = Path(entry[path_key])
-                            if not pth.is_absolute():
-                                entry[path_key] = str((storyboard.parent / pth).resolve())
-                    retarget_cfg = entry.get("retarget", {})
-                    if retarget_cfg.get("animation_file"):
-                        pth = Path(retarget_cfg["animation_file"])
-                        if not pth.is_absolute():
-                            retarget_cfg["animation_file"] = str((storyboard.parent / pth).resolve())
+            entries = list(shot.get("subjects", [])) + list(shot.get("props", []))
+            entries += list(shot.get("environment", {}).get("objects", []))
+            for entry in entries:
+                if entry.get("asset_file"):
+                    pth = Path(entry["asset_file"])
+                    if not pth.is_absolute():
+                        entry["asset_file"] = str((storyboard.parent / pth).resolve())
+                retarget_cfg = entry.get("retarget", {})
+                if retarget_cfg.get("animation_file"):
+                    pth = Path(retarget_cfg["animation_file"])
+                    if not pth.is_absolute():
+                        retarget_cfg["animation_file"] = str((storyboard.parent / pth).resolve())
         storyboard = work / "storyboard_with_audio_lipsync.json"
         storyboard.write_text(json.dumps(data, indent=2), encoding="utf-8")
         lip_sync_report = {"enabled": True, "subjects_animated": subjects_animated,
