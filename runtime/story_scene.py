@@ -196,10 +196,6 @@ def apply_keyframes(obj, keyframes, fps, total_frames):
         if "scale" in key:
             obj.scale = vector(key["scale"], list(obj.scale))
             obj.keyframe_insert(data_path="scale", frame=frame)
-    if obj.animation_data and obj.animation_data.action:
-        for fc in obj.animation_data.action.fcurves:
-            for point in fc.keyframe_points:
-                point.interpolation = "BEZIER"
 
 
 def find_armature(root):
@@ -391,10 +387,6 @@ def apply_rig_controls(armature, controls, fps, total_frames):
                 rotation[axis] = angle * signs.get(semantic, 1)
                 bone.rotation_euler = rotation
                 bone.keyframe_insert(data_path="rotation_euler", frame=frame, group=bone_name)
-    if armature.animation_data and armature.animation_data.action:
-        for fc in armature.animation_data.action.fcurves:
-            for point in fc.keyframe_points:
-                point.interpolation = "BEZIER"
 
 def apply_viseme_animation(root, viseme_keyframes, viseme_map, fps, total_frames):
     """Map externally aligned viseme events onto imported facial shape keys."""
