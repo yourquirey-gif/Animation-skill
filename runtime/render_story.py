@@ -76,6 +76,18 @@ def main():
     for path in (a.voice, a.music, a.captions):
         if path and not path.is_file():
             raise FileNotFoundError(str(path))
+    total_story_seconds = sum(float(shot["duration_seconds"]) for shot in shots)
+    voice_duration = None
+    if a.voice:
+        voice_probe = run([ffprobe, "-v", "error", "-show_entries", "format=duration", "-of", "json", str(a.voice)])
+        voice_duration = float(json.loads(voice_probe.stdout).get("format", {}).get("duration", 0))
+        tolerance = max(0.5, 1.0 / fps)
+        if abs(voice_duration - total_story_seconds) > tolerance:
+            raise ValueError(
+                "Voice is the master timeline: its duration is %.3fs but storyboard totals %.3fs. "
+                "Adjust shot durations to the supplied audio before rendering; the voice will not be sped up, cut or replaced."
+                % (voice_duration, total_story_seconds)
+            )
 
     output = a.output.resolve()
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -123,14 +135,14 @@ def main():
         if a.voice:
             cmd += ["-i", str(a.voice)]
         if a.music:
-            cmd += ["-i", str(a.music)]
+            cmd += ["-stream_loop", "-1", "-i", str(a.music)]
         if a.voice and a.music:
-            cmd += ["-filter_complex", "[1:a]aresample=48000[voice];[2:a]volume=0.18,aresample=48000[music];[voice][music]amix=inputs=2:duration=longest:dropout_transition=2[aout]",
+            cmd += ["-filter_complex", "[1:a]aresample=48000,apad[voice];[2:a]volume=0.18,aresample=48000,apad[music];[voice][music]amix=inputs=2:duration=longest:dropout_transition=2[aout]",
                     "-map", "0:v:0", "-map", "[aout]"]
         elif a.voice:
-            cmd += ["-map", "0:v:0", "-map", "1:a:0"]
+            cmd += ["-filter_complex", "[1:a]aresample=48000,apad[aout]", "-map", "0:v:0", "-map", "[aout]"]
         else:
-            cmd += ["-filter_complex", "[1:a]volume=0.18[aout]", "-map", "0:v:0", "-map", "[aout]"]
+            cmd += ["-filter_complex", "[1:a]volume=0.18,aresample=48000,apad[aout]", "-map", "0:v:0", "-map", "[aout]"]
         cmd += ["-c:v", "copy", "-c:a", "aac", "-b:a", "192k", "-shortest", "-movflags", "+faststart", str(output)]
         run(cmd, work / "audio_mux.log")
     else:
@@ -147,7 +159,7 @@ def main():
         "shot_count": len(shots),
         "resolution": [width, height],
         "fps": fps,
-        "audio_inputs": {"voice": str(a.voice.resolve()) if a.voice else None,
+        "audio_inputs": {"voice": str(a.voice.resolve()) if a.voice else None,\n                         "voice_duration_seconds": voice_duration,
                          "music": str(a.music.resolve()) if a.music else None,
                          "captions": str(a.captions.resolve()) if a.captions else None},
         "metadata": metadata,
