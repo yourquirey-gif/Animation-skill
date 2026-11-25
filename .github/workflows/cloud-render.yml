@@ -7,6 +7,7 @@ on:
     paths:
       - "runtime/**"
       - "tests/fixtures/**"
+      - ".github/workflows/cloud-render.yml"
   workflow_dispatch:
     inputs:
       storyboard_path:
@@ -101,6 +102,13 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y blender ffmpeg unzip curl libegl1 libgl1 libegl-mesa0 libglx-mesa0 libgl1-mesa-dri
+          blender --version
+          ffmpeg -version | head -n 2
+          ffprobe -version | head -n 1
+
+      - name: Install Rhubarb Lip Sync CLI (only when requested)
+        if: ${{ inputs.auto_lip_sync == true }}
+        run: |
           curl -fsSL -o /tmp/rhubarb.zip https://github.com/DanielSWolf/rhubarb-lip-sync/releases/download/v1.14.0/Rhubarb-Lip-Sync-1.14.0-Linux.zip
           sudo mkdir -p /opt/rhubarb
           sudo unzip -q /tmp/rhubarb.zip -d /opt/rhubarb
@@ -109,9 +117,6 @@ jobs:
           sudo chmod +x "$RHUBARB_BIN"
           echo "$(dirname "$RHUBARB_BIN")" >> "$GITHUB_PATH"
           echo "RHUBARB_BIN=$RHUBARB_BIN" >> "$GITHUB_ENV"
-          blender --version
-          ffmpeg -version | head -n 2
-          ffprobe -version | head -n 1
 
       - name: Inspect cloud runner resources
         run: |
@@ -158,7 +163,7 @@ jobs:
 
       - name: Compile orchestration and validate asset catalog
         run: |
-          python3 -m py_compile runtime/animation_runtime.py runtime/render_story.py runtime/story_scene.py runtime/align_visemes.py runtime/asset_catalog.py
+          python3 -m py_compile runtime/animation_runtime.py runtime/render_story.py runtime/story_scene.py runtime/align_visemes.py runtime/asset_catalog.py runtime/rig_retarget.py
           python3 runtime/asset_catalog.py validate
 
       - name: Render Blender scenes and assemble MP4
