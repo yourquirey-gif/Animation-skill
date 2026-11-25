@@ -57,11 +57,11 @@ The cloud workflow's default settings are preview values. Full HD/30 FPS or Cycl
 
 ## First-use application implementation requirement
 
-This repository is a Claude Code skill/instruction package, not a prebuilt renderer. When installed into a user's working project, inspect that project and implement a real reusable local video-production application before claiming the workflow is ready. Follow `docs/APP_IMPLEMENTATION_SPEC.md` and `docs/CODE_FIRST_PIPELINE.md`.
+This repository is a Claude Code skill/instruction package, not a prebuilt renderer. When installed into a user's working project, inspect that project and implement a real reusable cloud-backed video-production application before claiming the workflow is ready. Follow `docs/APP_IMPLEMENTATION_SPEC.md` and `docs/CODE_FIRST_PIPELINE.md`.
 
 - Create working Python orchestration, Blender `bpy` scene generation, FFmpeg assembly, audio/transcription/timestamp handling, subtitle rendering, job persistence, preview/render/resume/validate commands, and automated tests. In Claude Code Web, run the renderer through GitHub Actions Ubuntu rather than on the user's Windows 7 PC.
 - Do not merely create placeholder directories, pseudocode, fake progress bars, mock renders, or a sample slideshow and call it complete.
-- Detect Blender, FFmpeg, Python, available hardware, fonts, audio tools, and dependencies. Provide a setup report and a real smoke test.
+- Detect Blender, FFmpeg, Python, CPU/RAM/disk/GPU, fonts, audio tools, and dependencies on the actual GitHub Actions Ubuntu runner. Provide a cloud setup report and a real smoke test.
 - Keep the app modular and story data separate from rendering code. Validate storyboard data against a schema.
 - Implement graceful missing-dependency handling and clearly explain installation steps. Never silently switch to still images if Blender is unavailable.
 - Build the first usable vertical/horizontal end-to-end sample with actual moving 3D geometry, real audio, subtitles, and ffprobe validation before declaring the app operational.
@@ -69,19 +69,19 @@ This repository is a Claude Code skill/instruction package, not a prebuilt rende
 
 ## Mandatory code-first production workflow
 
-1. Inspect the project, available assets, reference media, OS, CPU/GPU/RAM/disk, Python, Blender, FFmpeg/ffprobe, fonts, and audio tools before changing anything.
-2. If Blender is missing, assess whether it can be installed and explain requirements. Do not silently replace 3D animation with a slideshow.
+1. Inspect the connected target repository, Git state, application architecture, available assets, reference media, Actions workflows, permissions, and secrets requirements before changing anything. In Claude Code Web, inspect the actual Ubuntu runner resources, not the user's Windows 7 computer.
+2. Install Blender, FFmpeg and required system libraries inside the GitHub Actions Ubuntu workflow. Do not ask the user to install local Blender. If the cloud runner cannot render, report the blocker; do not silently replace 3D animation with a slideshow.
 3. Analyze references when supplied: sample frames across the whole clip; inspect aspect ratio, frame rate, shot length, palette, lighting, character design, camera language, motion, subtitles, sound, and transitions. Write findings to docs/REFERENCE_STYLE_GUIDE.md.
 4. Parse the story into beats, characters, locations, props, and chronological events. Preserve the user's plot and causal order.
 5. Create a structured storyboard/scene manifest before rendering. Each shot records ID, duration, location, characters, initial positions, action, emotion, props, framing, camera/lens/movement, lighting, environment motion, narration/dialogue, SFX/music, continuity constraints, output path, and status.
 6. Create a Character Bible and Location Bible. Record stable visual traits, wardrobe, scale, voice, props, geography, layout, lighting, and recurring details.
 7. Before building new assets, search `assets/catalog.json` with `python runtime/asset_catalog.py search --query "<story subject>"` and consult `docs/ASSET_SOURCES.md`. Reuse only downloaded, inspected, legally usable files; do not assume a source listing means the model is already present.
 8. Build reusable procedural 3D characters, props, and environments using Blender's Python API (bpy). Create meshes, materials, textures, armatures, named bones, facial shape keys, camera rigs, lighting, and reusable scene assets.
-8. Animate actual geometry using keyframes, action/NLA tracks, constraints, IK where practical, drivers, shape keys, particles, and physics where useful. Implement walk/run/idle/talk/gesture/action cycles and correct prop interactions.
-9. Render real frames from Blender. Use low-quality previews first, inspect them, fix defects, then render final shots. Save .blend files and per-shot renders.
-10. Generate or import narration, dialogue, music, and sound effects. Use locally available TTS/audio tools when suitable; otherwise ask for user-provided audio or approval for an optional provider. Do not fabricate audio.
-11. Generate subtitles from actual audio timing. Mix audio and assemble scenes using FFmpeg.
-12. Validate the final MP4 with ffprobe and visual/audio checks. Save manifests and intermediate assets so failed jobs can resume.
+9. Animate actual geometry using keyframes, action/NLA tracks, constraints, IK where practical, drivers, shape keys, particles, and physics where useful. Implement walk/run/idle/talk/gesture/action cycles and correct prop interactions.
+10. Render real frames from Blender. Use low-quality previews first, inspect them, fix defects, then render final shots. Save .blend files and per-shot renders.
+11. Generate or import narration, dialogue, music, and sound effects. Use TTS/audio tools available on the cloud runner when suitable; otherwise ask for user-provided audio or approval for an optional provider. Do not fabricate audio.
+12. Generate subtitles from actual audio timing. Mix audio and assemble scenes using FFmpeg.
+13. Validate the final MP4 with ffprobe and visual/audio checks. Save manifests and intermediate assets so failed jobs can resume.
 
 Read docs/CODE_FIRST_PIPELINE.md before implementing a complete code-generated video. It defines the architecture, procedural modeling, rigging, animation, rendering, audio, performance, reference matching, commands, and acceptance gates.
 
