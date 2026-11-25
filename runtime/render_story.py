@@ -51,7 +51,7 @@ def validate_rendered_frames(shot_dir, expected_frames, width, height):
     for frame in frames:
         with frame.open("rb") as fp:
             header = fp.read(24)
-        if len(header) != 24 or header[:8] != b"\\x89PNG\\r\\n\\x1a\\n":
+        if len(header) != 24 or header[:8] != b"\x89PNG\r\n\x1a\n":
             raise RuntimeError("Invalid or truncated PNG frame: " + str(frame))
         actual_width, actual_height = struct.unpack(">II", header[16:24])
         if (actual_width, actual_height) != (width, height):
