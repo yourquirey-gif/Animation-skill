@@ -1,0 +1,62 @@
+{
+  "project_id": "example-story",
+  "title": "Example Story",
+  "language": "en",
+  "target": {
+    "aspect_ratio": "9:16",
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "container": "mp4",
+    "video_codec": "h264",
+    "audio_codec": "aac"
+  },
+  "characters": [
+    {
+      "id": "character_01",
+      "name": "Character Name",
+      "bible_file": "docs/CHARACTER_BIBLE.md",
+      "approved_reference_assets": []
+    }
+  ],
+  "locations": [
+    {
+      "id": "location_01",
+      "name": "Location Name",
+      "bible_file": "docs/LOCATION_BIBLE.md",
+      "approved_reference_assets": []
+    }
+  ],
+  "shots": [
+    {
+      "id": "shot_001",
+      "duration_seconds": 5,
+      "story_beat": "Describe the story beat",
+      "location_id": "location_01",
+      "character_ids": ["character_01"],
+      "action": "One primary action with a clear beginning, middle, and end",
+      "emotion": "curious",
+      "framing": "medium shot",
+      "camera_angle": "eye level",
+      "camera_movement": "slow tracking movement",
+      "lighting": "soft cinematic key light",
+      "environment_motion": ["gentle wind"],
+      "narration": "",
+      "dialogue": [],
+      "sound_effects": [],
+      "music_cue": "",
+      "visual_prompt": "",
+      "motion_prompt": "",
+      "continuity_constraints": [],
+      "reference_assets": [],
+      "provider": null,
+      "model": null,
+      "status": "planned",
+      "output_file": null,
+      "qa": {
+        "passed": false,
+        "issues": []
+      }
+    }
+  ]
+}
