@@ -5,9 +5,14 @@ from pathlib import Path
 
 def run(cmd, log=None):
     if log:
-        with open(log,"w",encoding="utf-8") as f: p=subprocess.run(cmd,stdout=f,stderr=subprocess.STDOUT,text=True)
-    else: p=subprocess.run(cmd,capture_output=True,text=True)
-    if p.returncode: raise RuntimeError("Command failed: "+" ".join(map(str,cmd))+"\n"+(getattr(p,"stderr","") or "")[-2500:])
+        with open(log, "w", encoding="utf-8") as f:
+            p = subprocess.run(cmd, stdout=f, stderr=subprocess.STDOUT, text=True)
+        detail = Path(log).read_text(encoding="utf-8", errors="replace")[-6000:]
+    else:
+        p = subprocess.run(cmd, capture_output=True, text=True)
+        detail = (p.stderr or "")[-6000:]
+    if p.returncode:
+        raise RuntimeError("Command failed: " + " ".join(map(str, cmd)) + "\\n" + detail)
     return p
 
 def check_frames(folder,count,w,h):
