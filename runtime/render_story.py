@@ -196,7 +196,7 @@ def main():
     video_streams = [stream for stream in streams if stream.get("codec_type") == "video"]
     audio_streams = [stream for stream in streams if stream.get("codec_type") == "audio"]
     actual_duration = float(metadata.get("format", {}).get("duration", 0))
-    expected_duration = total_story_seconds
+    expected_duration = sum(max(1, round(float(shot["duration_seconds"]) * fps)) for shot in shots) / fps
     duration_tolerance = max(0.15, 2.0 / fps)
     if not video_streams:
         raise RuntimeError("Final MP4 has no video stream.")
