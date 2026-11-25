@@ -40,7 +40,10 @@ def smoke(a):
          "--fps",str(a.fps),"--frames",str(a.frames)]
     start=time.time()
     with log.open("w",encoding="utf-8") as fp: p=subprocess.run(cmd,stdout=fp,stderr=subprocess.STDOUT)
-    if p.returncode:\n        print("Blender failed; last log lines:\\n"+ "\\n".join(log.read_text(encoding="utf-8",errors="replace").splitlines()[-80:]),file=sys.stderr)\n        return p.returncode
+    if p.returncode:
+        tail = log.read_text(encoding="utf-8", errors="replace").splitlines()[-80:]
+        print("Blender failed; last log lines:\\n" + "\\n".join(tail), file=sys.stderr)
+        return p.returncode
     if not (frames/"frame_0001.png").exists(): print("No rendered frame found.",file=sys.stderr); return 1
     p=subprocess.run([ffmpeg,"-y","-framerate",str(a.fps),"-i",str(frames/"frame_%04d.png"),
                       "-c:v","libx264","-pix_fmt","yuv420p","-movflags","+faststart",str(video)],capture_output=True,text=True)
