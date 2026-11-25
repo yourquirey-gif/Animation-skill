@@ -271,3 +271,8 @@ The bundled renderer currently provides a procedural 3D foundation (primitive me
 ### Detailed story assets and animation
 
 When quality requires more than procedural blockout geometry, use story-specific licensed/approved `.glb`, `.gltf` or `.fbx` models in the storyboard via `asset_file`; paths are relative to the storyboard JSON. Preserve embedded materials and model hierarchy. For imported armatures, an exact existing Blender action may be selected with `asset_action`. Do not invent a model path or claim an asset was imported unless the file exists and Blender import succeeds. Keep an asset manifest with source/license. Procedural primitives are for layout, blockout and simple visual metaphors—not a universal substitute for detailed character/environment art.
+
+
+### Rigged character performance and face animation
+
+For character-driven stories, prefer detailed licensed/approved rigged GLB/glTF or FBX assets over primitive assemblies. Inspect the actual armature bone names, available animation actions and facial shape keys after import. Use `asset_action` for a prepared motion clip, `pose_keyframes` for custom bone-level acting, and `facial_keyframes` for shape-key expressions. The bundled Blender renderer implements these channels; see runtime/README.md for the storyboard schema. Never invent bone or shape-key names. If no suitable rig exists, build/rig an appropriate story-specific character or disclose the limitation. Do not call simple object transforms skeletal animation or claim lip-sync unless phoneme/viseme timing has actually been generated and rendered.
