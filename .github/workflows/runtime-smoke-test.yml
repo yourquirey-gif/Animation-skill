@@ -14,8 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
-      BLENDER_SMOKE_ENGINE: BLENDER_WORKBENCH
-      ANIMATION_RENDER_ENGINE: BLENDER_WORKBENCH
+      BLENDER_SMOKE_ENGINE: BLENDER_EEVEE
+      ANIMATION_RENDER_ENGINE: BLENDER_EEVEE
       LIBGL_ALWAYS_SOFTWARE: '1'
     steps:
       - uses: actions/checkout@v4
