@@ -204,7 +204,8 @@ def main():
     out.mkdir(parents=True, exist_ok=True)
     bpy.ops.wm.read_factory_settings(use_empty=True)
     scene = bpy.context.scene
-    scene.render.engine = "BLENDER_EEVEE_NEXT"
+    available_engines = scene.render.bl_rna.properties["engine"].enum_items.keys()
+    scene.render.engine = "BLENDER_EEVEE_NEXT" if "BLENDER_EEVEE_NEXT" in available_engines else "BLENDER_EEVEE"
     scene.eevee.taa_render_samples = max(8, args.samples)
     scene.render.resolution_x = args.width
     scene.render.resolution_y = args.height
