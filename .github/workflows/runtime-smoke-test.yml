@@ -32,9 +32,11 @@ jobs:
         run: blender -b --python-exit-code 1 --python tests/blender/test_terrain.py
       - name: Test procedural humanoid character generation inside Blender
         run: blender -b --python-exit-code 1 --python tests/blender_character_smoke.py
+      - name: Test explicit rig action retargeting inside Blender
+        run: blender -b --python-exit-code 1 --python tests/blender/test_rig_retarget.py
       - name: Compile Python orchestration scripts
         run: |
-          python3 -m py_compile runtime/animation_runtime.py runtime/render_story.py runtime/story_scene.py runtime/align_visemes.py runtime/asset_catalog.py
+          python3 -m py_compile runtime/animation_runtime.py runtime/render_story.py runtime/story_scene.py runtime/align_visemes.py runtime/asset_catalog.py runtime/rig_retarget.py
       - name: Validate reusable asset catalog
         run: |
           python3 runtime/asset_catalog.py validate
