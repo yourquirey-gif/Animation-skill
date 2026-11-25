@@ -91,7 +91,7 @@ def main():
         raise ValueError("--retries must be between 0 and 5")
 
     def progress(status, shot_index=None, shot_id=None, message=None):
-        payload = {"status": status, "completed_shots": len(shot_qc) if "shot_qc" in locals() else 0,
+        payload = {"status": status, "completed_shots": len(shot_qc),
                    "total_shots": len(shots), "current_shot_index": shot_index,
                    "current_shot_id": shot_id, "message": message}
         if a.progress_file:
