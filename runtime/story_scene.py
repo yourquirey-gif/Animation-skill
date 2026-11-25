@@ -75,7 +75,7 @@ def validate(story):
                         raise ValueError(f"shots[{i}].{group}[{j}] viseme_keyframes require a non-empty viseme_map")
                     for event in entry["viseme_keyframes"]:
                         label = str(event.get("viseme", "REST"))
-                        if label not in viseme_map:
+                        if label not in viseme_map and label not in {"X", "REST"}:
                             raise ValueError(f"Unknown viseme label '{label}' at shots[{i}].{group}[{j}]")
                         strength = float(event.get("strength", 1.0))
                         if strength < 0 or strength > 1:
