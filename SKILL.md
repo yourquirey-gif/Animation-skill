@@ -150,3 +150,20 @@ Ask only for information that blocks progress. If reference media is missing, ex
 ## Final report
 
 State what code and assets were created, what was actually tested, Blender/FFmpeg versions, actual output path, duration/resolution/frame rate, render time, failed or pending shots, optional API credentials still needed, and known visual limitations. Never say complete when core animation is mocked or untested.
+
+
+## YouTube Shorts: hook and retention requirements
+
+Whenever the requested output is a YouTube Short or vertical short-form story, read docs/SHORTS_RETENTION_WORKFLOW.md and follow it as a mandatory production standard.
+
+- Write the complete script before production, built around one clear premise.
+- Make the first 0–3 seconds the strongest part: frame 1 must already show a clear, high-impact action or unusual image, paired with a concise hook line or on-screen text.
+- Create at least three genuinely different hook concepts, evaluate visual clarity, curiosity, stakes, mute-viewer comprehension, and connection to the payoff, then select the strongest.
+- Do not open with greetings, channel intros, slow establishing shots, fade-ins, empty walking, or backstory.
+- Build a curiosity gap in the opening and resolve it with a satisfying payoff near the end. Do not use misleading bait.
+- Default to a 25–40 second runtime while testing a new format, but never pad a story just to reach a duration.
+- As a starting point, change the visual, camera angle, meaningful action, or relevant insert every 1.5–2.5 seconds where the story supports it. Remove dead air and unnecessary pauses.
+- Keep dynamic captions readable and inside platform-safe areas; keep voice clear above music.
+- Plan a natural loop when appropriate, plus an accurate title, restrained hashtags, thumbnail frame suggestion, and story-related audience question.
+- Render and inspect the opening hook preview before rendering the entire Short. A static title card or slideshow does not pass.
+- If the user supplied a reference video, inspect its opening and use its hook technique as guidance. Never claim to have inspected unavailable reference media or copy protected footage, characters, dialogue, or music.
