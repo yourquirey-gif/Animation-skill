@@ -10,6 +10,7 @@ import json
 import math
 import os
 import sys
+import time
 from pathlib import Path
 
 import bpy
@@ -662,6 +663,28 @@ def create_stylized_humanoid(spec, cache, root, fps, total_frames):
     return parts
 
 
+
+def merge_static_environment_meshes(objects):
+    """Join unanimated primitive environment meshes to reduce per-frame draw overhead.
+
+    Only static, unparented mesh objects are passed here. Joining preserves their
+    world-space transforms and material slots; animated subjects and imported rigs
+    are deliberately kept separate.
+    """
+    meshes = [obj for obj in objects if obj and obj.type == "MESH" and obj.parent is None]
+    if len(meshes) < 2:
+        return len(meshes), 1 if meshes else 0
+    bpy.ops.object.select_all(action="DESELECT")
+    for obj in meshes:
+        obj.select_set(True)
+    bpy.context.view_layer.objects.active = meshes[0]
+    bpy.ops.object.join()
+    merged = bpy.context.view_layer.objects.active
+    merged.name = "Environment_Static_Merged"
+    merged.data.name = "Environment_Static_Merged_Mesh"
+    return len(meshes), 1
+
+
 def main():
     args = parse_args()
     story_path = Path(args.storyboard)
@@ -706,6 +729,7 @@ def main():
     cache = {}
 
     env = shot.get("environment", {})
+    static_environment_meshes = []
     for item in env.get("objects", []):
         obj = create_mesh(item, cache, base_dir=story_path.parent)
         apply_keyframes(obj, item.get("keyframes", []), args.fps, scene.frame_end)
@@ -717,6 +741,22 @@ def main():
             scene.frame_end,
             item.get("rig_controls", {}),
         )
+        is_static_primitive = (
+            not item.get("asset_file")
+            and not item.get("keyframes")
+            and not item.get("pose_keyframes")
+            and not item.get("facial_keyframes")
+            and not item.get("rig_controls")
+            and obj.type == "MESH"
+            and obj.parent is None
+        )
+        if is_static_primitive:
+            static_environment_meshes.append(obj)
+    static_mesh_count, merged_mesh_count = merge_static_environment_meshes(static_environment_meshes)
+    print("STATIC_ENVIRONMENT_MESH_OPTIMIZATION", {
+        "source_meshes": static_mesh_count,
+        "merged_meshes": merged_mesh_count,
+    }, flush=True)
     subject_roots = {}
     subject_rigs = {}
     for item in shot.get("subjects", []):
@@ -774,17 +814,25 @@ def main():
 
     build_camera(shot.get("camera", {}))
     add_lights(shot.get("lighting", []))
-    # Render every frame to disk; no still-image pan/zoom substitution.
-    for frame in range(1, scene.frame_end + 1):
-        scene.frame_set(frame)
-        scene.render.filepath = str(out / ("frame_%04d.png" % frame))
-        bpy.ops.render.render(write_still=True)
+    # Render as one animation job so Blender can retain scene/render data
+    # between frames. This is still a genuine per-frame 3D render, not a still pan.
+    if hasattr(scene.render, "use_persistent_data"):
+        scene.render.use_persistent_data = True
+    scene.render.image_settings.file_format = "PNG"
+    scene.render.filepath = str(out / "frame_")
+    render_started = time.perf_counter()
+    bpy.ops.render.render(animation=True)
+    render_elapsed = time.perf_counter() - render_started
 
     report = {
         "status": "RENDERED",
         "shot_id": shot.get("id", str(args.shot_index + 1)),
         "frames": scene.frame_end,
         "fps": args.fps,
+        "render_seconds": round(render_elapsed, 3),
+        "rendered_frames_per_second": round(scene.frame_end / max(render_elapsed, 0.001), 3),
+        "static_environment_source_meshes": static_mesh_count,
+        "static_environment_merged_meshes": merged_mesh_count,
         "resolution": [args.width, args.height],
         "rendered_frame_pattern": str((out / "frame_%04d.png").resolve()),
         "scene_object_count": len(scene.objects),

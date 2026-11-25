@@ -9,6 +9,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 from pathlib import Path
 
 
@@ -212,6 +213,7 @@ def main():
         shot_id = shot.get("id", index + 1)
         progress("RENDERING", index + 1, shot_id)
         print("Rendering shot", index + 1, "of", len(shots), "-", shot_id, flush=True)
+        shot_render_started = time.perf_counter()
         last_error = None
         for attempt in range(a.retries + 1):
             for stale in shot_dir.glob("frame_*.png"):
@@ -229,8 +231,11 @@ def main():
         if last_error:
             raise last_error
         expected_frames = max(1, round(float(shot["duration_seconds"]) * fps))
+        shot_render_seconds = time.perf_counter() - shot_render_started
         shot_qc.append({
             "shot_id": shot.get("id", index + 1),
+            "render_seconds": round(shot_render_seconds, 3),
+            "rendered_frames_per_second": round(expected_frames / max(shot_render_seconds, 0.001), 3),
             **validate_rendered_frames(shot_dir, expected_frames, width, height),
         })
         segment = shot_dir / "segment.mp4"

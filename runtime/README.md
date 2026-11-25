@@ -10,7 +10,7 @@ GitHub Actions workflow: `.github/workflows/cloud-render.yml`
 2. Select **Actions → Cloud Blender Video Render → Run workflow**.
 3. Choose a storyboard JSON already committed to the repository, output name, aspect ratio, Blender engine, resolution, FPS, samples, and optional repository-relative voice/music/SRT paths.
 4. The Ubuntu runner installs Blender, FFmpeg and headless graphics libraries, reports CPU/RAM/disk/GPU availability, validates inputs, and runs the real renderer.
-5. Each shot is rendered separately in Blender background mode. Failed shots get a bounded retry; progress is written to JSON and logs are retained.
+5. Each shot is rendered separately in Blender background mode as a single animation render, allowing Blender to retain render data between frames. Static, unanimated primitive environment meshes are joined into a shared environment mesh before rendering; animated subjects and imported rigs remain separate. Failed shots get a bounded retry; progress is written to JSON and logs are retained. Per-shot render time and frames-per-second are recorded for benchmarking.
 6. FFmpeg encodes and joins shot frames, applies captions and mixes audio. ffprobe validates the final MP4.
 7. The workflow uploads the MP4, final report, progress record and render logs as a downloadable Actions artifact (7-day retention).
 
@@ -31,7 +31,7 @@ Use Blender's bundled Python for `bpy`; do not pip-install `bpy` into arbitrary 
 
 ## Storyboard renderer
 
-`runtime/render_story.py` reads story-specific JSON and launches Blender once per shot. It renders actual PNG frames, validates frame count/signature/dimensions, encodes each shot with FFmpeg, concatenates the shots, optionally burns SRT captions and muxes voice/music, then checks the final MP4 with ffprobe. It supports bounded shot retries and machine-readable progress via `--progress-file`. Work directories contain `.blend` files, frames, logs, and `final_report.json` for diagnosis/resume.
+`runtime/render_story.py` reads story-specific JSON and launches Blender once per shot. It renders actual PNG frames using Blender's animation render path (with persistent render data enabled where supported), merges eligible static primitive environment geometry to reduce scene-object overhead, validates frame count/signature/dimensions, records per-shot render timing, encodes each shot with FFmpeg, concatenates the shots, optionally burns SRT captions and muxes voice/music, then checks the final MP4 with ffprobe. It supports bounded shot retries and machine-readable progress via `--progress-file`. Work directories contain `.blend` files, frames, logs, and `final_report.json` for diagnosis/resume.
 
 ## Detailed model assets
 
