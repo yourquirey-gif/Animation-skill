@@ -69,3 +69,21 @@ Example fragment:
 Bone and shape-key names are asset-specific: inspect the imported model first and use its actual names. `pose_keyframes` creates a dedicated action for the supplied bone poses; do not combine it with `asset_action` on the same armature because the pose action becomes the active action. Use an imported action for a prepared motion clip, or explicit pose keyframes for custom performance. Facial shape-key animation is a separate animation channel.
 
 This enables real rig-driven performance when suitable assets exist; it does not magically auto-rig arbitrary downloaded meshes. If a character asset has no rig, Claude must create/rig an appropriate model or state the limitation rather than pretending it can perform skeletal acting.
+
+
+### Props attached to character hands/bones
+
+To keep a prop attached to an animated hand or other rig bone, put `attach_to` on its prop entry. It references the subject name and exact armature bone name; `offset` and `rotation` are local to that bone:
+
+    {
+      "name": "Lantern",
+      "asset_file": "assets/lantern.glb",
+      "attach_to": {
+        "subject": "StoryHero",
+        "bone": "hand.R",
+        "offset": [0.02, 0.0, 0.08],
+        "rotation": [0.0, 0.0, 0.0]
+      }
+    }
+
+This gives the prop a real Blender bone parent, so it follows the character's animated hand. Claude must inspect the model's real bone names and tune local offsets from a preview. It does not automatically solve finger gripping, collisions or contact physics; those need a suitable hand rig, constraints and story-specific animation.
