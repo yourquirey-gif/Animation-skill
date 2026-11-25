@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Orchestrate a complete storyboard -> Blender shot renders -> MP4 pipeline."""
 import argparse
+import hashlib
 import json
+import struct
 import os
 import shutil
 import subprocess
@@ -35,6 +37,38 @@ def run(command, log_path=None):
 
 def ffmpeg_escape(path):
     return str(Path(path).resolve()).replace("\\", "\\\\").replace(":", "\\:").replace("'", "\\'")
+
+
+def validate_rendered_frames(shot_dir, expected_frames, width, height):
+    frames = sorted(shot_dir.glob("frame_*.png"))
+    if len(frames) != expected_frames:
+        raise RuntimeError(
+            "Shot frame count mismatch in " + str(shot_dir) + ": expected " +
+            str(expected_frames) + ", found " + str(len(frames))
+        )
+    previous_hash = None
+    duplicate_adjacent = 0
+    for frame in frames:
+        with frame.open("rb") as fp:
+            header = fp.read(24)
+        if len(header) != 24 or header[:8] != b"\\x89PNG\\r\\n\\x1a\\n":
+            raise RuntimeError("Invalid or truncated PNG frame: " + str(frame))
+        actual_width, actual_height = struct.unpack(">II", header[16:24])
+        if (actual_width, actual_height) != (width, height):
+            raise RuntimeError(
+                "Frame dimensions mismatch in " + str(frame) + ": " +
+                str(actual_width) + "x" + str(actual_height)
+            )
+        digest = hashlib.sha256(frame.read_bytes()).digest()
+        if digest == previous_hash:
+            duplicate_adjacent += 1
+        previous_hash = digest
+    return {
+        "frame_count": len(frames),
+        "dimensions": [width, height],
+        "adjacent_identical_frame_pairs": duplicate_adjacent,
+        "duplicate_frames_are_review_candidates": duplicate_adjacent > 0,
+    }
 
 
 def main():
@@ -95,6 +129,7 @@ def main():
     work.mkdir(parents=True, exist_ok=True)
     scene_script = Path(__file__).with_name("story_scene.py").resolve()
     segment_files = []
+    shot_qc = []
 
     for index, shot in enumerate(shots):
         shot_dir = work / ("shot_%03d" % (index + 1))
@@ -108,6 +143,11 @@ def main():
         ]
         print("Rendering shot", index + 1, "of", len(shots), "-", shot.get("id", index + 1))
         run(blender_cmd, shot_dir / "blender.log")
+        expected_frames = max(1, round(float(shot["duration_seconds"]) * fps))
+        shot_qc.append({
+            "shot_id": shot.get("id", index + 1),
+            **validate_rendered_frames(shot_dir, expected_frames, width, height),
+        })
         segment = shot_dir / "segment.mp4"
         encode_cmd = [
             ffmpeg, "-y", "-framerate", str(fps), "-i", str(shot_dir / "frame_%04d.png"),
@@ -152,11 +192,30 @@ def main():
                  "format=duration:stream=codec_type,codec_name,width,height,r_frame_rate",
                  "-of", "json", str(output)])
     metadata = json.loads(probe.stdout)
+    streams = metadata.get("streams", [])
+    video_streams = [stream for stream in streams if stream.get("codec_type") == "video"]
+    audio_streams = [stream for stream in streams if stream.get("codec_type") == "audio"]
+    actual_duration = float(metadata.get("format", {}).get("duration", 0))
+    expected_duration = total_story_seconds
+    duration_tolerance = max(0.15, 2.0 / fps)
+    if not video_streams:
+        raise RuntimeError("Final MP4 has no video stream.")
+    if actual_duration <= 0:
+        raise RuntimeError("Final MP4 has an invalid or zero duration.")
+    if abs(actual_duration - expected_duration) > duration_tolerance:
+        raise RuntimeError(
+            "Final MP4 duration mismatch: expected %.3fs, got %.3fs." %
+            (expected_duration, actual_duration)
+        )
+    if (a.voice or a.music) and not audio_streams:
+        raise RuntimeError("Audio was requested but final MP4 contains no audio stream.")
     report = {
-        "status": "PASS",
+        "status": "PASS_WITH_REVIEW_WARNINGS" if any(x["adjacent_identical_frame_pairs"] for x in shot_qc) else "PASS",
         "output": str(output),
-        "duration_seconds": float(metadata.get("format", {}).get("duration", 0)),
+        "duration_seconds": actual_duration,
         "shot_count": len(shots),
+        "shot_frame_qc": shot_qc,
+        "qc_note": "Adjacent byte-identical frames are flagged for visual review; a duplicate may be intentional in a held/static shot.",
         "resolution": [width, height],
         "fps": fps,
         "audio_inputs": {"voice": str(a.voice.resolve()) if a.voice else None,
