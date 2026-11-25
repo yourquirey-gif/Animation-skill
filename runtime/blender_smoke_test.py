@@ -1,5 +1,5 @@
 """Headless Blender integration test: animated 3D character, prop, terrain and camera."""
-import argparse, math, sys
+import argparse, math, os, sys
 from pathlib import Path
 import bpy
 from mathutils import Vector
@@ -28,7 +28,10 @@ def main():
     a=args(); out=Path(a.output_dir); out.mkdir(parents=True,exist_ok=True)
     bpy.ops.wm.read_factory_settings(use_empty=True); s=bpy.context.scene
     available_engines = bpy.context.scene.render.bl_rna.properties["engine"].enum_items.keys()
-    if "BLENDER_EEVEE_NEXT" in available_engines:
+    requested_engine = os.environ.get("BLENDER_SMOKE_ENGINE", "BLENDER_WORKBENCH")
+    if requested_engine in available_engines:
+        s.render.engine = requested_engine
+    elif "BLENDER_EEVEE_NEXT" in available_engines:
         s.render.engine = "BLENDER_EEVEE_NEXT"
     elif "BLENDER_EEVEE" in available_engines:
         s.render.engine = "BLENDER_EEVEE"
