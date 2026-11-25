@@ -417,10 +417,7 @@ def apply_viseme_animation(root, viseme_keyframes, viseme_map, fps, total_frames
             block.keyframe_insert(data_path="value", frame=frame)
     for shape_name in set(viseme_map.values()):
         block = shape_keys[shape_name]
-        if block.id_data.animation_data and block.id_data.animation_data.action:
-            for fc in block.id_data.animation_data.action.fcurves:
-                for point in fc.keyframe_points:
-                    point.interpolation = "LINEAR"
+
 
 
 def aim(camera, target):
