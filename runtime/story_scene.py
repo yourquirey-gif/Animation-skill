@@ -17,7 +17,7 @@ import bpy
 from mathutils import Vector
 
 
-PRIMITIVES = {"cube", "uv_sphere", "ico_sphere", "cylinder", "cone", "torus", "plane", "terrain"}
+PRIMITIVES = {"cube", "uv_sphere", "ico_sphere", "cylinder", "cone", "torus", "plane", "terrain", "text"}
 DEFAULT_MATERIAL = {"color": [0.35, 0.42, 0.55], "roughness": 0.7, "metallic": 0.0}
 
 
@@ -254,6 +254,15 @@ def create_mesh(spec, cache, collection=None, base_dir=None):
         bpy.ops.mesh.primitive_torus_add(major_segments=48, minor_segments=12, location=location)
     elif primitive == "plane":
         bpy.ops.mesh.primitive_plane_add(size=2, location=location)
+    elif primitive == "text":
+        bpy.ops.object.text_add(location=location)
+        text_obj = bpy.context.object
+        text_obj.data.body = str(spec.get("text", name))
+        text_obj.data.align_x = str(spec.get("align_x", "CENTER"))
+        text_obj.data.align_y = str(spec.get("align_y", "CENTER"))
+        text_obj.data.extrude = float(spec.get("extrude", 0.025))
+        text_obj.data.bevel_depth = float(spec.get("bevel_depth", 0.006))
+        text_obj.data.bevel_resolution = 2
     obj = bpy.context.object
     obj.name = name
     obj.rotation_euler = rotation
