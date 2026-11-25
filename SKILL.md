@@ -266,3 +266,8 @@ For a user-approved story, create a project-specific storyboard JSON using the s
 The renderer invokes Blender once per shot, renders real PNG frames, encodes each shot with FFmpeg, concatenates shots, optionally burns SRT captions and muxes voice/music, then validates the final MP4 with ffprobe. Inspect Blender logs, previews and final video. Do not report success if any shot fails or the output file/metadata is missing.
 
 The bundled renderer currently provides a procedural 3D foundation (primitive meshes, subject assemblies, transform keyframes, camera keyframes and lighting). For professional story-specific output, add suitable detailed models, rigs, facial performance, contact-aware interactions, scene-specific textures and refined acting. Do not pass off the primitive diagnostic look as finished cinematic quality. The user's supplied audio remains the timing/master track; plan shot durations against its actual duration.
+
+
+### Detailed story assets and animation
+
+When quality requires more than procedural blockout geometry, use story-specific licensed/approved `.glb`, `.gltf` or `.fbx` models in the storyboard via `asset_file`; paths are relative to the storyboard JSON. Preserve embedded materials and model hierarchy. For imported armatures, an exact existing Blender action may be selected with `asset_action`. Do not invent a model path or claim an asset was imported unless the file exists and Blender import succeeds. Keep an asset manifest with source/license. Procedural primitives are for layout, blockout and simple visual metaphors—not a universal substitute for detailed character/environment art.
