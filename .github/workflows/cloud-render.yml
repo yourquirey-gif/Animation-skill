@@ -5,9 +5,7 @@ on:
     branches:
       - blender-cloud-production
     paths:
-      - ".github/workflows/cloud-render.yml"
       - "runtime/**"
-      - "assets/**"
       - "tests/fixtures/**"
   workflow_dispatch:
     inputs:
