@@ -1,0 +1,18 @@
+name: Rig Controls and Viseme Utility Tests
+on:
+  push:
+    paths:
+      - "runtime/story_scene.py"
+      - "runtime/align_visemes.py"
+      - "tests/test_align_visemes.py"
+      - ".github/workflows/rig-controls-tests.yml"
+  workflow_dispatch:
+jobs:
+  python-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile runtime
+        run: python3 -m py_compile runtime/story_scene.py runtime/align_visemes.py
+      - name: Test viseme cue conversion
+        run: python3 -m unittest tests.test_align_visemes
