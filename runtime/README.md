@@ -35,3 +35,8 @@ Optional narration, music and subtitles:
 The storyboard contains a sequence of shots. Each shot defines its own environment objects, subject assemblies, props, keyframes, camera and lights. See `templates/storyboard.universal.example.json`. Claude must create a new storyboard and story-specific assets for every production; the example JSON is a schema illustration only.
 
 The current scene compiler supports procedural mesh primitives and transform/camera keyframes. It is a working foundation for generated 3D scenes, not a claim that primitive geometry alone achieves feature-film character quality. Production art direction, detailed meshes/rigs, contact-aware hand/prop actions, facial performance and lip-sync still require story-specific asset/animation work and visual QA.
+
+
+### Detailed model assets
+
+Storyboard object/subject-part entries may use `asset_file` instead of a procedural primitive. Supported imports are `.glb`, `.gltf` and `.fbx`; relative paths resolve from the storyboard JSON file. GLB/glTF is preferred for embedded PBR materials and hierarchy. An optional `asset_action` selects an imported Blender action by exact action name for imported armatures. Keep asset licenses and source notes in the project asset manifest. The renderer does not download models or assume external asset access.
