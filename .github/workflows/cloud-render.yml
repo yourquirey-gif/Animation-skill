@@ -1,6 +1,14 @@
 name: Cloud Blender Video Render
 
 on:
+  push:
+    branches:
+      - blender-cloud-production
+    paths:
+      - ".github/workflows/cloud-render.yml"
+      - "runtime/**"
+      - "assets/**"
+      - "tests/fixtures/**"
   workflow_dispatch:
     inputs:
       storyboard_path:
@@ -69,7 +77,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: blender-render-${{ github.ref }}-${{ inputs.output_name }}
+  group: blender-render-${{ github.ref }}-${{ inputs.output_name || 'ci-cloud-render' }}
   cancel-in-progress: false
 
 jobs:
@@ -77,7 +85,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
-      ANIMATION_RENDER_ENGINE: ${{ inputs.render_engine }}
+      ANIMATION_RENDER_ENGINE: ${{ inputs.render_engine || 'BLENDER_EEVEE' }}
       LIBGL_ALWAYS_SOFTWARE: "1"
       BLENDER_BIN: blender
       FFMPEG_BIN: ffmpeg
@@ -107,15 +115,15 @@ jobs:
 
       - name: Validate workflow inputs
         env:
-          STORYBOARD: ${{ inputs.storyboard_path }}
-          OUTPUT_NAME: ${{ inputs.output_name }}
-          VOICE_PATH: ${{ inputs.voice_path }}
-          MUSIC_PATH: ${{ inputs.music_path }}
-          CAPTIONS_PATH: ${{ inputs.captions_path }}
-          WIDTH: ${{ inputs.width }}
-          HEIGHT: ${{ inputs.height }}
-          FPS: ${{ inputs.fps }}
-          SAMPLES: ${{ inputs.samples }}
+          STORYBOARD: ${{ inputs.storyboard_path || 'tests/fixtures/human_prop_story.json' }}
+          OUTPUT_NAME: ${{ inputs.output_name || 'ci-cloud-render' }}
+          VOICE_PATH: ${{ inputs.voice_path || '' }}
+          MUSIC_PATH: ${{ inputs.music_path || '' }}
+          CAPTIONS_PATH: ${{ inputs.captions_path || '' }}
+          WIDTH: ${{ inputs.width || '240' }}
+          HEIGHT: ${{ inputs.height || '426' }}
+          FPS: ${{ inputs.fps || '12' }}
+          SAMPLES: ${{ inputs.samples || '8' }}
         run: |
           set -euo pipefail
           [[ "$OUTPUT_NAME" =~ ^[A-Za-z0-9._-]+$ ]] || { echo "Invalid output_name"; exit 2; }
@@ -136,16 +144,16 @@ jobs:
 
       - name: Render Blender scenes and assemble MP4
         env:
-          STORYBOARD: ${{ inputs.storyboard_path }}
-          OUTPUT_NAME: ${{ inputs.output_name }}
-          FORMAT: ${{ inputs.format }}
-          WIDTH: ${{ inputs.width }}
-          HEIGHT: ${{ inputs.height }}
-          FPS: ${{ inputs.fps }}
-          SAMPLES: ${{ inputs.samples }}
-          VOICE_PATH: ${{ inputs.voice_path }}
-          MUSIC_PATH: ${{ inputs.music_path }}
-          CAPTIONS_PATH: ${{ inputs.captions_path }}
+          STORYBOARD: ${{ inputs.storyboard_path || 'tests/fixtures/human_prop_story.json' }}
+          OUTPUT_NAME: ${{ inputs.output_name || 'ci-cloud-render' }}
+          FORMAT: ${{ inputs.format || 'shorts' }}
+          WIDTH: ${{ inputs.width || '240' }}
+          HEIGHT: ${{ inputs.height || '426' }}
+          FPS: ${{ inputs.fps || '12' }}
+          SAMPLES: ${{ inputs.samples || '8' }}
+          VOICE_PATH: ${{ inputs.voice_path || '' }}
+          MUSIC_PATH: ${{ inputs.music_path || '' }}
+          CAPTIONS_PATH: ${{ inputs.captions_path || '' }}
         run: |
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/video-output" "$RUNNER_TEMP/video-work"
@@ -164,7 +172,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ inputs.output_name }}-${{ github.run_number }}
+          name: ${{ inputs.output_name || 'ci-cloud-render' }}-${{ github.run_number }}
           path: |
             ${{ runner.temp }}/video-output/
             ${{ runner.temp }}/video-work/final_report.json
