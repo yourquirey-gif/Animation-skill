@@ -42,7 +42,14 @@ class Renderer:
         if spec.get("asset"):
             path=Path(spec["asset"]); path=path if path.is_absolute() else root_path/path
             if not path.is_file(): raise FileNotFoundError(path)
-            model=self.base.loader.loadModel(Filename.fromOsSpecific(str(path)))
+            if path.suffix.lower() in (".gltf", ".glb"):
+                try:
+                    from panda3d_gltf import load_model
+                except ImportError as exc:
+                    raise RuntimeError("Install panda3d-gltf to load GLB/glTF assets") from exc
+                model=load_model(str(path))
+            else:
+                model=self.base.loader.loadModel(Filename.fromOsSpecific(str(path)))
         else:
             names={"cube":"models/box","box":"models/box","uv_sphere":"models/misc/sphere","sphere":"models/misc/sphere","ico_sphere":"models/misc/sphere","cylinder":"models/misc/cylinder","cone":"models/misc/cone","plane":"models/plane"}
             name=names.get(spec.get("primitive","cube"))
@@ -60,10 +67,13 @@ class Renderer:
         for obj in env.get("objects",[]): self.object(obj,self.base.render,root_path)
         for subject in shot.get("subjects",[]):
             root=self.base.render.attachNewNode(subject.get("name","subject"))
+            defaults={"location":v(subject.get("location"),(0,0,0)),"rotation":v(subject.get("rotation"),(0,0,0)),"scale":v(subject.get("scale"),(1,1,1))}
+            root.setPos(*defaults["location"]); root.setHpr(defaults["rotation"][2],defaults["rotation"][0],defaults["rotation"][1]); root.setScale(*defaults["scale"])
             for part in subject.get("parts",[]): self.object(part,root,root_path)
-            if subject.get("asset"): self.object(subject,self.base.render,root_path)
+            if subject.get("asset"):
+                asset_spec={"name":subject.get("name","subject")+"-asset","asset":subject["asset"],"location":[0,0,0],"rotation":[0,0,0],"scale":subject.get("asset_scale",[1,1,1]),"color":[1,1,1]}
+                self.object(asset_spec,root,root_path)
             if subject.get("keyframes"):
-                defaults={"location":v(subject.get("location"),(0,0,0)),"rotation":v(subject.get("rotation"),(0,0,0)),"scale":v(subject.get("scale"),(1,1,1))}
                 self.animated.append((root,subject["keyframes"],defaults))
         for prop in shot.get("props",[]): self.object(prop,self.base.render,root_path)
         cam=shot.get("camera",{}); self.cam_keys=cam.get("keyframes",[])

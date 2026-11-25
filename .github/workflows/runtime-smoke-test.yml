@@ -1,43 +1,44 @@
-name: Blender Python Runtime Smoke Test
-
+name: Panda3D 3D Render Integration Test
 on:
   push:
     paths:
-      - "runtime/**"
-      - "templates/**"
-      - "tests/fixtures/**"
+      - "runtime/panda3d_scene.py"
+      - "runtime/render_panda_story.py"
+      - "requirements.txt"
+      - "tests/fixtures/panda3d_smoke_story.json"
       - ".github/workflows/runtime-smoke-test.yml"
   workflow_dispatch:
-
 jobs:
-  blender-render:
+  panda3d-render:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-    env:
-      BLENDER_SMOKE_ENGINE: BLENDER_WORKBENCH
-      ANIMATION_RENDER_ENGINE: BLENDER_WORKBENCH
-      LIBGL_ALWAYS_SOFTWARE: '1'
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
-      - name: Install Blender and FFmpeg
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install renderer and media dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y blender ffmpeg libegl1 libgl1 libegl-mesa0 libglx-mesa0 libgl1-mesa-dri
-      - name: Compile Python orchestration scripts
+          sudo apt-get install -y ffmpeg xvfb libgl1 libglx-mesa0 libgl1-mesa-dri
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+      - name: Compile Python runtime
+        run: python -m py_compile runtime/panda3d_scene.py runtime/render_panda_story.py runtime/align_visemes.py
+      - name: Render actual Panda3D frames and MP4
         run: |
-          python3 -m py_compile runtime/animation_runtime.py runtime/render_story.py runtime/story_scene.py runtime/align_visemes.py
-      - name: Inspect installed tools
+          xvfb-run -a python runtime/render_panda_story.py --storyboard tests/fixtures/panda3d_smoke_story.json --output "$RUNNER_TEMP/panda3d-smoke.mp4" --width 320 --height 240 --fps 12
+      - name: Verify MP4 metadata
         run: |
-          python3 runtime/animation_runtime.py inspect
-      - name: Render animated Blender smoke test
-        run: |
-          python3 runtime/animation_runtime.py smoke-test --workdir "$RUNNER_TEMP/blender-smoke" --width 240 --height 426 --fps 12 --frames 24
-      - name: Render three structurally different stories
-        run: |
-          set -e
-          for storyboard in tests/fixtures/*.json; do
-            name="$(basename "$storyboard" .json)"
-            python3 runtime/render_story.py --storyboard "$storyboard" --output "$RUNNER_TEMP/$name.mp4" --format shorts --width 240 --height 426 --fps 12 --samples 8
-            test -s "$RUNNER_TEMP/$name.mp4"
-            ffprobe -v error -show_entries format=duration:stream=codec_name,width,height -of json "$RUNNER_TEMP/$name.mp4"
-          done
+          ffprobe -v error -show_entries format=duration:stream=codec_type,codec_name,width,height -of json "$RUNNER_TEMP/panda3d-smoke.mp4"
+          test -s "$RUNNER_TEMP/panda3d-smoke.mp4"
+      - name: Upload render and QA report
+        uses: actions/upload-artifact@v4
+        with:
+          name: panda3d-smoke-render
+          path: |
+            ${{ runner.temp }}/panda3d-smoke.mp4
+            ${{ runner.temp }}/panda3d-smoke_work/final_report.json
+          if-no-files-found: warn
+          retention-days: 7

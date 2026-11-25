@@ -1,0 +1,14 @@
+{
+  "project":{"title":"Panda3D integration smoke test","fps":12,"resolution":"long","visual_style":"stylized_3d"},
+  "shots":[{
+    "id":"moving-subject","duration_seconds":2,
+    "environment":{"world_color":[0.025,0.04,0.08],"objects":[{"name":"ground","primitive":"cube","location":[0,0,-0.65],"scale":[5,5,0.5],"color":[0.12,0.18,0.22]}]},
+    "subjects":[{"name":"test-character","location":[-0.8,0,0],"parts":[
+      {"name":"body","primitive":"uv_sphere","location":[0,0,0.5],"scale":[0.45,0.35,0.65],"color":[0.1,0.55,0.9]},
+      {"name":"head","primitive":"uv_sphere","location":[0,0,1.35],"scale":[0.32,0.3,0.32],"color":[0.9,0.65,0.45]}
+    ],"keyframes":[{"time_seconds":0,"location":[-0.8,0,0]},{"time_seconds":1,"location":[0,0,0.1]},{"time_seconds":1.9,"location":[0.8,0,0]}]}],
+    "props":[{"name":"moving-prop","primitive":"cube","location":[1,0,0.5],"scale":[0.2,0.2,0.2],"color":[0.9,0.65,0.1],"keyframes":[{"time_seconds":0,"location":[1,0,0.5],"rotation":[0,0,0]},{"time_seconds":1.9,"location":[1,0,1.2],"rotation":[0,0,120]}]}],
+    "camera":{"location":[4,-8,3.5],"target":[0,0,0.8],"fov":48,"keyframes":[{"time_seconds":0,"location":[4,-8,3.5],"target":[0,0,0.8]},{"time_seconds":1.9,"location":[2.5,-7,3],"target":[0.2,0,0.8]}]},
+    "lighting":[{"name":"fill-light","location":[-4,-2,5],"color":[0.45,0.58,1]}]
+  }]
+}
