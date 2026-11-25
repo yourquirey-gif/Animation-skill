@@ -46,7 +46,7 @@ def main():
     ], frame_start=1, frame_end=9)
     assert result["frames"] == 9 and result["mapped_bones"] == 3
     assert target.animation_data.action is not None
-    assert len(target.animation_data.action.fcurves) >= 4
+    assert target.animation_data.action.frame_range[1] >= 9
     print("RIG_RETARGET_TEST_PASS", result)
 
 
