@@ -28,8 +28,9 @@ def sample(keys, t, defaults):
 class Renderer:
     def __init__(self, width, height, fps, out):
         from direct.showbase.ShowBase import ShowBase
+        loadPrcFileData("", f"win-size {width} {height}")
         self.base=ShowBase(windowType="offscreen"); self.base.disableMouse()
-        self.base.win.setSize(width,height); self.fps=fps; self.out=Path(out); self.out.mkdir(parents=True,exist_ok=True)
+        self.fps=fps; self.out=Path(out); self.out.mkdir(parents=True,exist_ok=True)
         self.animated=[]
         ambient=AmbientLight("ambient"); ambient.setColor(LColor(.42,.44,.5,1))
         self.base.render.setLight(self.base.render.attachNewNode(ambient))
