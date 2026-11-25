@@ -640,11 +640,28 @@ def create_stylized_humanoid(spec, cache, root, fps, total_frames):
         part("hat_brim", [0, 0, 3.02], [0.42, 0.34, 0.055], "accent")
         part("hat_crown", [0, 0, 3.16], [0.25, 0.24, 0.17], "accent")
 
-    # Per-part keyframes are authored in the storyboard using exact part names.
-    for name, keys in (cfg.get("part_keyframes", {}) or {}).items():
+    # Explicit part tracks remain available for carefully authored blocking.
+    authored_tracks = cfg.get("part_keyframes", {}) or {}
+    for name, keys in authored_tracks.items():
         if name not in parts:
             raise ValueError("Unknown procedural character part_keyframes target: " + str(name))
         apply_keyframes(parts[name], keys, fps, total_frames)
+
+    # Story-authored semantic performance beats (wave, point, nod, etc.) are
+    # compiled into per-part keyframes. This is a reusable blocking layer, not
+    # a substitute for a facially-rigged production character.
+    if cfg.get("performance"):
+        from semantic_actions import compile_performance
+        generated_tracks = compile_performance(cfg["performance"], fps, total_frames)
+        for name, keys in generated_tracks.items():
+            if name not in parts:
+                raise ValueError("Semantic action targets unavailable character part: " + name)
+            if name in authored_tracks:
+                raise ValueError(
+                    "Do not mix performance and part_keyframes for the same part ('" + name +
+                    "'); use one authored track to avoid conflicting poses."
+                )
+            apply_keyframes(parts[name], keys, fps, total_frames)
 
     # Lightweight looping walk-cycle motion is a preview-level procedural gait.
     motion = str(cfg.get("motion", "idle")).lower()
