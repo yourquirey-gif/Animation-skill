@@ -87,3 +87,29 @@ To keep a prop attached to an animated hand or other rig bone, put `attach_to` o
     }
 
 This gives the prop a real Blender bone parent, so it follows the character's animated hand. Claude must inspect the model's real bone names and tune local offsets from a preview. It does not automatically solve finger gripping, collisions or contact physics; those need a suitable hand rig, constraints and story-specific animation.
+
+
+### Audio-aligned lip-sync (viseme tracks)
+
+A subject can use `viseme_map` and `viseme_keyframes` to animate imported facial blendshapes from a phoneme/viseme alignment track. The map keys are viseme labels and values are the exact imported shape-key names. Each event supplies `time_seconds`, `viseme`, and optional `strength` (0–1). Example:
+
+    {
+      "name": "NarratorCharacter",
+      "asset_file": "assets/character.glb",
+      "viseme_map": {
+        "REST": "Mouth_Closed", "AA": "Mouth_A", "EE": "Mouth_E",
+        "OH": "Mouth_O", "FV": "Mouth_FV"
+      },
+      "viseme_keyframes": [
+        {"time_seconds": 0.00, "viseme": "REST"},
+        {"time_seconds": 0.18, "viseme": "AA", "strength": 0.9},
+        {"time_seconds": 0.34, "viseme": "EE", "strength": 0.8},
+        {"time_seconds": 0.52, "viseme": "REST"}
+      ]
+    }
+
+The timestamps must come from actual audio/phoneme alignment (or carefully authored dialogue timing) on the same unmodified master-audio timeline. The Blender renderer animates the supplied viseme events; it does not itself recognize speech or infer phonemes from a WAV. If no trustworthy alignment tool is available, do not invent precise mouth timing. `viseme_map` must match the model's actual blendshape names. This is mouth-shape animation, not proof of perfect speech synchronization; inspect close-up previews and refine coarticulation/strengths.
+
+### Render integrity checks
+
+The end-to-end renderer verifies the exact expected number of PNG frames per shot, PNG signatures, each frame's dimensions, final video stream, final duration, and requested audio stream. It also flags adjacent byte-identical frames as review candidates in `final_report.json`; static holds can be intentional, so these are warnings rather than automatic failures. Visual review remains mandatory for black frames, camera framing, frozen motion, flicker, anatomy and contact quality.
