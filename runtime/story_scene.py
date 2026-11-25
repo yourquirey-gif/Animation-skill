@@ -212,7 +212,7 @@ def find_armature(root):
     return None
 
 
-def apply_rig_animation(root, pose_keyframes, facial_keyframes, fps, total_frames):
+def apply_rig_animation(root, pose_keyframes, facial_keyframes, fps, total_frames, rig_controls=None):
     """Animate imported armature bones and mesh shape keys using story timing."""
     armatures = []
     meshes = []
@@ -253,6 +253,11 @@ def apply_rig_animation(root, pose_keyframes, facial_keyframes, fps, total_frame
                     pose_bone.scale = vector(transform["scale"], list(pose_bone.scale))
                     pose_bone.keyframe_insert(data_path="scale", frame=frame, group=bone_name)
 
+    controls = rig_controls or {}
+    for armature in armatures:
+        if controls:
+            apply_rig_controls(armature, controls, fps, total_frames)
+
     if facial_keyframes:
         shape_key_map = {}
         for mesh in meshes:
@@ -270,6 +275,126 @@ def apply_rig_animation(root, pose_keyframes, facial_keyframes, fps, total_frame
                 block.value = max(0.0, min(1.0, float(value)))
                 block.keyframe_insert(data_path="value", frame=frame)
 
+
+
+def _rig_bone(armature, bone_name, purpose):
+    bone = armature.pose.bones.get(str(bone_name))
+    if bone is None:
+        raise ValueError(purpose + " bone '" + str(bone_name) + "' not found in rig '" + armature.name + "'")
+    return bone
+
+
+def apply_rig_controls(armature, controls, fps, total_frames):
+    """Apply explicitly mapped IK, procedural locomotion and finger-control keys.
+
+    All bone names are rig-specific and must be inspected from the imported asset.
+    This deliberately avoids guessing a universal humanoid skeleton naming scheme.
+    """
+    # Finger controls are explicit authored poses, not an automatic grasp solver.
+    finger_keys = controls.get("finger_keyframes", [])
+    if finger_keys:
+        armature.animation_data_create()
+        action = armature.animation_data.action
+        if action is None:
+            action = bpy.data.actions.new("StoryFingerPose_" + armature.name)
+            armature.animation_data.action = action
+        for entry in finger_keys:
+            frame = max(1, min(total_frames, 1 + round(float(entry["time_seconds"]) * fps)))
+            for bone_name, transform in entry.get("bones", {}).items():
+                bone = _rig_bone(armature, bone_name, "Finger control")
+                bone.rotation_mode = "XYZ"
+                if "rotation" in transform:
+                    bone.rotation_euler = vector(transform["rotation"], list(bone.rotation_euler))
+                    bone.keyframe_insert(data_path="rotation_euler", frame=frame, group=bone_name)
+                if "location" in transform:
+                    bone.location = vector(transform["location"], list(bone.location))
+                    bone.keyframe_insert(data_path="location", frame=frame, group=bone_name)
+
+    # A named IK control constrains a selected end-effector bone to an animated
+    # Empty target. Optional pole targets control bend direction.
+    for index, spec in enumerate(controls.get("ik", [])):
+        bone_name = str(spec["bone"])
+        bone = _rig_bone(armature, bone_name, "IK end-effector")
+        target = bpy.data.objects.new(str(spec.get("name", "IK_Target_%s" % (index + 1))), None)
+        bpy.context.scene.collection.objects.link(target)
+        target.empty_display_type = "SPHERE"
+        target.empty_display_size = float(spec.get("display_size", 0.12))
+        target.location = vector(spec.get("target"), [0, 0, 0])
+        constraint = bone.constraints.new("IK")
+        constraint.name = str(spec.get("constraint_name", "StoryIK_" + bone_name))
+        constraint.target = target
+        constraint.chain_count = int(spec.get("chain_count", 2))
+        if constraint.chain_count < 1:
+            raise ValueError("IK chain_count must be at least 1")
+        constraint.use_stretch = bool(spec.get("use_stretch", False))
+        constraint.influence = max(0.0, min(1.0, float(spec.get("influence", 1.0))))
+        if spec.get("pole_bone"):
+            _rig_bone(armature, spec["pole_bone"], "IK pole")
+            pole = bpy.data.objects.new(str(spec.get("pole_name", "IK_Pole_%s" % (index + 1))), None)
+            bpy.context.scene.collection.objects.link(pole)
+            pole.empty_display_type = "CIRCLE"
+            pole.location = vector(spec.get("pole_target"), [0, 0, 0])
+            constraint.pole_target = pole
+            constraint.pole_angle = float(spec.get("pole_angle", 0.0))
+        for key in spec.get("keyframes", []):
+            frame = max(1, min(total_frames, 1 + round(float(key["time_seconds"]) * fps)))
+            if "target" in key:
+                target.location = vector(key["target"], list(target.location))
+                target.keyframe_insert(data_path="location", frame=frame)
+            if "pole_target" in key and constraint.pole_target:
+                constraint.pole_target.location = vector(key["pole_target"], list(constraint.pole_target.location))
+                constraint.pole_target.keyframe_insert(data_path="location", frame=frame)
+
+    # Optional mapped walk/run cycle. It only animates bones explicitly named by
+    # the asset author; no guessed rig names or universal anatomy assumptions.
+    locomotion = controls.get("locomotion")
+    if locomotion:
+        mapping = locomotion.get("bone_map", {})
+        if not mapping:
+            raise ValueError("locomotion requires bone_map with exact imported bone names")
+        for semantic, bone_name in mapping.items():
+            _rig_bone(armature, bone_name, "Locomotion " + semantic)
+        start = max(1, 1 + round(float(locomotion.get("start_seconds", 0)) * fps))
+        end = min(total_frames, 1 + round(float(locomotion.get("end_seconds", (total_frames - 1) / fps)) * fps))
+        if end <= start:
+            raise ValueError("locomotion end_seconds must be after start_seconds")
+        cycles = max(0.1, float(locomotion.get("cycles", 2.0)))
+        stride = float(locomotion.get("stride_radians", 0.55))
+        knee = float(locomotion.get("knee_radians", 0.65))
+        arm_swing = float(locomotion.get("arm_swing_radians", 0.4))
+        phase_offset = float(locomotion.get("phase_offset_radians", 0.0))
+        amplitude = {
+            "left_hip": stride, "right_hip": stride,
+            "left_knee": knee, "right_knee": knee,
+            "left_shoulder": arm_swing, "right_shoulder": arm_swing,
+            "left_elbow": arm_swing * 0.35, "right_elbow": arm_swing * 0.35,
+            "left_ankle": stride * 0.25, "right_ankle": stride * 0.25,
+        }
+        signs = {"left_hip": 1, "right_hip": -1, "left_knee": 1, "right_knee": 1,
+                 "left_shoulder": -1, "right_shoulder": 1, "left_elbow": 1, "right_elbow": -1,
+                 "left_ankle": -1, "right_ankle": 1}
+        for frame in range(start, end + 1):
+            phase = ((frame - start) / max(1, end - start)) * (2.0 * math.pi * cycles) + phase_offset
+            for semantic, bone_name in mapping.items():
+                bone = _rig_bone(armature, bone_name, "Locomotion " + semantic)
+                bone.rotation_mode = "XYZ"
+                axis = int(locomotion.get("axis", 0))
+                if axis not in (0, 1, 2):
+                    raise ValueError("locomotion axis must be 0, 1 or 2")
+                amp = amplitude.get(semantic, stride)
+                angle = math.sin(phase + (math.pi if semantic.startswith("right_") else 0.0)) * amp
+                if semantic.endswith("_knee"):
+                    angle = max(0.0, angle) * (1 if semantic.startswith("left_") else 1)
+                if semantic.endswith("_elbow"):
+                    angle = abs(angle)
+                rotation = list(bone.rotation_euler)
+                rotation[axis] = angle * signs.get(semantic, 1)
+                bone.rotation_euler = rotation
+                bone.keyframe_insert(data_path="rotation_euler", frame=frame, group=bone_name)
+    if armature.animation_data and armature.animation_data.action:
+        for fc in armature.animation_data.action.fcurves:
+            for point in fc.keyframe_points:
+                point.interpolation = "BEZIER"
 
 def apply_viseme_animation(root, viseme_keyframes, viseme_map, fps, total_frames):
     """Map externally aligned viseme events onto imported facial shape keys."""
@@ -392,6 +517,7 @@ def main():
             item.get("facial_keyframes", []),
             args.fps,
             scene.frame_end,
+            item.get("rig_controls", {}),
         )
     subject_roots = {}
     subject_rigs = {}
@@ -415,6 +541,7 @@ def main():
             item.get("facial_keyframes", []),
             args.fps,
             scene.frame_end,
+            item.get("rig_controls", {}),
         )
         apply_viseme_animation(
             root,
