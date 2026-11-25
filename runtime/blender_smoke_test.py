@@ -27,7 +27,7 @@ def aim(o,target): o.rotation_euler=(Vector(target)-o.location).to_track_quat("-
 def main():
     a=args(); out=Path(a.output_dir); out.mkdir(parents=True,exist_ok=True)
     bpy.ops.wm.read_factory_settings(use_empty=True); s=bpy.context.scene
-    s.render.engine="BLENDER_EEVEE_NEXT"; s.eevee.taa_render_samples=16
+    available_engines = bpy.context.scene.render.bl_rna.properties["engine"].enum_items.keys(); s.render.engine = "BLENDER_EEVEE_NEXT" if "BLENDER_EEVEE_NEXT" in available_engines else "BLENDER_EEVEE"; s.eevee.taa_render_samples=16
     s.render.resolution_x=a.width; s.render.resolution_y=a.height; s.render.resolution_percentage=100
     s.render.fps=a.fps; s.frame_start=1; s.frame_end=a.frames
     s.render.image_settings.file_format="PNG"; s.world=s.world or bpy.data.worlds.new("SmokeTest_World"); s.world.color=(0.025,0.025,0.04)
