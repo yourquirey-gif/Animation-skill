@@ -22,6 +22,9 @@ Reopen Claude Code if the skill is not immediately discovered.
 The default workflow does not require a paid AI video API. Claude Code writes the code and automation; Blender performs actual 3D modeling, rigging, animation, and rendering; Python orchestrates story/scene data, assets, audio, subtitles, and QA; FFmpeg assembles and validates the final MP4.
 
 The skill instructs Claude Code to:
+- Ask whether the user wants an idea, has a script, or is supplying voice/audio; skip questions already answered and start audio-led analysis immediately when audio is uploaded.
+- Ask for duration and Shorts/Long format only when those details are still needed.
+- Create story-specific scripts with a strong opening, escalating curiosity, a truthful final payoff, and natural loop where suitable.
 - Inspect the user's machine and available tools first.
 - Analyze supplied reference videos and document their visual style.
 - Turn any story into a structured storyboard and scene manifest.
@@ -34,7 +37,9 @@ The skill instructs Claude Code to:
 
 ## Documentation
 
-- `SKILL.md` — main Claude Code skill instructions.
+- `SKILL.md` — main Claude Code skill instructions and mandatory workflow.
+- `docs/INTERACTIVE_INTAKE_AND_PRODUCTION.md` — idea/script/audio intake, duration/format questions, script styles, storyboard, and production gates.
+- `docs/APP_IMPLEMENTATION_SPEC.md` — implementation contract for the actual reusable Blender/Python/FFmpeg application.
 - `docs/CODE_FIRST_PIPELINE.md` — detailed end-to-end code-first implementation architecture.
 - `docs/PRODUCTION_WORKFLOW.md` — production workflow.
 - `templates/shot-prompt-template.md` — reusable shot specification template.
