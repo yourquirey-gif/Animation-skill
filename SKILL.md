@@ -253,3 +253,16 @@ For every Short, apply the following as a measurable production standard:
 The video generator must handle arbitrary stories, not just the reference example or a hard-coded genre menu. Treat genre labels as hints, never as a finite allow-list. Infer the required subjects, body plans, locations, period, props, physics, action vocabulary, visual metaphors and tone from each individual story. A human story, animal story, vehicle story, science explainer, fantasy sequence, cooking tutorial, biography or abstract concept may require completely different 3D assets and animation logic.
 
 Reuse only general-purpose systems (camera, lighting, animation utilities, render, audio, captions, QA). Generate story-specific characters/subjects, environments, props, actions and visual direction for every new project. Never reuse the diagnostic smoke-test scene as the user's story. Read docs/APP_IMPLEMENTATION_SPEC.md section 12 and pass its cross-genre acceptance suite before claiming the engine is universal.
+
+
+## Execute the bundled story renderer
+
+For a user-approved story, create a project-specific storyboard JSON using the structure in `templates/storyboard.universal.example.json`. Do not copy its sample scene as the finished story. Then execute the actual pipeline from the skill directory:
+
+- Shorts: `python runtime/render_story.py --storyboard projects/<id>/storyboard.json --output projects/<id>/final.mp4 --format shorts`
+- Long: `python runtime/render_story.py --storyboard projects/<id>/storyboard.json --output projects/<id>/final.mp4 --format long`
+- With supplied audio: add `--voice <path>`; optionally add `--music <path>` and `--captions <path-to-srt>`.
+
+The renderer invokes Blender once per shot, renders real PNG frames, encodes each shot with FFmpeg, concatenates shots, optionally burns SRT captions and muxes voice/music, then validates the final MP4 with ffprobe. Inspect Blender logs, previews and final video. Do not report success if any shot fails or the output file/metadata is missing.
+
+The bundled renderer currently provides a procedural 3D foundation (primitive meshes, subject assemblies, transform keyframes, camera keyframes and lighting). For professional story-specific output, add suitable detailed models, rigs, facial performance, contact-aware interactions, scene-specific textures and refined acting. Do not pass off the primitive diagnostic look as finished cinematic quality. The user's supplied audio remains the timing/master track; plan shot durations against its actual duration.
