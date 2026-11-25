@@ -51,7 +51,7 @@ def retarget_action(source_armature, target_armature, source_action, bone_map,
 
     pairs = []
     seen_targets = set()
-    for item in bone_map:
+    for index, item in enumerate(bone_map):
         src_name, dst_name = str(item["source"]), str(item["target"])
         src = _bone(source_armature, src_name)
         dst = _bone(target_armature, dst_name)
@@ -59,7 +59,7 @@ def retarget_action(source_armature, target_armature, source_action, bone_map,
             raise ValueError("Duplicate target bone mapping: " + dst_name)
         seen_targets.add(dst_name)
         pairs.append((src, dst, _as_quaternion(item.get("rotation_offset")),
-                      bool(item.get("copy_location", False))))
+                      bool(item.get("copy_location", copy_root_motion and index == 0))))
 
     source_armature.animation_data_create()
     source_armature.animation_data.action = source_action
@@ -74,7 +74,7 @@ def retarget_action(source_armature, target_armature, source_action, bone_map,
             scene.frame_set(frame)
             for src, dst, offset, copy_location in pairs:
                 # Pose-bone quaternion is the local delta from its rest pose.
-                delta = src.rotation_quaternion.copy()
+                delta = src.matrix_basis.to_quaternion()
                 delta.normalize()
                 dst.rotation_mode = "QUATERNION"
                 dst.rotation_quaternion = offset @ delta
