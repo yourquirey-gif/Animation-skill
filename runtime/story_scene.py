@@ -184,6 +184,63 @@ def apply_keyframes(obj, keyframes, fps, total_frames):
                 point.interpolation = "BEZIER"
 
 
+def apply_rig_animation(root, pose_keyframes, facial_keyframes, fps, total_frames):
+    """Animate imported armature bones and mesh shape keys using story timing."""
+    armatures = []
+    meshes = []
+    stack = list(root.children)
+    while stack:
+        obj = stack.pop()
+        stack.extend(list(obj.children))
+        if obj.type == "ARMATURE":
+            armatures.append(obj)
+        elif obj.type == "MESH":
+            meshes.append(obj)
+
+    if pose_keyframes and not armatures:
+        raise ValueError("pose_keyframes require an imported rigged model with an armature")
+
+    for armature in armatures:
+        armature.animation_data_create()
+        # A dedicated per-shot action keeps source-library actions untouched.
+        action = bpy.data.actions.new("StoryPose_" + armature.name)
+        armature.animation_data.action = action
+        for entry in pose_keyframes:
+            frame = max(1, min(total_frames, 1 + round(float(entry["time_seconds"]) * fps)))
+            bones = entry.get("bones", {})
+            for bone_name, transform in bones.items():
+                pose_bone = armature.pose.bones.get(bone_name)
+                if pose_bone is None:
+                    raise ValueError("Bone '" + bone_name + "' not found in imported rig '" + armature.name + "'")
+                pose_bone.rotation_mode = "XYZ"
+                if "rotation" in transform:
+                    pose_bone.rotation_euler = vector(transform["rotation"], list(pose_bone.rotation_euler))
+                    pose_bone.keyframe_insert(data_path="rotation_euler", frame=frame, group=bone_name)
+                if "location" in transform:
+                    pose_bone.location = vector(transform["location"], list(pose_bone.location))
+                    pose_bone.keyframe_insert(data_path="location", frame=frame, group=bone_name)
+                if "scale" in transform:
+                    pose_bone.scale = vector(transform["scale"], list(pose_bone.scale))
+                    pose_bone.keyframe_insert(data_path="scale", frame=frame, group=bone_name)
+
+    if facial_keyframes:
+        shape_key_map = {}
+        for mesh in meshes:
+            if mesh.data.shape_keys:
+                for key in mesh.data.shape_keys.key_blocks:
+                    shape_key_map[key.name] = key
+        if not shape_key_map:
+            raise ValueError("facial_keyframes require imported mesh shape keys (blendshapes)")
+        for entry in facial_keyframes:
+            frame = max(1, min(total_frames, 1 + round(float(entry["time_seconds"]) * fps)))
+            for shape_name, value in entry.get("shapes", {}).items():
+                block = shape_key_map.get(shape_name)
+                if block is None:
+                    raise ValueError("Shape key '" + shape_name + "' not found in imported character")
+                block.value = max(0.0, min(1.0, float(value)))
+                block.keyframe_insert(data_path="value", frame=frame)
+
+
 def aim(camera, target):
     camera.rotation_euler = (Vector(target) - camera.location).to_track_quat("-Z", "Y").to_euler()
 
@@ -264,6 +321,13 @@ def main():
     for item in env.get("objects", []):
         obj = create_mesh(item, cache, base_dir=story_path.parent)
         apply_keyframes(obj, item.get("keyframes", []), args.fps, scene.frame_end)
+        apply_rig_animation(
+            obj,
+            item.get("pose_keyframes", []),
+            item.get("facial_keyframes", []),
+            args.fps,
+            scene.frame_end,
+        )
     for item in shot.get("subjects", []):
         root = bpy.data.objects.new(str(item.get("name", "Subject")) + "_Root", None)
         scene.collection.objects.link(root)
