@@ -67,10 +67,6 @@ def main():
         obj.location.z=1.9+(.35 if f==a.frames//2 else 0); obj.keyframe_insert(data_path="location",frame=f)
     for f in range(1,a.frames+1,max(1,a.fps//2)):
         parts[0].location.z=1.55+.035*math.sin(f*.35); parts[0].keyframe_insert(data_path="location",frame=f)
-    for o in s.objects:
-        if o.animation_data and o.animation_data.action:
-            for fc in o.animation_data.action.fcurves:
-                for k in fc.keyframe_points: k.interpolation="BEZIER"
     s.view_settings.view_transform="AgX"; bpy.ops.wm.save_as_mainfile(filepath=a.blend_file)
     for f in range(1,a.frames+1):
         s.frame_set(f); s.render.filepath=str(out/("frame_%04d.png"%f)); bpy.ops.render.render(write_still=True)
