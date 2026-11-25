@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "assets": [],
+  "notes": [
+    "Register only files that exist in this repository or the project asset directory.",
+    "Every third-party asset must include its source URL, license identifier, and attribution requirements.",
+    "No paid or remotely hosted asset is assumed to be available."
+  ]
+}
