@@ -181,3 +181,12 @@ For every new story, follow the extended requirements in docs/SHORTS_RETENTION_W
 - Animate captions word by word, synchronized to actual voice timestamps. Highlight the active/important word tastefully; keep text readable, accurate, centered in a safe zone, and clear of faces and platform UI.
 - Animate high-quality facial emotions and reactions: eyes, brows, mouth, head, hands, posture, recoil, anticipation, and follow-through. Use facial rigs/shape keys and lip sync where applicable. Keep the character recognizable and consistent.
 - For every new story, create fresh hook alternatives, environment concept, lighting/camera tests, caption timing preview, and acting close-up before full rendering.
+
+
+## User-supplied reference videos
+
+Read docs/REFERENCE_VIDEO_ANALYSIS.md before creating videos based on the two supplied visual references. The original assets are expected at:
+- references/1000328716.mp4
+- references/1000328717.mp4
+
+The repository currently contains the reference instructions and analysis, not the MP4 binaries. Verify both files exist before claiming full reference inspection. If either is missing, tell the user exactly which file needs to be copied into references/. Inspect the full videos, especially the first three seconds, audio, caption timing, facial acting, camera language, and the second clip's opening shake. Do not guess unverified details from the sampled-frame description.
