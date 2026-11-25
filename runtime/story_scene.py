@@ -272,7 +272,7 @@ def main():
             obj.parent = root
         apply_keyframes(root, item.get("keyframes", []), args.fps, scene.frame_end)
     for item in shot.get("props", []):
-        obj = create_mesh(item, cache)
+        obj = create_mesh(item, cache, base_dir=story_path.parent)
         apply_keyframes(obj, item.get("keyframes", []), args.fps, scene.frame_end)
 
     build_camera(shot.get("camera", {}))
