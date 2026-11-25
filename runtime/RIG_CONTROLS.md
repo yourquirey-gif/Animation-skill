@@ -15,4 +15,4 @@ Install Rhubarb Lip Sync CLI, then run:
 python runtime/align_visemes.py --audio voice.wav --dialogue transcript.txt --output visemes.json
 ```
 
-Copy the generated events to the speaking subject's `viseme_keyframes`; map Rhubarb A-F/X labels to exact facial shape keys in `viseme_map`. These are estimated mouth-shape cues, not phoneme-perfect alignment or emotion-aware facial acting. Inspect close-up renders against the original voice.
+Copy the generated events to the speaking subject's `viseme_keyframes`; map Rhubarb A-H/X labels to exact facial shape keys in `viseme_map`. These are estimated mouth-shape cues, not phoneme-perfect alignment or emotion-aware facial acting. Inspect close-up renders against the original voice.
