@@ -1,1 +1,1 @@
-Trigger Panda3D render integration workflow.
+Panda3D render buffer fix validation.
