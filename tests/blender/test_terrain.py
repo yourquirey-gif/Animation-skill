@@ -36,7 +36,6 @@ assert len(terrain.data.polygons) == 12 * 10, "unexpected terrain face count"
 assert len(terrain.data.materials) == 1, "terrain must have a material"
 zs = [vertex.co.z for vertex in terrain.data.vertices]
 assert max(zs) - min(zs) > 1.0, "terrain peaks did not create meaningful height variation"
-assert len(terrain.data.uv_layers) == 0 or len(terrain.data.uv_layers) >= 0
 print({
     "status": "PASS",
     "vertices": len(terrain.data.vertices),
