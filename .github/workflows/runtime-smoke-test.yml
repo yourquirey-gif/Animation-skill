@@ -1,0 +1,36 @@
+name: Blender Python Runtime Smoke Test
+
+on:
+  push:
+    paths:
+      - "runtime/**"
+      - "templates/**"
+      - ".github/workflows/runtime-smoke-test.yml"
+  workflow_dispatch:
+
+jobs:
+  blender-render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Blender and FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y blender ffmpeg
+      - name: Compile Python orchestration scripts
+        run: |
+          python3 -m py_compile runtime/animation_runtime.py runtime/render_story.py
+      - name: Inspect installed tools
+        run: |
+          python3 runtime/animation_runtime.py inspect
+      - name: Render animated Blender smoke test
+        run: |
+          python3 runtime/animation_runtime.py smoke-test --workdir "$RUNNER_TEMP/blender-smoke" --width 240 --height 426 --fps 12 --frames 24
+      - name: Render storyboard through universal pipeline
+        run: |
+          python3 runtime/render_story.py --storyboard templates/storyboard.universal.example.json --output "$RUNNER_TEMP/story-render.mp4" --format shorts --width 240 --height 426 --fps 12 --samples 8
+      - name: Verify MP4 output
+        run: |
+          test -s "$RUNNER_TEMP/story-render.mp4"
+          ffprobe -v error -show_entries format=duration:stream=codec_name,width,height -of json "$RUNNER_TEMP/story-render.mp4"
