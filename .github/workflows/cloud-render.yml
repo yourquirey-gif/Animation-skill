@@ -1,0 +1,175 @@
+name: Cloud Blender Video Render
+
+on:
+  workflow_dispatch:
+    inputs:
+      storyboard_path:
+        description: "Repository-relative storyboard JSON path"
+        required: true
+        default: "tests/fixtures/human_prop_story.json"
+        type: string
+      output_name:
+        description: "Output MP4 filename without extension"
+        required: true
+        default: "animation-render"
+        type: string
+      format:
+        description: "Output aspect ratio profile"
+        required: true
+        default: "shorts"
+        type: choice
+        options:
+          - shorts
+          - long
+      render_engine:
+        description: "Blender render engine"
+        required: true
+        default: "BLENDER_EEVEE"
+        type: choice
+        options:
+          - BLENDER_EEVEE
+          - CYCLES
+      width:
+        description: "Output width (preview default: 360)"
+        required: true
+        default: "360"
+        type: string
+      height:
+        description: "Output height (preview default: 640)"
+        required: true
+        default: "640"
+        type: string
+      fps:
+        description: "Frames per second"
+        required: true
+        default: "12"
+        type: string
+      samples:
+        description: "Render samples"
+        required: true
+        default: "16"
+        type: string
+      voice_path:
+        description: "Optional repository-relative narration audio path"
+        required: false
+        default: ""
+        type: string
+      music_path:
+        description: "Optional repository-relative background music path"
+        required: false
+        default: ""
+        type: string
+      captions_path:
+        description: "Optional repository-relative SRT captions path"
+        required: false
+        default: ""
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: blender-render-${{ github.ref }}-${{ inputs.output_name }}
+  cancel-in-progress: false
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      ANIMATION_RENDER_ENGINE: ${{ inputs.render_engine }}
+      LIBGL_ALWAYS_SOFTWARE: "1"
+      BLENDER_BIN: blender
+      FFMPEG_BIN: ffmpeg
+      FFPROBE_BIN: ffprobe
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Blender, FFmpeg and headless graphics libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y blender ffmpeg libegl1 libgl1 libegl-mesa0 libglx-mesa0 libgl1-mesa-dri
+          blender --version
+          ffmpeg -version | head -n 2
+          ffprobe -version | head -n 1
+
+      - name: Inspect cloud runner resources
+        run: |
+          echo "CPU:"
+          nproc
+          echo "Memory:"
+          free -h
+          echo "Disk:"
+          df -h "$GITHUB_WORKSPACE" "$RUNNER_TEMP"
+          echo "GPU (optional; absence is expected on standard hosted runners):"
+          (command -v nvidia-smi && nvidia-smi) || echo "No NVIDIA GPU exposed; using CPU/software-compatible rendering."
+
+      - name: Validate workflow inputs
+        env:
+          STORYBOARD: ${{ inputs.storyboard_path }}
+          OUTPUT_NAME: ${{ inputs.output_name }}
+          VOICE_PATH: ${{ inputs.voice_path }}
+          MUSIC_PATH: ${{ inputs.music_path }}
+          CAPTIONS_PATH: ${{ inputs.captions_path }}
+          WIDTH: ${{ inputs.width }}
+          HEIGHT: ${{ inputs.height }}
+          FPS: ${{ inputs.fps }}
+          SAMPLES: ${{ inputs.samples }}
+        run: |
+          set -euo pipefail
+          [[ "$OUTPUT_NAME" =~ ^[A-Za-z0-9._-]+$ ]] || { echo "Invalid output_name"; exit 2; }
+          for path in "$STORYBOARD" "$VOICE_PATH" "$MUSIC_PATH" "$CAPTIONS_PATH"; do
+            [ -z "$path" ] && continue
+            case "$path" in /*|*..*) echo "Paths must be safe repository-relative paths: $path"; exit 2;; esac
+            [ -f "$GITHUB_WORKSPACE/$path" ] || { echo "File not found: $path"; exit 2; }
+          done
+          [[ "$WIDTH" =~ ^[0-9]+$ ]] && [ "$WIDTH" -ge 16 ] && [ "$WIDTH" -le 1920 ]
+          [[ "$HEIGHT" =~ ^[0-9]+$ ]] && [ "$HEIGHT" -ge 16 ] && [ "$HEIGHT" -le 1920 ]
+          [[ "$FPS" =~ ^[0-9]+$ ]] && [ "$FPS" -ge 1 ] && [ "$FPS" -le 60 ]
+          [[ "$SAMPLES" =~ ^[0-9]+$ ]] && [ "$SAMPLES" -ge 1 ] && [ "$SAMPLES" -le 256 ]
+
+      - name: Compile orchestration and validate asset catalog
+        run: |
+          python3 -m py_compile runtime/animation_runtime.py runtime/render_story.py runtime/story_scene.py runtime/align_visemes.py runtime/asset_catalog.py
+          python3 runtime/asset_catalog.py validate
+
+      - name: Render Blender scenes and assemble MP4
+        env:
+          STORYBOARD: ${{ inputs.storyboard_path }}
+          OUTPUT_NAME: ${{ inputs.output_name }}
+          FORMAT: ${{ inputs.format }}
+          WIDTH: ${{ inputs.width }}
+          HEIGHT: ${{ inputs.height }}
+          FPS: ${{ inputs.fps }}
+          SAMPLES: ${{ inputs.samples }}
+          VOICE_PATH: ${{ inputs.voice_path }}
+          MUSIC_PATH: ${{ inputs.music_path }}
+          CAPTIONS_PATH: ${{ inputs.captions_path }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/video-output" "$RUNNER_TEMP/video-work"
+          args=(--storyboard "$GITHUB_WORKSPACE/$STORYBOARD"
+                --output "$RUNNER_TEMP/video-output/$OUTPUT_NAME.mp4"
+                --format "$FORMAT" --width "$WIDTH" --height "$HEIGHT"
+                --fps "$FPS" --samples "$SAMPLES" --retries 1
+                --workdir "$RUNNER_TEMP/video-work"
+                --progress-file "$RUNNER_TEMP/video-work/progress.json")
+          [ -z "$VOICE_PATH" ] || args+=(--voice "$GITHUB_WORKSPACE/$VOICE_PATH")
+          [ -z "$MUSIC_PATH" ] || args+=(--music "$GITHUB_WORKSPACE/$MUSIC_PATH")
+          [ -z "$CAPTIONS_PATH" ] || args+=(--captions "$GITHUB_WORKSPACE/$CAPTIONS_PATH")
+          python3 runtime/render_story.py "${args[@]}"
+
+      - name: Upload MP4, QA report and render logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.output_name }}-${{ github.run_number }}
+          path: |
+            ${{ runner.temp }}/video-output/
+            ${{ runner.temp }}/video-work/final_report.json
+            ${{ runner.temp }}/video-work/progress.json
+            ${{ runner.temp }}/video-work/shot_*/blender_attempt_*.log
+            ${{ runner.temp }}/video-work/shot_*/ffmpeg.log
+          if-no-files-found: warn
+          retention-days: 7
