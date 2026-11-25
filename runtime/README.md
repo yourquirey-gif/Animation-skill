@@ -91,3 +91,25 @@ The reference-style starting assets are documented in `assets/REFERENCE_STYLE_AS
 ## Honest quality limits
 
 Panda3D is not part of the active renderer. Blender is the only 3D render engine in this project. Blender's presence does not automatically provide high-quality models, universal retargeting, motion capture, perfect lipsync, physically correct contacts, cloth, or photorealistic assets. These require suitable assets, rig mappings, story-specific implementation and visual inspection. A successful CI smoke test proves the cloud toolchain can render its fixtures, not that every arbitrary story is cinematic or production-ready.
+
+## Story-driven semantic acting for the procedural starter
+
+For a quick blocking pass, a `stylized_humanoid` subject may define a `character.performance` array. The renderer compiles each semantic beat into timed part-level animation keyframes:
+
+```json
+{
+  "name": "Story_Character",
+  "character": {
+    "type": "stylized_humanoid",
+    "performance": [
+      {"time_seconds": 0.4, "duration_seconds": 0.8, "action": "look_left"},
+      {"time_seconds": 1.5, "duration_seconds": 0.9, "action": "wave", "side": "right"},
+      {"time_seconds": 2.6, "duration_seconds": 0.6, "action": "nod"}
+    ]
+  }
+}
+```
+
+Currently supported generic blocking actions: `wave`, `point`, `raise_arms`, `cheer`, `look_left`, `look_right`, `look_up`, `look_down`, `nod`, `shake_head`, `surprised`, `sad`, `talk`, and `idle_breath`. Events must fit within the shot and overlapping events on the same body part are rejected. The procedural starter is a part-animated blockout character: it is not a skeletal rig, does not provide finger articulation, and is not suitable as a final close-up acting model. Use a real imported rig with authored bone/facial tracks for production acting.
+
+CI runs pure-Python unit tests for the semantic action compiler. Blender integration and visual inspection remain separate acceptance gates.
