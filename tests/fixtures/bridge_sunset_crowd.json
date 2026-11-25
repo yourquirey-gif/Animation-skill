@@ -1,6 +1,6 @@
 {
   "project": {
-    "title": "The Last Light on the Bridge",
+    "title": "Bridge Sunset Crowd — 24 Stylized Visitors",
     "fps": 30,
     "resolution": "shorts"
   },
@@ -2546,7 +2546,1832 @@
           }
         ]
       },
-      "subjects": [],
+      "subjects": [
+        {
+          "name": "Bridge_Visitor_01",
+          "location": [
+            -5.13,
+            -10,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 3.15,
+            "skin_color": [
+              0.68,
+              0.43,
+              0.29
+            ],
+            "clothing_color": [
+              0.12,
+              0.24,
+              0.55
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.035,
+              0.025,
+              0.02
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                -5.13,
+                -10,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                -5.13,
+                -10,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                -0.05
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_02",
+          "location": [
+            -3.07,
+            -10,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 3.15,
+            "skin_color": [
+              0.48,
+              0.29,
+              0.19
+            ],
+            "clothing_color": [
+              0.55,
+              0.16,
+              0.12
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.12,
+              0.07,
+              0.035
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                -3.07,
+                -10,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                -3.07,
+                -10,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                -0.025
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_03",
+          "location": [
+            -1.02,
+            -10,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 3.15,
+            "skin_color": [
+              0.78,
+              0.57,
+              0.4
+            ],
+            "clothing_color": [
+              0.12,
+              0.38,
+              0.3
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.18,
+              0.12,
+              0.08
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                -1.02,
+                -10,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                -1.02,
+                -10,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_04",
+          "location": [
+            1.02,
+            -10,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 3.15,
+            "skin_color": [
+              0.57,
+              0.36,
+              0.25
+            ],
+            "clothing_color": [
+              0.42,
+              0.25,
+              0.58
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.035,
+              0.025,
+              0.02
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                1.02,
+                -10,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                1.02,
+                -10,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0.025
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_05",
+          "location": [
+            3.07,
+            -10,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 3.15,
+            "skin_color": [
+              0.68,
+              0.43,
+              0.29
+            ],
+            "clothing_color": [
+              0.72,
+              0.4,
+              0.12
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.12,
+              0.07,
+              0.035
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                3.07,
+                -10,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                3.07,
+                -10,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0.05
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_06",
+          "location": [
+            5.13,
+            -10,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 3.15,
+            "skin_color": [
+              0.48,
+              0.29,
+              0.19
+            ],
+            "clothing_color": [
+              0.16,
+              0.32,
+              0.42
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.18,
+              0.12,
+              0.08
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                5.13,
+                -10,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                5.13,
+                -10,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                -0.05
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_07",
+          "location": [
+            -4.67,
+            -3.8,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 3.15,
+            "skin_color": [
+              0.78,
+              0.57,
+              0.4
+            ],
+            "clothing_color": [
+              0.12,
+              0.24,
+              0.55
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.035,
+              0.025,
+              0.02
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                -4.67,
+                -3.8,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                -4.67,
+                -3.8,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                -0.025
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_08",
+          "location": [
+            -2.62,
+            -3.8,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 3.15,
+            "skin_color": [
+              0.57,
+              0.36,
+              0.25
+            ],
+            "clothing_color": [
+              0.55,
+              0.16,
+              0.12
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.12,
+              0.07,
+              0.035
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                -2.62,
+                -3.8,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                -2.62,
+                -3.8,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_09",
+          "location": [
+            -0.57,
+            -3.8,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 3.15,
+            "skin_color": [
+              0.68,
+              0.43,
+              0.29
+            ],
+            "clothing_color": [
+              0.12,
+              0.38,
+              0.3
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.18,
+              0.12,
+              0.08
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                -0.57,
+                -3.8,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                -0.57,
+                -3.8,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0.025
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_10",
+          "location": [
+            1.47,
+            -3.8,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 3.15,
+            "skin_color": [
+              0.48,
+              0.29,
+              0.19
+            ],
+            "clothing_color": [
+              0.42,
+              0.25,
+              0.58
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.035,
+              0.025,
+              0.02
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                1.47,
+                -3.8,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                1.47,
+                -3.8,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0.05
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_11",
+          "location": [
+            3.52,
+            -3.8,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 3.15,
+            "skin_color": [
+              0.78,
+              0.57,
+              0.4
+            ],
+            "clothing_color": [
+              0.72,
+              0.4,
+              0.12
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.12,
+              0.07,
+              0.035
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                3.52,
+                -3.8,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                3.52,
+                -3.8,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                -0.05
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_12",
+          "location": [
+            5.58,
+            -3.8,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 3.15,
+            "skin_color": [
+              0.57,
+              0.36,
+              0.25
+            ],
+            "clothing_color": [
+              0.16,
+              0.32,
+              0.42
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.18,
+              0.12,
+              0.08
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                5.58,
+                -3.8,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                5.58,
+                -3.8,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                -0.025
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_13",
+          "location": [
+            -5.13,
+            2.4,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 2.75,
+            "skin_color": [
+              0.68,
+              0.43,
+              0.29
+            ],
+            "clothing_color": [
+              0.12,
+              0.24,
+              0.55
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.035,
+              0.025,
+              0.02
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                -5.13,
+                2.4,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                -5.13,
+                2.4,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_14",
+          "location": [
+            -3.07,
+            2.4,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 2.75,
+            "skin_color": [
+              0.48,
+              0.29,
+              0.19
+            ],
+            "clothing_color": [
+              0.55,
+              0.16,
+              0.12
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.12,
+              0.07,
+              0.035
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                -3.07,
+                2.4,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                -3.07,
+                2.4,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0.025
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_15",
+          "location": [
+            -1.02,
+            2.4,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 2.75,
+            "skin_color": [
+              0.78,
+              0.57,
+              0.4
+            ],
+            "clothing_color": [
+              0.12,
+              0.38,
+              0.3
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.18,
+              0.12,
+              0.08
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                -1.02,
+                2.4,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                -1.02,
+                2.4,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0.05
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_16",
+          "location": [
+            1.02,
+            2.4,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 2.75,
+            "skin_color": [
+              0.57,
+              0.36,
+              0.25
+            ],
+            "clothing_color": [
+              0.42,
+              0.25,
+              0.58
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.035,
+              0.025,
+              0.02
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                1.02,
+                2.4,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                1.02,
+                2.4,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                -0.05
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_17",
+          "location": [
+            3.07,
+            2.4,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 2.75,
+            "skin_color": [
+              0.68,
+              0.43,
+              0.29
+            ],
+            "clothing_color": [
+              0.72,
+              0.4,
+              0.12
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.12,
+              0.07,
+              0.035
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                3.07,
+                2.4,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                3.07,
+                2.4,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                -0.025
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_18",
+          "location": [
+            5.13,
+            2.4,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 2.75,
+            "skin_color": [
+              0.48,
+              0.29,
+              0.19
+            ],
+            "clothing_color": [
+              0.16,
+              0.32,
+              0.42
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.18,
+              0.12,
+              0.08
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                5.13,
+                2.4,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                5.13,
+                2.4,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_19",
+          "location": [
+            -4.67,
+            8.6,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 2.75,
+            "skin_color": [
+              0.78,
+              0.57,
+              0.4
+            ],
+            "clothing_color": [
+              0.12,
+              0.24,
+              0.55
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.035,
+              0.025,
+              0.02
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                -4.67,
+                8.6,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                -4.67,
+                8.6,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0.025
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_20",
+          "location": [
+            -2.62,
+            8.6,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 2.75,
+            "skin_color": [
+              0.57,
+              0.36,
+              0.25
+            ],
+            "clothing_color": [
+              0.55,
+              0.16,
+              0.12
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.12,
+              0.07,
+              0.035
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                -2.62,
+                8.6,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                -2.62,
+                8.6,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0.05
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_21",
+          "location": [
+            -0.57,
+            8.6,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 2.75,
+            "skin_color": [
+              0.68,
+              0.43,
+              0.29
+            ],
+            "clothing_color": [
+              0.12,
+              0.38,
+              0.3
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.18,
+              0.12,
+              0.08
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                -0.57,
+                8.6,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                -0.57,
+                8.6,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                -0.05
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_22",
+          "location": [
+            1.47,
+            8.6,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 2.75,
+            "skin_color": [
+              0.48,
+              0.29,
+              0.19
+            ],
+            "clothing_color": [
+              0.42,
+              0.25,
+              0.58
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.035,
+              0.025,
+              0.02
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                1.47,
+                8.6,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                1.47,
+                8.6,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                -0.025
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_23",
+          "location": [
+            3.52,
+            8.6,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 2.75,
+            "skin_color": [
+              0.78,
+              0.57,
+              0.4
+            ],
+            "clothing_color": [
+              0.72,
+              0.4,
+              0.12
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.12,
+              0.07,
+              0.035
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                3.52,
+                8.6,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                3.52,
+                8.6,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_24",
+          "location": [
+            5.58,
+            8.6,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 2.75,
+            "skin_color": [
+              0.57,
+              0.36,
+              0.25
+            ],
+            "clothing_color": [
+              0.16,
+              0.32,
+              0.42
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.18,
+              0.12,
+              0.08
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                5.58,
+                8.6,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                5.58,
+                8.6,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0.025
+              ]
+            }
+          ]
+        }
+      ],
       "props": [],
       "camera": {
         "location": [
