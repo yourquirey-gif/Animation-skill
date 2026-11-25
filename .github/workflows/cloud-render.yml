@@ -13,12 +13,12 @@ on:
       storyboard_path:
         description: "Repository-relative storyboard JSON path"
         required: true
-        default: "tests/fixtures/human_prop_story.json"
+        default: "tests/fixtures/guddu_shop_market.json"
         type: string
       output_name:
         description: "Output MP4 filename without extension"
         required: true
-        default: "animation-render"
+        default: "guddu-shop-market-test"
         type: string
       format:
         description: "Output aspect ratio profile"
@@ -39,22 +39,22 @@ on:
       width:
         description: "Optional custom width; leave blank for 1080p profile"
         required: false
-        default: ""
+        default: "540"
         type: string
       height:
         description: "Optional custom height; leave blank for 1080p profile"
         required: false
-        default: ""
+        default: "960"
         type: string
       fps:
         description: "Frames per second (default 30)"
         required: true
-        default: "30"
+        default: "12"
         type: string
       samples:
         description: "Render samples (default 16)"
         required: true
-        default: "16"
+        default: "8"
         type: string
       voice_path:
         description: "Optional repository-relative narration audio path"
@@ -81,7 +81,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: blender-render-${{ github.ref }}-${{ inputs.output_name || 'ci-cloud-render' }}
+  group: blender-render-${{ github.ref }}-${{ inputs.output_name || 'guddu-shop-market-test' }}
   cancel-in-progress: false
 
 jobs:
@@ -131,17 +131,17 @@ jobs:
 
       - name: Validate workflow inputs
         env:
-          STORYBOARD: ${{ inputs.storyboard_path || 'tests/fixtures/human_prop_story.json' }}
-          OUTPUT_NAME: ${{ inputs.output_name || 'ci-cloud-render' }}
+          STORYBOARD: ${{ inputs.storyboard_path || 'tests/fixtures/guddu_shop_market.json' }}
+          OUTPUT_NAME: ${{ inputs.output_name || 'guddu-shop-market-test' }}
           FORMAT: ${{ inputs.format || 'shorts' }}
           VOICE_PATH: ${{ inputs.voice_path || '' }}
           MUSIC_PATH: ${{ inputs.music_path || '' }}
           CAPTIONS_PATH: ${{ inputs.captions_path || '' }}
           AUTO_LIP_SYNC: ${{ inputs.auto_lip_sync || 'false' }}
-          WIDTH: ${{ inputs.width || '' }}
-          HEIGHT: ${{ inputs.height || '' }}
-          FPS: ${{ inputs.fps || '30' }}
-          SAMPLES: ${{ inputs.samples || '16' }}
+          WIDTH: ${{ inputs.width || '540' }}
+          HEIGHT: ${{ inputs.height || '960' }}
+          FPS: ${{ inputs.fps || '12' }}
+          SAMPLES: ${{ inputs.samples || '8' }}
         run: |
           set -euo pipefail
           [[ "$OUTPUT_NAME" =~ ^[A-Za-z0-9._-]+$ ]] || { echo "Invalid output_name"; exit 2; }
@@ -169,13 +169,13 @@ jobs:
 
       - name: Render Blender scenes and assemble MP4
         env:
-          STORYBOARD: ${{ inputs.storyboard_path || 'tests/fixtures/human_prop_story.json' }}
-          OUTPUT_NAME: ${{ inputs.output_name || 'ci-cloud-render' }}
+          STORYBOARD: ${{ inputs.storyboard_path || 'tests/fixtures/guddu_shop_market.json' }}
+          OUTPUT_NAME: ${{ inputs.output_name || 'guddu-shop-market-test' }}
           FORMAT: ${{ inputs.format || 'shorts' }}
-          WIDTH: ${{ inputs.width || '' }}
-          HEIGHT: ${{ inputs.height || '' }}
-          FPS: ${{ inputs.fps || '30' }}
-          SAMPLES: ${{ inputs.samples || '16' }}
+          WIDTH: ${{ inputs.width || '540' }}
+          HEIGHT: ${{ inputs.height || '960' }}
+          FPS: ${{ inputs.fps || '12' }}
+          SAMPLES: ${{ inputs.samples || '8' }}
           VOICE_PATH: ${{ inputs.voice_path || '' }}
           MUSIC_PATH: ${{ inputs.music_path || '' }}
           CAPTIONS_PATH: ${{ inputs.captions_path || '' }}
@@ -208,7 +208,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ inputs.output_name || 'ci-cloud-render' }}-${{ github.run_number }}
+          name: ${{ inputs.output_name || 'guddu-shop-market-test' }}-${{ github.run_number }}
           path: |
             ${{ runner.temp }}/video-output/
             ${{ runner.temp }}/video-work/final_report.json
