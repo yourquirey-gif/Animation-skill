@@ -77,6 +77,8 @@ def main():
     p.add_argument("--storyboard", required=True, type=Path)
     p.add_argument("--output", required=True, type=Path)
     p.add_argument("--voice", type=Path)
+    p.add_argument("--auto-lip-sync", action="store_true", help="Run Rhubarb on --voice and distribute viseme cues to storyboard subjects with viseme_map")
+    p.add_argument("--rhubarb", help="Optional path to Rhubarb Lip Sync CLI")
     p.add_argument("--music", type=Path)
     p.add_argument("--captions", type=Path, help="Optional SRT file burned into the final video")
     p.add_argument("--format", choices=("shorts", "long"), default=None)
@@ -143,6 +145,56 @@ def main():
     output.parent.mkdir(parents=True, exist_ok=True)
     work = a.workdir.resolve() if a.workdir else output.parent / (output.stem + "_work")
     work.mkdir(parents=True, exist_ok=True)
+
+    lip_sync_report = {"enabled": False, "subjects_animated": 0, "events": 0}
+    if a.auto_lip_sync:
+        if not a.voice:
+            raise ValueError("--auto-lip-sync requires --voice")
+        viseme_output = work / "audio_visemes.json"
+        align_script = Path(__file__).with_name("align_visemes.py").resolve()
+        align_command = [sys.executable, str(align_script), "--audio", str(a.voice),
+                         "--output", str(viseme_output)]
+        if a.rhubarb:
+            align_command += ["--rhubarb", a.rhubarb]
+        run(align_command, work / "rhubarb_alignment.log")
+        aligned = json.loads(viseme_output.read_text(encoding="utf-8"))
+        all_events = aligned.get("viseme_keyframes", [])
+        elapsed = 0.0
+        subjects_animated = 0
+        for shot in shots:
+            duration = float(shot["duration_seconds"])
+            shot_events = [
+                {"time_seconds": round(float(event["time_seconds"]) - elapsed, 4),
+                 "viseme": event["viseme"], "strength": event.get("strength", 1.0)}
+                for event in all_events
+                if elapsed - 1e-6 <= float(event["time_seconds"]) <= elapsed + duration + 1e-6
+            ]
+            for subject in shot.get("subjects", []):
+                if subject.get("viseme_map"):
+                    subject["viseme_keyframes"] = shot_events
+                    subjects_animated += 1
+            elapsed += duration
+        if subjects_animated == 0:
+            raise ValueError("--auto-lip-sync found no storyboard subject with a viseme_map. Add exact facial shape-key names to the character subject.")
+        # Keep relative asset paths anchored to the original storyboard directory.
+        for shot in shots:
+            for group in ("subjects", "props"):
+                for entry in shot.get(group, []):
+                    for path_key in ("asset_file",):
+                        if entry.get(path_key):
+                            pth = Path(entry[path_key])
+                            if not pth.is_absolute():
+                                entry[path_key] = str((storyboard.parent / pth).resolve())
+                    retarget_cfg = entry.get("retarget", {})
+                    if retarget_cfg.get("animation_file"):
+                        pth = Path(retarget_cfg["animation_file"])
+                        if not pth.is_absolute():
+                            retarget_cfg["animation_file"] = str((storyboard.parent / pth).resolve())
+        storyboard = work / "storyboard_with_audio_lipsync.json"
+        storyboard.write_text(json.dumps(data, indent=2), encoding="utf-8")
+        lip_sync_report = {"enabled": True, "subjects_animated": subjects_animated,
+                           "events": len(all_events), "source": "Rhubarb Lip Sync"}
+
     scene_script = Path(__file__).with_name("story_scene.py").resolve()
     segment_files = []
     shot_qc = []
@@ -265,7 +317,7 @@ def main():
         "resolution": [width, height],
         "fps": fps,
         "detected_black_segments_over_one_second": black_segments,
-        "audio_inputs": {"voice": str(a.voice.resolve()) if a.voice else None,
+        "lip_sync": lip_sync_report,\n        "audio_inputs": {"voice": str(a.voice.resolve()) if a.voice else None,
                          "voice_duration_seconds": voice_duration,
                          "music": str(a.music.resolve()) if a.music else None,
                          "captions": str(a.captions.resolve()) if a.captions else None},
