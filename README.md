@@ -50,3 +50,15 @@ The skill instructs Claude Code to:
 This repository contains the skill, instructions, and templates—not a prebuilt video-rendering service. Claude Code must implement the actual project code in the user's working repository and run it with available local tools. Blender and FFmpeg must be installed or made available. Rendering speed and achievable visual fidelity depend on hardware, modeling/rigging quality, and render settings.
 
 Optional hosted AI providers are enhancements only. Do not use paid APIs or incur costs without explicit user approval. Never describe a still-image slideshow with zoom effects as actual character animation.
+
+
+## Bundled executable runtime
+
+The repository now includes a real local dependency inspector and Blender/FFmpeg smoke-test runner:
+
+```bash
+python runtime/animation_runtime.py inspect
+python runtime/animation_runtime.py smoke-test
+```
+
+The smoke test builds and animates actual 3D geometry in headless Blender, renders image frames, encodes an MP4 with FFmpeg, and validates metadata with ffprobe. See runtime/README.md. This validates the local toolchain; it is not a finished story render. Claude Code must still create story-specific scenes and assets for each new script/audio/story.
