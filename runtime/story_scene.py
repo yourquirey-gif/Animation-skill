@@ -35,6 +35,7 @@ def parse_args():
     parser.add_argument("--height", type=int, default=1920)
     parser.add_argument("--fps", type=int, default=24)
     parser.add_argument("--samples", type=int, default=32)
+    parser.add_argument("--progress-file", default=None, help="Write per-frame render progress JSON")
     return parser.parse_args(sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else [])
 
 
@@ -879,7 +880,47 @@ def main():
     scene.render.image_settings.file_format = "PNG"
     scene.render.filepath = str(out / "frame_")
     render_started = time.perf_counter()
-    bpy.ops.render.render(animation=True)
+    total_frames = max(1, scene.frame_end - scene.frame_start + 1)
+    progress_path = Path(args.progress_file).resolve() if args.progress_file else None
+
+    def report_frame_progress(render_scene, *unused):
+        current_frame = min(scene.frame_end, max(scene.frame_start, render_scene.frame_current))
+        completed_frames = max(0, current_frame - scene.frame_start + 1)
+        elapsed = time.perf_counter() - render_started
+        average_per_frame = elapsed / max(1, completed_frames)
+        remaining = max(0, total_frames - completed_frames) * average_per_frame
+        payload = {
+            "status": "RENDERING",
+            "completed_frames": completed_frames,
+            "total_frames": total_frames,
+            "current_frame": current_frame,
+            "percent": round(100.0 * completed_frames / total_frames, 1),
+            "elapsed_seconds": round(elapsed, 1),
+            "eta_seconds": round(remaining, 1),
+            "rendered_frames_per_second": round(completed_frames / max(elapsed, 0.001), 3),
+        }
+        if progress_path:
+            try:
+                progress_path.parent.mkdir(parents=True, exist_ok=True)
+                temporary = progress_path.with_suffix(progress_path.suffix + ".tmp")
+                temporary.write_text(json.dumps(payload), encoding="utf-8")
+                temporary.replace(progress_path)
+            except Exception as exc:
+                print("FRAME_PROGRESS_FILE_WARNING", str(exc), flush=True)
+        print("FRAME_PROGRESS " + json.dumps(payload), flush=True)
+
+    print("FRAME_PROGRESS " + json.dumps({
+        "status": "RENDERING", "completed_frames": 0, "total_frames": total_frames,
+        "current_frame": scene.frame_start, "percent": 0.0,
+        "elapsed_seconds": 0.0, "eta_seconds": None
+    }), flush=True)
+    render_handler = report_frame_progress
+    bpy.app.handlers.render_write.append(render_handler)
+    try:
+        bpy.ops.render.render(animation=True)
+    finally:
+        if render_handler in bpy.app.handlers.render_write:
+            bpy.app.handlers.render_write.remove(render_handler)
     render_elapsed = time.perf_counter() - render_started
 
     report = {

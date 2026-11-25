@@ -24,11 +24,45 @@ def locate(env, names):
     return None
 
 
-def run(command, log_path=None):
+def run(command, log_path=None, stream=False, stall_timeout=900):
     if log_path:
-        with Path(log_path).open("w", encoding="utf-8") as log:
-            result = subprocess.run(command, stdout=log, stderr=subprocess.STDOUT, text=True)
-        detail = Path(log_path).read_text(encoding="utf-8", errors="replace")[-6000:]
+        log_file = Path(log_path)
+        with log_file.open("w", encoding="utf-8") as log:
+            if stream:
+                process = subprocess.Popen(command, stdout=log, stderr=subprocess.STDOUT, text=True)
+                offset = 0
+                last_activity = time.monotonic()
+                while process.poll() is None:
+                    log.flush()
+                    with log_file.open("r", encoding="utf-8", errors="replace") as reader:
+                        reader.seek(offset)
+                        chunk = reader.read()
+                        offset = reader.tell()
+                    if chunk:
+                        print(chunk, end="", flush=True)
+                        last_activity = time.monotonic()
+                    elif time.monotonic() - last_activity > stall_timeout:
+                        process.terminate()
+                        try:
+                            process.wait(timeout=10)
+                        except subprocess.TimeoutExpired:
+                            process.kill()
+                            process.wait()
+                        raise RuntimeError(
+                            "No Blender log/progress output for " + str(stall_timeout) +
+                            " seconds; the render process was stopped as stalled."
+                        )
+                    time.sleep(2)
+                log.flush()
+                with log_file.open("r", encoding="utf-8", errors="replace") as reader:
+                    reader.seek(offset)
+                    tail = reader.read()
+                if tail:
+                    print(tail, end="", flush=True)
+                result = subprocess.CompletedProcess(command, process.returncode)
+            else:
+                result = subprocess.run(command, stdout=log, stderr=subprocess.STDOUT, text=True)
+        detail = log_file.read_text(encoding="utf-8", errors="replace")[-6000:]
     else:
         result = subprocess.run(command, capture_output=True, text=True)
         detail = getattr(result, "stderr", "") or ""
@@ -90,9 +124,12 @@ def main():
     p.add_argument("--workdir", type=Path)
     p.add_argument("--retries", type=int, default=1, help="Number of retries after the first failed shot render")
     p.add_argument("--progress-file", type=Path, help="Write machine-readable job progress JSON")
+    p.add_argument("--stall-timeout-seconds", type=int, default=900, help="Stop a Blender render if no log/progress output arrives within this many seconds")
     a = p.parse_args()
     if a.retries < 0 or a.retries > 5:
         raise ValueError("--retries must be between 0 and 5")
+    if a.stall_timeout_seconds < 30 or a.stall_timeout_seconds > 7200:
+        raise ValueError("--stall-timeout-seconds must be between 30 and 7200")
 
     def progress(status, shot_index=None, shot_id=None, message=None):
         payload = {"status": status, "completed_shots": len(shot_qc),
@@ -208,7 +245,8 @@ def main():
             "--python", str(scene_script), "--",
             "--storyboard", str(storyboard), "--shot-index", str(index),
             "--output-dir", str(shot_dir), "--width", str(width), "--height", str(height),
-            "--fps", str(fps), "--samples", str(a.samples)
+            "--fps", str(fps), "--samples", str(a.samples),
+            "--progress-file", str(shot_dir / "frame_progress.json")
         ]
         shot_id = shot.get("id", index + 1)
         progress("RENDERING", index + 1, shot_id)
@@ -219,7 +257,8 @@ def main():
             for stale in shot_dir.glob("frame_*.png"):
                 stale.unlink()
             try:
-                run(blender_cmd, shot_dir / ("blender_attempt_%02d.log" % (attempt + 1)))
+                run(blender_cmd, shot_dir / ("blender_attempt_%02d.log" % (attempt + 1)),
+                    stream=True, stall_timeout=a.stall_timeout_seconds)
                 last_error = None
                 break
             except Exception as exc:
