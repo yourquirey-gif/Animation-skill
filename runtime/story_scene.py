@@ -8,6 +8,7 @@ blender --background --python-exit-code 1 --python story_scene.py -- --storyboar
 import argparse
 import json
 import math
+import os
 import sys
 from pathlib import Path
 
@@ -481,7 +482,10 @@ def main():
     bpy.ops.wm.read_factory_settings(use_empty=True)
     scene = bpy.context.scene
     available_engines = scene.render.bl_rna.properties["engine"].enum_items.keys()
-    if "BLENDER_EEVEE_NEXT" in available_engines:
+    requested_engine = os.environ.get("ANIMATION_RENDER_ENGINE")
+    if requested_engine and requested_engine in available_engines:
+        scene.render.engine = requested_engine
+    elif "BLENDER_EEVEE_NEXT" in available_engines:
         scene.render.engine = "BLENDER_EEVEE_NEXT"
     elif "BLENDER_EEVEE" in available_engines:
         scene.render.engine = "BLENDER_EEVEE"
