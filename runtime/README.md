@@ -14,7 +14,7 @@ GitHub Actions workflow: `.github/workflows/cloud-render.yml`
 6. FFmpeg encodes and joins shot frames, applies captions and mixes audio. ffprobe validates the final MP4.
 7. The workflow uploads the MP4, final report, progress record and render logs as a downloadable Actions artifact (7-day retention).
 
-The default workflow settings are deliberately low-resolution smoke/preview values to stay within hosted-runner limits. Select 1080x1920 for Shorts or 1920x1080 for Long only after a preview confirms the scene and the expected render time is acceptable. Standard GitHub-hosted runners are CPU/software-rendered unless a GPU is explicitly detected; no GPU is assumed.
+Production workflow defaults: 1080x1920 (9:16) for Shorts and 1920x1080 (16:9) for Long, both at 30 FPS. Width/height inputs may override these defaults; FPS can also be changed. Smoke tests deliberately remain low-resolution. Preview the scene before a full-HD render. Standard GitHub-hosted runners are CPU/software-rendered unless a GPU is explicitly detected; no GPU is assumed, so complex 1080p renders may be slow or hit the workflow's 45-minute limit.
 
 ## Local development / tests
 
