@@ -29,6 +29,20 @@ Before creating a new video, follow `docs/INTERACTIVE_INTAKE_AND_PRODUCTION.md`.
 - Ask one concise question at a time. Remember answers within the current task; never repeat answered questions. If a ZIP contains multiple assets, inspect its contents before asking for anything.
 - After intake, take ownership of script timing, storyboard, characters, environments, animation, sound design, captions, rendering, and QA. Ask only when a genuine blocker or user approval is needed.
 
+## Bundled executable runtime — run it, do not only describe it
+
+This skill now ships executable helpers in runtime/. When a user starts a video task in Claude Code, use the terminal to run the bundled runtime from the skill directory before inventing a new setup:
+
+1. Run `python runtime/animation_runtime.py inspect` (Windows may use `py`). Read the actual report; do not assume Blender or FFmpeg is installed.
+2. If all three tools are available, run `python runtime/animation_runtime.py smoke-test`. This must create a real animated 3D Blender scene, render frames, encode an MP4 with FFmpeg, and validate it with ffprobe. Inspect the produced MP4 and report the real result.
+3. If a dependency is missing, identify OS and install route; ask before using administrator privileges, large downloads, or changing system configuration. Support BLENDER_BIN, FFMPEG_BIN and FFPROBE_BIN overrides.
+4. Do not pip-install bpy into arbitrary system Python as the default. Use Blender's own bundled Python for bpy scripts and invoke Blender in background mode with --python and --python-exit-code 1.
+5. The smoke test is only a technical integration check. It is not a finished story engine, not a production character benchmark, and not permission to reuse its sample scene as every story.
+6. For the actual user story, Claude Code must author a new story-specific Blender scene/asset code from the approved storyboard: unique world, set dressing, characters, props, physically coherent actions, camera, lighting and facial acting. Keep reusable rig/animation utilities separate from story data.
+7. Use a real preview render and inspect it. Fix defects before final render. Assemble audio/captions/music/SFX and validate the final export with ffprobe. In Claude chat, present the preview/result file paths and attach or surface the actual MP4 using the host's supported file workflow; never claim an attachment exists if it was not produced.
+
+The bundled runtime commands and requirements are documented in runtime/README.md. The Blender API's supported headless pattern is documented by Blender itself: `blender --background --python script.py`. See https://docs.blender.org/api/current/info_tips_and_tricks.html and https://docs.blender.org/api/current/info_advanced_blender_as_bpy.html.
+
 ## First-use application implementation requirement
 
 This repository is a Claude Code skill/instruction package, not a prebuilt renderer. When installed into a user's working project, inspect that project and implement a real reusable local video-production application before claiming the workflow is ready. Follow `docs/APP_IMPLEMENTATION_SPEC.md` and `docs/CODE_FIRST_PIPELINE.md`.
