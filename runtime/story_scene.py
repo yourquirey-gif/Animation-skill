@@ -56,11 +56,29 @@ def validate(story):
                 raise ValueError(f"shots[{i}].{group} must be an array")
             entries = value.get("objects", []) if group == "environment" else value
             for j, entry in enumerate(entries):
-                if entry.get("primitive", "cube") not in PRIMITIVES:
+                if not isinstance(entry, dict):
+                    raise ValueError(f"shots[{i}].{group}[{j}] must be an object")
+                if entry.get("primitive", "cube") not in PRIMITIVES and not entry.get("asset_file"):
                     raise ValueError(f"Unsupported primitive at shots[{i}].{group}[{j}]")
-                for kf in entry.get("keyframes", []):
-                    if float(kf.get("time_seconds", -1)) < 0:
-                        raise ValueError("keyframe time_seconds cannot be negative")
+                duration = float(shot["duration_seconds"])
+                for track_name in ("keyframes", "pose_keyframes", "facial_keyframes", "viseme_keyframes"):
+                    for kf in entry.get(track_name, []):
+                        event_time = float(kf.get("time_seconds", -1))
+                        if event_time < 0 or event_time > duration:
+                            raise ValueError(
+                                f"shots[{i}].{group}[{j}].{track_name} time_seconds must be within 0..{duration}"
+                            )
+                if entry.get("viseme_keyframes"):
+                    viseme_map = entry.get("viseme_map")
+                    if not isinstance(viseme_map, dict) or not viseme_map:
+                        raise ValueError(f"shots[{i}].{group}[{j}] viseme_keyframes require a non-empty viseme_map")
+                    for event in entry["viseme_keyframes"]:
+                        label = str(event.get("viseme", "REST"))
+                        if label not in viseme_map:
+                            raise ValueError(f"Unknown viseme label '{label}' at shots[{i}].{group}[{j}]")
+                        strength = float(event.get("strength", 1.0))
+                        if strength < 0 or strength > 1:
+                            raise ValueError("Viseme strength must be between 0 and 1")
     return story
 
 
