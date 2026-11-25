@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "presets": {
+    "daylight": {"key": "large_area_or_sun", "fill": "soft_sky", "contrast": "medium"},
+    "sunset": {"key": "low_warm_sun", "fill": "cool_sky", "contrast": "medium"},
+    "night_moonlight": {"key": "cool_directional", "fill": "low_ambient", "contrast": "high"},
+    "interior_practical": {"key": "motivated_practical_sources", "fill": "soft_bounce", "contrast": "medium"},
+    "dramatic": {"key": "directional_hard_or_large_area", "fill": "controlled_low", "contrast": "high"},
+    "foggy_atmosphere": {"key": "soft_directional", "fill": "volumetric_scatter", "contrast": "low"}
+  }
+}
