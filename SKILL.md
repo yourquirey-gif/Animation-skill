@@ -276,3 +276,8 @@ When quality requires more than procedural blockout geometry, use story-specific
 ### Rigged character performance and face animation
 
 For character-driven stories, prefer detailed licensed/approved rigged GLB/glTF or FBX assets over primitive assemblies. Inspect the actual armature bone names, available animation actions and facial shape keys after import. Use `asset_action` for a prepared motion clip, `pose_keyframes` for custom bone-level acting, and `facial_keyframes` for shape-key expressions. The bundled Blender renderer implements these channels; see runtime/README.md for the storyboard schema. Never invent bone or shape-key names. If no suitable rig exists, build/rig an appropriate story-specific character or disclose the limitation. Do not call simple object transforms skeletal animation or claim lip-sync unless phoneme/viseme timing has actually been generated and rendered.
+
+
+### Believable hand-held prop continuity
+
+When a character picks up, holds, carries, throws or hands over an object, prefer a bone-attached prop using the renderer's `attach_to` support. Inspect the imported rig and use its exact hand/finger bone names; author local offsets and rotations from preview renders. Animate the prop's release/transfer as an explicit state change. Do not fake a grip by leaving the prop floating near the hand. Bone parenting makes the prop follow the hand, but does not itself create finger closure, collision or contact physics; author those actions with the rig's real controls and validate them visually.
