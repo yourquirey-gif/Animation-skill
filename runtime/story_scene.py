@@ -702,10 +702,37 @@ def merge_static_environment_meshes(objects):
     return len(meshes), 1
 
 
+def resolve_story_assets(story):
+    """Resolve catalog IDs to real files before Blender imports any models."""
+    from asset_catalog import resolve_asset
+    for shot_index, shot in enumerate(story["shots"]):
+        entries = list(shot.get("subjects", [])) + list(shot.get("props", []))
+        entries += list(shot.get("environment", {}).get("objects", []))
+        for entry in entries:
+            asset_id = entry.get("asset_id")
+            if asset_id:
+                if entry.get("asset_file"):
+                    raise ValueError("Use either asset_id or asset_file, not both: " + str(entry.get("name", asset_id)))
+                resolved, metadata = resolve_asset(str(asset_id))
+                entry["asset_file"] = str(resolved)
+                entry["_resolved_asset_metadata"] = {
+                    "id": metadata["id"], "name": metadata["name"],
+                    "license": metadata["license"], "source_url": metadata["source_url"]
+                }
+            retarget = entry.get("retarget", {})
+            animation_asset_id = retarget.get("animation_asset_id")
+            if animation_asset_id:
+                if retarget.get("animation_file"):
+                    raise ValueError("Use either retarget.animation_asset_id or animation_file")
+                resolved, _ = resolve_asset(str(animation_asset_id))
+                retarget["animation_file"] = str(resolved)
+
+
 def main():
     args = parse_args()
-    story_path = Path(args.storyboard)
+    story_path = Path(args.storyboard).resolve()
     story = validate(json.loads(story_path.read_text(encoding="utf-8")))
+    resolve_story_assets(story)
     if args.shot_index < 0 or args.shot_index >= len(story["shots"]):
         raise ValueError("shot-index is outside storyboard shots array")
     shot = story["shots"][args.shot_index]
