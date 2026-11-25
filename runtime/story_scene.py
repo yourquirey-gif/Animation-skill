@@ -253,6 +253,41 @@ def apply_rig_animation(root, pose_keyframes, facial_keyframes, fps, total_frame
                 block.keyframe_insert(data_path="value", frame=frame)
 
 
+def apply_viseme_animation(root, viseme_keyframes, viseme_map, fps, total_frames):
+    """Map externally aligned viseme events onto imported facial shape keys."""
+    if not viseme_keyframes:
+        return
+    if not isinstance(viseme_map, dict) or not viseme_map:
+        raise ValueError("viseme_keyframes require a viseme_map from viseme labels to exact imported shape-key names")
+    shape_keys = {}
+    stack = list(root.children)
+    while stack:
+        obj = stack.pop()
+        stack.extend(list(obj.children))
+        if obj.type == "MESH" and obj.data.shape_keys:
+            for key in obj.data.shape_keys.key_blocks:
+                shape_keys[key.name] = key
+    for label, shape_name in viseme_map.items():
+        if shape_name not in shape_keys:
+            raise ValueError("Viseme '" + str(label) + "' maps to missing shape key '" + str(shape_name) + "'")
+    # Key every mapped shape at every event, so unused mouth poses return to zero.
+    for entry in viseme_keyframes:
+        frame = max(1, min(total_frames, 1 + round(float(entry["time_seconds"]) * fps)))
+        label = str(entry.get("viseme", "REST"))
+        strength = max(0.0, min(1.0, float(entry.get("strength", 1.0))))
+        active_shape = viseme_map.get(label)
+        for mapped_label, shape_name in viseme_map.items():
+            block = shape_keys[shape_name]
+            block.value = strength if shape_name == active_shape else 0.0
+            block.keyframe_insert(data_path="value", frame=frame)
+    for shape_name in set(viseme_map.values()):
+        block = shape_keys[shape_name]
+        if block.id_data.animation_data and block.id_data.animation_data.action:
+            for fc in block.id_data.animation_data.action.fcurves:
+                for point in fc.keyframe_points:
+                    point.interpolation = "LINEAR"
+
+
 def aim(camera, target):
     camera.rotation_euler = (Vector(target) - camera.location).to_track_quat("-Z", "Y").to_euler()
 
@@ -360,6 +395,13 @@ def main():
             root,
             item.get("pose_keyframes", []),
             item.get("facial_keyframes", []),
+            args.fps,
+            scene.frame_end,
+        )
+        apply_viseme_animation(
+            root,
+            item.get("viseme_keyframes", []),
+            item.get("viseme_map", {}),
             args.fps,
             scene.frame_end,
         )
