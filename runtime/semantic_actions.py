@@ -87,7 +87,7 @@ def compile_performance(events, fps, total_frames):
         action = str(event.get("action", "")).strip().lower()
         start = float(event.get("time_seconds", 0))
         duration = float(event.get("duration_seconds", 0.7))
-        if start < 0 or duration <= 0 or start + duration > (total_frames - 1) / fps + 1e-6:
+        if start < 0 or duration <= 0 or start + duration > total_frames / fps + 1e-6:
             raise ValueError(f"performance[{index}] time/duration is outside the shot")
         pose = _pose(action, event.get("side", "right"), event.get("intensity", 1.0))
         normalized.append((start, duration, pose, index))
