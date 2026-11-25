@@ -5,7 +5,8 @@ on:
     paths:
       - "runtime/**"
       - "templates/**"
-      - "tests/fixtures/**"
+      - "tests/**"
+      - "assets/**"
       - ".github/workflows/runtime-smoke-test.yml"
   workflow_dispatch:
 
@@ -46,6 +47,11 @@ jobs:
             test -s "$RUNNER_TEMP/story-fixtures/$name.mp4"
             ffprobe -v error -show_entries format=duration:stream=codec_name,width,height -of json "$RUNNER_TEMP/story-fixtures/$name.mp4"
           done
+          # Exercise actual audio mux and subtitle burn-in with a deterministic 2s test tone.
+          ffmpeg -y -f lavfi -i "sine=frequency=440:duration=2" -c:a pcm_s16le "$RUNNER_TEMP/story-fixtures/test-tone.wav"
+          printf "1\\n00:00:00,000 --> 00:00:01,900\\nAudio pipeline test\\n" > "$RUNNER_TEMP/story-fixtures/test-captions.srt"
+          python3 runtime/render_story.py --storyboard tests/fixtures/human_prop_story.json --output "$RUNNER_TEMP/story-fixtures/audio-mux-test.mp4" --format shorts --width 240 --height 426 --fps 12 --samples 8 --voice "$RUNNER_TEMP/story-fixtures/test-tone.wav" --captions "$RUNNER_TEMP/story-fixtures/test-captions.srt" --retries 1 --progress-file "$RUNNER_TEMP/story-fixtures/audio-mux-progress.json"
+          ffprobe -v error -select_streams a:0 -show_entries stream=codec_name -of json "$RUNNER_TEMP/story-fixtures/audio-mux-test.mp4" | grep -q aac
       - name: Upload Blender smoke and cross-genre render artifacts
         if: always()
         uses: actions/upload-artifact@v4
