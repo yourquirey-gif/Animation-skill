@@ -157,7 +157,7 @@ def build_camera(spec):
     aim(camera, vector(spec.get("target"), [0, 0, 1]))
     bpy.context.scene.camera = camera
     for key in spec.get("keyframes", []):
-        frame = 1 + round(float(key["time_seconds"]) * bpy.context.scene.render.fps)
+        frame = max(1, min(bpy.context.scene.frame_end, 1 + round(float(key["time_seconds"]) * bpy.context.scene.render.fps)))
         if "location" in key:
             camera.location = vector(key["location"], list(camera.location))
             camera.keyframe_insert(data_path="location", frame=frame)
