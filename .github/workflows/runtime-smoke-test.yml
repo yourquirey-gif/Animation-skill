@@ -16,12 +16,13 @@ jobs:
     env:
       BLENDER_SMOKE_ENGINE: BLENDER_WORKBENCH
       ANIMATION_RENDER_ENGINE: BLENDER_WORKBENCH
+      LIBGL_ALWAYS_SOFTWARE: '1'
     steps:
       - uses: actions/checkout@v4
       - name: Install Blender and FFmpeg
         run: |
           sudo apt-get update
-          sudo apt-get install -y blender ffmpeg libegl1 libgl1
+          sudo apt-get install -y blender ffmpeg libegl1 libgl1 libegl-mesa0 libglx-mesa0 libgl1-mesa-dri
       - name: Compile Python orchestration scripts
         run: |
           python3 -m py_compile runtime/animation_runtime.py runtime/render_story.py runtime/story_scene.py runtime/align_visemes.py
