@@ -211,6 +211,8 @@ def apply_rig_animation(root, pose_keyframes, facial_keyframes, fps, total_frame
         raise ValueError("pose_keyframes require an imported rigged model with an armature")
 
     for armature in armatures:
+        if not pose_keyframes:
+            continue
         armature.animation_data_create()
         # A dedicated per-shot action keeps source-library actions untouched.
         action = bpy.data.actions.new("StoryPose_" + armature.name)
