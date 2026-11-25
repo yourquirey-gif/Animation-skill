@@ -83,12 +83,52 @@ def make_material(spec, cache):
     return mat
 
 
-def create_mesh(spec, cache, collection=None):
+def create_mesh(spec, cache, collection=None, base_dir=None):
     primitive = spec.get("primitive", "cube")
     location = vector(spec.get("location"), [0, 0, 0])
     scale = vector(spec.get("scale"), [1, 1, 1])
     rotation = vector(spec.get("rotation"), [0, 0, 0])
     name = str(spec.get("name", "Story_Object"))
+    # Import detailed story-specific models when supplied. GLB/glTF preserves
+    # PBR materials and hierarchy; FBX is supported for common rigged assets.
+    if spec.get("asset_file"):
+        asset_path = Path(spec["asset_file"])
+        if not asset_path.is_absolute():
+            asset_path = (Path(base_dir or Path.cwd()) / asset_path).resolve()
+        if not asset_path.is_file():
+            raise FileNotFoundError("3D asset file not found: " + str(asset_path))
+        before = set(bpy.data.objects)
+        suffix = asset_path.suffix.lower()
+        if suffix in {".glb", ".gltf"}:
+            bpy.ops.import_scene.gltf(filepath=str(asset_path))
+        elif suffix == ".fbx":
+            bpy.ops.import_scene.fbx(filepath=str(asset_path))
+        else:
+            raise ValueError("Supported detailed model formats are .glb, .gltf and .fbx: " + suffix)
+        imported = [o for o in bpy.data.objects if o not in before and o.type not in {"CAMERA", "LIGHT"}]
+        if not imported:
+            raise RuntimeError("Blender importer produced no objects for " + str(asset_path))
+        root = bpy.data.objects.new(name + "_AssetRoot", None)
+        bpy.context.scene.collection.objects.link(root)
+        for child in imported:
+            world_matrix = child.matrix_world.copy()
+            child.parent = root
+            child.matrix_world = world_matrix
+        root.location = location
+        root.rotation_euler = rotation
+        root.scale = scale
+        action_name = spec.get("asset_action")
+        if action_name:
+            action = bpy.data.actions.get(str(action_name))
+            if action is None:
+                raise ValueError("Requested imported animation action not found: " + str(action_name))
+            armatures = [o for o in imported if o.type == "ARMATURE"]
+            if not armatures:
+                raise ValueError("asset_action was supplied but imported model has no armature")
+            for armature in armatures:
+                armature.animation_data_create()
+                armature.animation_data.action = action
+        return root
     if primitive == "cube":
         bpy.ops.mesh.primitive_cube_add(size=1, location=location)
     elif primitive == "uv_sphere":
@@ -222,13 +262,13 @@ def main():
 
     env = shot.get("environment", {})
     for item in env.get("objects", []):
-        obj = create_mesh(item, cache)
+        obj = create_mesh(item, cache, base_dir=story_path.parent)
         apply_keyframes(obj, item.get("keyframes", []), args.fps, scene.frame_end)
     for item in shot.get("subjects", []):
         root = bpy.data.objects.new(str(item.get("name", "Subject")) + "_Root", None)
         scene.collection.objects.link(root)
         for part in item.get("parts", []):
-            obj = create_mesh(part, cache)
+            obj = create_mesh(part, cache, base_dir=story_path.parent)
             obj.parent = root
         apply_keyframes(root, item.get("keyframes", []), args.fps, scene.frame_end)
     for item in shot.get("props", []):
