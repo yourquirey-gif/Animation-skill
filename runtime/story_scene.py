@@ -517,6 +517,112 @@ def add_lights(lights):
             aim(light, vector(item["target"], [0, 0, 0]))
 
 
+
+def create_stylized_humanoid(spec, cache, root, fps, total_frames):
+    """Build a reusable, detailed stylized humanoid from configurable proportions and colors.
+
+    This is a procedural starter character, not a substitute for a production
+    sculpt/rig. Imported rigged assets remain preferred for close-up acting.
+    """
+    cfg = spec.get("character", {}) or {}
+    palette = {
+        "skin": cfg.get("skin_color", [0.62, 0.39, 0.25]),
+        "clothes": cfg.get("clothing_color", [0.12, 0.24, 0.62]),
+        "accent": cfg.get("accent_color", [0.9, 0.55, 0.12]),
+        "hair": cfg.get("hair_color", [0.08, 0.045, 0.025]),
+        "eyes": cfg.get("eye_color", [0.025, 0.018, 0.012]),
+        "shoes": cfg.get("shoe_color", [0.035, 0.04, 0.055]),
+    }
+    for key, color in palette.items():
+        if not isinstance(color, list) or len(color) != 3 or any(float(c) < 0 or float(c) > 1 for c in color):
+            raise ValueError("character." + key + " must be an RGB array with values in 0..1")
+    scale = float(cfg.get("height", 3.2))
+    if not 1.4 <= scale <= 5.0:
+        raise ValueError("character.height must be between 1.4 and 5.0")
+    ratio = scale / 3.2
+    parts = {}
+
+    def part(name, location, dimensions, color, smooth=True):
+        obj = create_mesh({
+            "name": spec.get("name", "Character") + "_" + name,
+            "primitive": "uv_sphere",
+            "location": [v * ratio for v in location],
+            "scale": [v * ratio for v in dimensions],
+            "smooth": smooth,
+            "material": {"color": palette[color], "roughness": 0.58},
+        }, cache)
+        obj.parent = root
+        parts[name] = obj
+        return obj
+
+    # Main silhouette: torso, pelvis, neck, head and articulated-looking limbs.
+    part("pelvis", [0, 0, 1.15], [0.34, 0.24, 0.25], "clothes")
+    part("torso", [0, 0, 1.72], [0.48, 0.29, 0.62], "clothes")
+    part("shirt_collar", [0, -0.005, 2.25], [0.19, 0.20, 0.12], "accent")
+    part("neck", [0, 0, 2.36], [0.15, 0.15, 0.20], "skin")
+    part("head", [0, 0, 2.68], [0.34, 0.30, 0.42], "skin")
+    part("ear_left", [-0.34, 0, 2.67], [0.075, 0.10, 0.13], "skin")
+    part("ear_right", [0.34, 0, 2.67], [0.075, 0.10, 0.13], "skin")
+    part("hair_cap", [0, 0.015, 2.98], [0.355, 0.31, 0.19], "hair")
+    part("hair_fringe", [0, -0.235, 2.91], [0.28, 0.10, 0.12], "hair")
+
+    # Face faces toward negative Y; layered eyes, brows, nose and mouth improve readability.
+    for side, x in (("left", -0.13), ("right", 0.13)):
+        part("eye_white_" + side, [x, -0.275, 2.72], [0.075, 0.035, 0.055], "eyes")
+        part("eyebrow_" + side, [x, -0.285, 2.82], [0.09, 0.035, 0.025], "hair")
+    part("nose", [0, -0.31, 2.64], [0.055, 0.07, 0.09], "skin")
+    part("mouth", [0, -0.286, 2.53], [0.09, 0.025, 0.025], "hair")
+
+    # Upper arms, forearms, hands, thighs, shins and shoes are separate objects
+    # so authored motion keys can animate them independently.
+    part("upper_arm_left", [-0.55, 0, 1.92], [0.16, 0.17, 0.34], "clothes")
+    part("upper_arm_right", [0.55, 0, 1.92], [0.16, 0.17, 0.34], "clothes")
+    part("forearm_left", [-0.62, -0.01, 1.48], [0.13, 0.14, 0.31], "skin")
+    part("forearm_right", [0.62, -0.01, 1.48], [0.13, 0.14, 0.31], "skin")
+    part("hand_left", [-0.64, -0.035, 1.14], [0.13, 0.11, 0.15], "skin")
+    part("hand_right", [0.64, -0.035, 1.14], [0.13, 0.11, 0.15], "skin")
+    part("thigh_left", [-0.20, 0, 0.82], [0.19, 0.21, 0.42], "clothes")
+    part("thigh_right", [0.20, 0, 0.82], [0.19, 0.21, 0.42], "clothes")
+    part("shin_left", [-0.20, 0, 0.36], [0.14, 0.16, 0.34], "skin")
+    part("shin_right", [0.20, 0, 0.36], [0.14, 0.16, 0.34], "skin")
+    part("shoe_left", [-0.20, -0.10, 0.12], [0.18, 0.29, 0.12], "shoes")
+    part("shoe_right", [0.20, -0.10, 0.12], [0.18, 0.29, 0.12], "shoes")
+
+    # Optional accessories can be enabled per story without changing the generator.
+    if cfg.get("cape"):
+        part("cape", [0, 0.27, 1.72], [0.43, 0.10, 0.72], "accent")
+    if cfg.get("hat"):
+        part("hat_brim", [0, 0, 3.02], [0.42, 0.34, 0.055], "accent")
+        part("hat_crown", [0, 0, 3.16], [0.25, 0.24, 0.17], "accent")
+
+    # Per-part keyframes are authored in the storyboard using exact part names.
+    for name, keys in (cfg.get("part_keyframes", {}) or {}).items():
+        if name not in parts:
+            raise ValueError("Unknown procedural character part_keyframes target: " + str(name))
+        apply_keyframes(parts[name], keys, fps, total_frames)
+
+    # Lightweight looping walk-cycle motion is a preview-level procedural gait.
+    motion = str(cfg.get("motion", "idle")).lower()
+    if motion not in {"idle", "walk", "run"}:
+        raise ValueError("character.motion must be idle, walk or run")
+    if motion in {"walk", "run"}:
+        cycles = float(cfg.get("motion_cycles", 2.0 if motion == "walk" else 3.0))
+        amplitude = 0.42 if motion == "walk" else 0.68
+        for frame in range(1, total_frames + 1):
+            phase = 2.0 * math.pi * cycles * (frame - 1) / max(1, total_frames - 1)
+            for name, sign in (("thigh_left", 1), ("thigh_right", -1),
+                               ("upper_arm_left", -1), ("upper_arm_right", 1)):
+                obj = parts[name]
+                obj.rotation_euler.x = math.sin(phase) * amplitude * sign
+                obj.keyframe_insert(data_path="rotation_euler", frame=frame)
+        for obj in parts.values():
+            if obj.animation_data and obj.animation_data.action:
+                for fc in obj.animation_data.action.fcurves:
+                    for key in fc.keyframe_points:
+                        key.interpolation = "BEZIER"
+    return parts
+
+
 def main():
     args = parse_args()
     story_path = Path(args.storyboard)
@@ -583,10 +689,13 @@ def main():
         if item.get("asset_file"):
             model_root = create_mesh(item, cache, base_dir=story_path.parent)
             model_root.parent = root
+        elif item.get("character", {}).get("type") == "stylized_humanoid":
+            create_stylized_humanoid(item, cache, root, args.fps, scene.frame_end)
         else:
             for part in item.get("parts", []):
                 obj = create_mesh(part, cache, base_dir=story_path.parent)
                 obj.parent = root
+                apply_keyframes(obj, part.get("keyframes", []), args.fps, scene.frame_end)
         apply_keyframes(root, item.get("keyframes", []), args.fps, scene.frame_end)
         apply_rig_animation(
             root,
