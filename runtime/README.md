@@ -53,9 +53,40 @@ For a detailed character model, provide an imported rigged GLB/glTF or FBX with 
 
 Use `attach_to` on a prop with the subject name and exact armature bone name. Tune local offset/rotation from preview renders. Bone parenting makes the prop follow the animated hand; it does not itself solve finger closure, collision or contact physics.
 
+## Real humanoid animation retargeting
+
+A subject can import a rigged character and a separate animation pack, then bake the animation onto the character's own armature:
+
+```json
+{
+  "name": "Palace_Guard",
+  "asset_file": "characters/guard.glb",
+  "retarget": {
+    "animation_file": "animations/UAL1_Standard.glb",
+    "source_armature": "Armature",
+    "source_action": "Walk",
+    "action_name": "Guard_Walk",
+    "frame_start": 1,
+    "frame_end": 48,
+    "copy_root_motion": true,
+    "root_translation_scale": 1.0,
+    "bone_map": [
+      {"source": "root", "target": "Root"},
+      {"source": "hips", "target": "Hips"},
+      {"source": "spine", "target": "Spine"},
+      {"source": "head", "target": "Head"}
+    ]
+  }
+}
+```
+
+Bone names and action names above are examples only. Inspect the exact imported rig/action first. `rotation_offset` accepts 3 Euler radians or 4 quaternion values for per-bone axis correction. The first mapped bone receives root translation when `copy_root_motion` is true. Retargeting bakes local bone rotations; it does not automatically solve foot sliding, contact, scale mismatch or facial motion. The `runtime/rig_retarget.py` helper is covered by a Blender integration test.
+
+The reference-style starting assets are documented in `assets/REFERENCE_STYLE_ASSETS.md`. The Quaternius character and animation packs are CC0 according to their official publisher pages, but their ZIP files are not bundled in this repository; download the Standard packs and place the extracted files under `assets/characters/` and `assets/animations/`. Keep large source packs out of Git unless intentionally required.
+
 ## Audio-aligned lip-sync
 
-`runtime/align_visemes.py` converts Rhubarb cue JSON into viseme events. Rhubarb must be installed separately and run against the actual audio; the renderer does not invent phoneme timestamps. The viseme map must match the model's real blendshape names. Inspect close-up previews against the master narration.
+`runtime/align_visemes.py` converts Rhubarb cue JSON into viseme events and inserts a neutral-mouth reset at every cue end. For automatic orchestration, pass `--voice narration.wav --auto-lip-sync --rhubarb /path/to/rhubarb` to `render_story.py`. Each speaking subject must define a `viseme_map` with exact imported shape-key names (Rhubarb A-H); neutral X/REST resets all mapped mouth shapes to zero and needs no dedicated shape key. Rhubarb must be installed separately and run against the actual audio; the renderer does not invent phoneme timestamps. This is approximate mouth-shape alignment, not phoneme-perfect facial acting. Inspect close-up previews against the master narration.
 
 ## Honest quality limits
 
