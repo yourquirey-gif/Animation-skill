@@ -16,6 +16,17 @@ def load_catalog(path=CATALOG):
     return data
 
 
+def resolve_asset(asset_id, catalog_path=CATALOG):
+    """Resolve a stable catalog ID to a verified on-disk asset path."""
+    data = load_catalog(catalog_path)
+    matches = [item for item in data["assets"] if item.get("id") == asset_id]
+    if len(matches) != 1:
+        raise KeyError("Asset ID %r must match exactly one catalog entry; found %d" % (asset_id, len(matches)))
+    catalog_root = Path(catalog_path).resolve().parents[1]
+    path = validate_asset(matches[0], data["assets"].index(matches[0]), catalog_root)
+    return path, matches[0]
+
+
 def validate_asset(item, index, root=ROOT):
     required = ("id", "category", "name", "path", "format", "visual_style", "license", "source_url")
     missing = [key for key in required if not str(item.get(key, "")).strip()]
@@ -41,7 +52,8 @@ def validate_asset(item, index, root=ROOT):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=("validate", "list", "search"))
+    parser.add_argument("command", choices=("validate", "list", "search", "resolve"))
+    parser.add_argument("--id", default="")
     parser.add_argument("--query", default="")
     parser.add_argument("--category", default="")
     parser.add_argument("--style", default="")
@@ -57,6 +69,10 @@ def main():
         validate_asset(item, index, args.catalog.resolve().parents[1])
     if args.command == "validate":
         print(json.dumps({"status": "PASS", "asset_count": len(assets)}, indent=2))
+        return 0
+    if args.command == "resolve":
+        path, item = resolve_asset(args.id, args.catalog)
+        print(json.dumps({"status": "PASS", "asset": item, "resolved_path": str(path)}, indent=2))
         return 0
     query = args.query.casefold()
     results = []
