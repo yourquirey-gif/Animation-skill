@@ -9,6 +9,20 @@ Use this skill for every animated-story task. Treat user-provided reference vide
 
 ## Core standard
 
+## Mandatory Claude Code Web cloud-rendering mode
+
+When operating in Claude Code Web, all production rendering must run on GitHub Actions Ubuntu. The user's Windows 7 PC is not a rendering host.
+
+- Use Blender installed by `.github/workflows/cloud-render.yml`; invoke it in background mode with `--background --python-exit-code 1 --python`.
+- Use Python for story orchestration, asset metadata, retries, progress and QA; use FFmpeg/ffprobe for assembly and verification.
+- Do not require the user to install Blender, run a local renderer, or install modern local dependencies.
+- Inspect the connected repository and Git state first. Preserve unrelated changes and work on a feature branch. Do not push to the default branch or merge without explicit authorization.
+- Use GitHub Actions workflow artifacts for MP4/report/log delivery. Never commit generated MP4s or large render caches to the source repository.
+- Detect CPU, RAM, disk and GPU on the actual runner. Standard GitHub-hosted runners are treated as CPU/software-rendered; never assume GPU access or unlimited time.
+- Start with preview resolution/samples, inspect output, then use the requested final profile. Do not silently downgrade engine, resolution, FPS or quality.
+- Keep private narration, reference videos, credentials and personal assets out of this public repository. For private media, require an explicitly configured private storage/upload route or a private repository before processing.
+- A passing smoke test proves only the tested scene and runner configuration. Inspect actual video frames and report artistic/animation limitations separately.
+
 The default approach is to build the complete video using code. Claude Code writes the application, procedural assets, Blender Python scripts, animation timelines, audio/subtitle processing, render automation, and tests. Blender performs 3D rendering; FFmpeg performs media assembly. Do not assume a paid cloud AI video API is required.
 
 Create real animated shots with moving 3D geometry, rigs, objects, camera, and environments—not a slideshow. Static images with pan/zoom are not animation. A code-first Blender pipeline is the default. Optional external AI providers are enhancements only and require user approval if paid.
@@ -29,25 +43,23 @@ Before creating a new video, follow `docs/INTERACTIVE_INTAKE_AND_PRODUCTION.md`.
 - Ask one concise question at a time. Remember answers within the current task; never repeat answered questions. If a ZIP contains multiple assets, inspect its contents before asking for anything.
 - After intake, take ownership of script timing, storyboard, characters, environments, animation, sound design, captions, rendering, and QA. Ask only when a genuine blocker or user approval is needed.
 
-## Bundled executable runtime — run it, do not only describe it
+## Bundled cloud runtime — use it, do not only describe it
 
-This skill now ships executable helpers in runtime/. When a user starts a video task in Claude Code, use the terminal to run the bundled runtime from the skill directory before inventing a new setup:
+This repository includes executable Blender/Python helpers and a GitHub Actions cloud-render workflow.
 
-1. Run `python runtime/animation_runtime.py inspect` (Windows may use `py`). Read the actual report; do not assume Blender or FFmpeg is installed.
-2. If all three tools are available, run `python runtime/animation_runtime.py smoke-test`. This must create a real animated 3D Blender scene, render frames, encode an MP4 with FFmpeg, and validate it with ffprobe. Inspect the produced MP4 and report the real result.
-3. If a dependency is missing, identify OS and install route; ask before using administrator privileges, large downloads, or changing system configuration. Support BLENDER_BIN, FFMPEG_BIN and FFPROBE_BIN overrides.
-4. Do not pip-install bpy into arbitrary system Python as the default. Use Blender's own bundled Python for bpy scripts and invoke Blender in background mode with --python and --python-exit-code 1.
-5. The smoke test is only a technical integration check. It is not a finished story engine, not a production character benchmark, and not permission to reuse its sample scene as every story.
-6. For the actual user story, Claude Code must author a new story-specific Blender scene/asset code from the approved storyboard: unique world, set dressing, characters, props, physically coherent actions, camera, lighting and facial acting. Keep reusable rig/animation utilities separate from story data.
-7. Use a real preview render and inspect it. Fix defects before final render. Assemble audio/captions/music/SFX and validate the final export with ffprobe. In Claude chat, present the preview/result file paths and attach or surface the actual MP4 using the host's supported file workflow; never claim an attachment exists if it was not produced.
+1. In Claude Code Web, inspect the connected GitHub repository, current branch, working tree, existing application and workflow permissions. Do not inspect or depend on the user's Windows 7 rendering capabilities.
+2. Use `.github/workflows/cloud-render.yml` for production rendering. It installs Blender and FFmpeg on Ubuntu, validates inputs, checks runner resources, renders real Blender frames per shot, assembles the MP4, validates it with ffprobe, and uploads artifacts.
+3. Use `runtime/animation_runtime.py inspect` and `smoke-test` only in a compatible cloud runner or a developer's supported machine. Never tell this user that local Windows 7 Blender setup is required.
+4. For each story, create a story-specific storyboard and use the existing renderer. Render a low-resolution preview first; inspect it before spending more runner time on final quality.
+5. Download the MP4, `final_report.json`, progress record and logs from the GitHub Actions artifact. Do not claim a file exists until the artifact is present and its metadata is checked.
 
-The bundled runtime commands and requirements are documented in runtime/README.md. The Blender API's supported headless pattern is documented by Blender itself: `blender --background --python script.py`. See https://docs.blender.org/api/current/info_tips_and_tricks.html and https://docs.blender.org/api/current/info_advanced_blender_as_bpy.html.
+The cloud workflow's default settings are preview values. Full HD/30 FPS or Cycles renders must be selected intentionally and may exceed hosted-runner time, memory or disk limits. The workflow has a bounded timeout and seven-day artifact retention.
 
 ## First-use application implementation requirement
 
 This repository is a Claude Code skill/instruction package, not a prebuilt renderer. When installed into a user's working project, inspect that project and implement a real reusable local video-production application before claiming the workflow is ready. Follow `docs/APP_IMPLEMENTATION_SPEC.md` and `docs/CODE_FIRST_PIPELINE.md`.
 
-- Create working Python orchestration, Blender `bpy` scene generation, FFmpeg assembly, audio/transcription/timestamp handling, subtitle rendering, job persistence, preview/render/resume/validate commands, and automated tests.
+- Create working Python orchestration, Blender `bpy` scene generation, FFmpeg assembly, audio/transcription/timestamp handling, subtitle rendering, job persistence, preview/render/resume/validate commands, and automated tests. In Claude Code Web, run the renderer through GitHub Actions Ubuntu rather than on the user's Windows 7 PC.
 - Do not merely create placeholder directories, pseudocode, fake progress bars, mock renders, or a sample slideshow and call it complete.
 - Detect Blender, FFmpeg, Python, available hardware, fonts, audio tools, and dependencies. Provide a setup report and a real smoke test.
 - Keep the app modular and story data separate from rendering code. Validate storyboard data against a schema.
@@ -109,10 +121,10 @@ Avoid contradictory instructions, overloaded action lists, and unnecessary style
 
 ## Tooling and provider rules
 
-- Prefer Blender + bpy, Python, and FFmpeg/ffprobe for the complete local pipeline.
+- Prefer Blender + bpy, Python, and FFmpeg/ffprobe for the complete cloud pipeline in Claude Code Web.
 - Inspect official documentation for tools and libraries before integration.
 - Do not add cloud APIs by default. If an optional AI image/video/TTS provider would materially improve a result, explain capability, pricing, limits, and required credentials; obtain approval before paid usage.
-- Keep optional providers behind adapters so the local pipeline remains usable without them.
+- Keep optional providers behind adapters so the Blender cloud pipeline remains usable without them.
 - Keep secrets in environment variables; provide .env.example with names only.
 - Do not expose keys in logs, UI, commits, or generated reports.
 - Distinguish implemented, tested, mocked, and pending functionality.
@@ -255,15 +267,11 @@ The video generator must handle arbitrary stories, not just the reference exampl
 Reuse only general-purpose systems (camera, lighting, animation utilities, render, audio, captions, QA). Generate story-specific characters/subjects, environments, props, actions and visual direction for every new project. Never reuse the diagnostic smoke-test scene as the user's story. Read docs/APP_IMPLEMENTATION_SPEC.md section 12 and pass its cross-genre acceptance suite before claiming the engine is universal.
 
 
-## Execute the bundled story renderer
+## Execute the cloud story renderer
 
-For a user-approved story, create a project-specific storyboard JSON using the structure in `templates/storyboard.universal.example.json`. Do not copy its sample scene as the finished story. Then execute the actual pipeline from the skill directory:
+For a user-approved story, create a project-specific storyboard JSON using `templates/storyboard.universal.example.json`; do not copy its sample scene as the finished story. In Claude Code Web, run `.github/workflows/cloud-render.yml` through GitHub Actions **Actions → Cloud Blender Video Render → Run workflow**. Supply the storyboard path, output name, format, engine, resolution, FPS, samples, and optional repository-relative audio/caption paths. For private audio/reference media, do not commit it to this public repository; first configure an approved private storage or private-repository workflow.
 
-- Shorts: `python runtime/render_story.py --storyboard projects/<id>/storyboard.json --output projects/<id>/final.mp4 --format shorts`
-- Long: `python runtime/render_story.py --storyboard projects/<id>/storyboard.json --output projects/<id>/final.mp4 --format long`
-- With supplied audio: add `--voice <path>`; optionally add `--music <path>` and `--captions <path-to-srt>`.
-
-The renderer invokes Blender once per shot, renders real PNG frames, encodes each shot with FFmpeg, concatenates shots, optionally burns SRT captions and muxes voice/music, then validates the final MP4 with ffprobe. Inspect Blender logs, previews and final video. Do not report success if any shot fails or the output file/metadata is missing.
+The workflow invokes Blender once per shot, renders real PNG frames, encodes each shot with FFmpeg, concatenates shots, optionally burns SRT captions and muxes voice/music, validates the final MP4 with ffprobe, and uploads the artifact. Inspect the MP4 and report actual metadata. Do not report success if any shot fails or the artifact/metadata is missing.
 
 The bundled renderer currently provides a procedural 3D foundation (primitive meshes, subject assemblies, transform keyframes, camera keyframes and lighting). For professional story-specific output, add suitable detailed models, rigs, facial performance, contact-aware interactions, scene-specific textures and refined acting. Do not pass off the primitive diagnostic look as finished cinematic quality. The user's supplied audio remains the timing/master track; plan shot durations against its actual duration.
 
