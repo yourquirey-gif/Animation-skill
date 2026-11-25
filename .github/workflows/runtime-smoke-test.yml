@@ -25,7 +25,11 @@ jobs:
           sudo apt-get install -y blender ffmpeg libegl1 libgl1 libegl-mesa0 libglx-mesa0 libgl1-mesa-dri
       - name: Compile Python orchestration scripts
         run: |
-          python3 -m py_compile runtime/animation_runtime.py runtime/render_story.py runtime/story_scene.py runtime/align_visemes.py
+          python3 -m py_compile runtime/animation_runtime.py runtime/render_story.py runtime/story_scene.py runtime/align_visemes.py runtime/asset_catalog.py
+      - name: Validate reusable asset catalog
+        run: |
+          python3 runtime/asset_catalog.py validate
+          python3 -m unittest tests.test_asset_catalog tests.test_align_visemes
       - name: Inspect installed tools
         run: |
           python3 runtime/animation_runtime.py inspect
@@ -34,10 +38,21 @@ jobs:
           python3 runtime/animation_runtime.py smoke-test --workdir "$RUNNER_TEMP/blender-smoke" --width 240 --height 426 --fps 12 --frames 24
       - name: Render three structurally different stories
         run: |
-          set -e
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/story-fixtures"
           for storyboard in tests/fixtures/*.json; do
             name="$(basename "$storyboard" .json)"
-            python3 runtime/render_story.py --storyboard "$storyboard" --output "$RUNNER_TEMP/$name.mp4" --format shorts --width 240 --height 426 --fps 12 --samples 8
-            test -s "$RUNNER_TEMP/$name.mp4"
-            ffprobe -v error -show_entries format=duration:stream=codec_name,width,height -of json "$RUNNER_TEMP/$name.mp4"
+            python3 runtime/render_story.py --storyboard "$storyboard" --output "$RUNNER_TEMP/story-fixtures/$name.mp4" --format shorts --width 240 --height 426 --fps 12 --samples 8 --retries 1 --progress-file "$RUNNER_TEMP/story-fixtures/$name-progress.json"
+            test -s "$RUNNER_TEMP/story-fixtures/$name.mp4"
+            ffprobe -v error -show_entries format=duration:stream=codec_name,width,height -of json "$RUNNER_TEMP/story-fixtures/$name.mp4"
           done
+      - name: Upload Blender smoke and cross-genre render artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: blender-cross-genre-smoke-renders
+          path: |
+            ${{ runner.temp }}/blender-smoke/
+            ${{ runner.temp }}/story-fixtures/
+          if-no-files-found: warn
+          retention-days: 7
