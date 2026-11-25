@@ -184,6 +184,16 @@ def apply_keyframes(obj, keyframes, fps, total_frames):
                 point.interpolation = "BEZIER"
 
 
+def find_armature(root):
+    stack = list(root.children)
+    while stack:
+        obj = stack.pop()
+        stack.extend(list(obj.children))
+        if obj.type == "ARMATURE":
+            return obj
+    return None
+
+
 def apply_rig_animation(root, pose_keyframes, facial_keyframes, fps, total_frames):
     """Animate imported armature bones and mesh shape keys using story timing."""
     armatures = []
@@ -328,15 +338,44 @@ def main():
             args.fps,
             scene.frame_end,
         )
+    subject_roots = {}
+    subject_rigs = {}
     for item in shot.get("subjects", []):
-        root = bpy.data.objects.new(str(item.get("name", "Subject")) + "_Root", None)
+        subject_name = str(item.get("name", "Subject"))
+        if subject_name in subject_roots:
+            raise ValueError("Duplicate subject name in shot: " + subject_name)
+        root = bpy.data.objects.new(subject_name + "_Root", None)
         scene.collection.objects.link(root)
         for part in item.get("parts", []):
             obj = create_mesh(part, cache, base_dir=story_path.parent)
             obj.parent = root
         apply_keyframes(root, item.get("keyframes", []), args.fps, scene.frame_end)
+        apply_rig_animation(
+            root,
+            item.get("pose_keyframes", []),
+            item.get("facial_keyframes", []),
+            args.fps,
+            scene.frame_end,
+        )
+        subject_roots[subject_name] = root
+        subject_rigs[subject_name] = find_armature(root)
+
     for item in shot.get("props", []):
         obj = create_mesh(item, cache, base_dir=story_path.parent)
+        attachment = item.get("attach_to")
+        if attachment:
+            subject_name = str(attachment.get("subject", ""))
+            bone_name = str(attachment.get("bone", ""))
+            rig = subject_rigs.get(subject_name)
+            if rig is None:
+                raise ValueError("Prop attachment requires a rigged subject: " + subject_name)
+            if rig.data.bones.get(bone_name) is None:
+                raise ValueError("Attachment bone '" + bone_name + "' not found on subject " + subject_name)
+            obj.parent = rig
+            obj.parent_type = "BONE"
+            obj.parent_bone = bone_name
+            obj.location = vector(attachment.get("offset"), [0, 0, 0])
+            obj.rotation_euler = vector(attachment.get("rotation"), [0, 0, 0])
         apply_keyframes(obj, item.get("keyframes", []), args.fps, scene.frame_end)
 
     build_camera(shot.get("camera", {}))
