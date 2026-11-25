@@ -246,3 +246,10 @@ For every Short, apply the following as a measurable production standard:
 - Voice must remain crisp and clearly louder than music; music and SFX must support rather than mask the story.
 - Finish with an accurate, intriguing title (aim under 50 characters when practical), restrained relevant hashtags, best thumbnail-frame suggestion, and one story-specific audience question.
 - Run the checklist before and after rendering. A failed critical item requires correction and re-render, or an explicit documented blocker—not a silent pass.
+
+
+## Genre-agnostic story generation — mandatory
+
+The video generator must handle arbitrary stories, not just the reference example or a hard-coded genre menu. Treat genre labels as hints, never as a finite allow-list. Infer the required subjects, body plans, locations, period, props, physics, action vocabulary, visual metaphors and tone from each individual story. A human story, animal story, vehicle story, science explainer, fantasy sequence, cooking tutorial, biography or abstract concept may require completely different 3D assets and animation logic.
+
+Reuse only general-purpose systems (camera, lighting, animation utilities, render, audio, captions, QA). Generate story-specific characters/subjects, environments, props, actions and visual direction for every new project. Never reuse the diagnostic smoke-test scene as the user's story. Read docs/APP_IMPLEMENTATION_SPEC.md section 12 and pass its cross-genre acceptance suite before claiming the engine is universal.
