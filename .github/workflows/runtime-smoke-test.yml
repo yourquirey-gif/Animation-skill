@@ -30,6 +30,8 @@ jobs:
           sudo apt-get install -y blender ffmpeg libegl1 libgl1 libegl-mesa0 libglx-mesa0 libgl1-mesa-dri
       - name: Test procedural terrain geometry inside Blender
         run: blender -b --python-exit-code 1 --python tests/blender/test_terrain.py
+      - name: Test procedural humanoid character generation inside Blender
+        run: blender -b --python-exit-code 1 --python tests/blender_character_smoke.py
       - name: Compile Python orchestration scripts
         run: |
           python3 -m py_compile runtime/animation_runtime.py runtime/render_story.py runtime/story_scene.py runtime/align_visemes.py runtime/asset_catalog.py
