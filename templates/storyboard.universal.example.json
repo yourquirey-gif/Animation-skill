@@ -1,0 +1,79 @@
+{
+  "project": {
+    "title": "A story-specific title",
+    "description": "Describe the actual story and its visual tone.",
+    "fps": 24,
+    "resolution": "shorts"
+  },
+  "shots": [
+    {
+      "id": "shot_01",
+      "duration_seconds": 3,
+      "environment": {
+        "world_color": [0.025, 0.03, 0.05],
+        "objects": [
+          {
+            "name": "Story-specific environment object",
+            "primitive": "cube",
+            "location": [0, 0, -0.5],
+            "scale": [12, 12, 0.5],
+            "material": {"color": [0.08, 0.12, 0.18], "roughness": 0.9}
+          }
+        ]
+      },
+      "subjects": [
+        {
+          "name": "Main subject",
+          "parts": [
+            {
+              "name": "Torso",
+              "primitive": "uv_sphere",
+              "location": [0, 0, 1.3],
+              "scale": [0.45, 0.3, 0.65],
+              "material": {"color": [0.8, 0.25, 0.08]}
+            },
+            {
+              "name": "Head",
+              "primitive": "uv_sphere",
+              "location": [0, 0, 2.15],
+              "scale": [0.35, 0.32, 0.38],
+              "material": {"color": [0.65, 0.38, 0.24]}
+            }
+          ],
+          "keyframes": [
+            {"time_seconds": 0, "location": [-0.5, 0, 0]},
+            {"time_seconds": 1.5, "location": [0, 0, 0.1]},
+            {"time_seconds": 3, "location": [0.5, 0, 0]}
+          ]
+        }
+      ],
+      "props": [
+        {
+          "name": "Story-specific prop",
+          "primitive": "cube",
+          "location": [0.8, 0, 1.6],
+          "scale": [0.2, 0.2, 0.4],
+          "material": {"color": [0.9, 0.65, 0.1], "metallic": 0.4},
+          "keyframes": [
+            {"time_seconds": 0, "location": [0.8, 0, 1.5]},
+            {"time_seconds": 1.5, "location": [0.8, 0, 2.0]},
+            {"time_seconds": 3, "location": [0.8, 0, 1.5]}
+          ]
+        }
+      ],
+      "camera": {
+        "location": [4, -8, 3.5],
+        "target": [0, 0, 1.2],
+        "lens": 50,
+        "keyframes": [
+          {"time_seconds": 0, "location": [4, -8, 3.5], "target": [0, 0, 1.2]},
+          {"time_seconds": 3, "location": [2, -6, 2.8], "target": [0, 0, 1.4]}
+        ]
+      },
+      "lighting": [
+        {"type": "AREA", "location": [2, -4, 6], "energy": 1000, "size": 4},
+        {"type": "AREA", "location": [-4, 2, 3], "energy": 600, "size": 3, "color": [0.3, 0.5, 1.0]}
+      ]
+    }
+  ]
+}
