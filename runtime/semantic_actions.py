@@ -50,16 +50,16 @@ def _pose(action, side="right", intensity=1.0):
         "nod": {"head": (0.22 * amount, 0.0, 0.0)},
         "shake_head": {"head": (0.0, 0.0, 0.24 * amount)},
         "surprised": {
-            "head": (-0.12 * amount, 0.0, 0.0),
-            "mouth": (0.0, 0.0, 0.0),
+            "head": {"rotation": [-0.12 * amount, 0.0, 0.0]},
+            "mouth": {"scale": [1.0, 1.0, 2.4]},
         },
         "sad": {
             "head": (0.22 * amount, 0.0, 0.0),
             "upper_arm_left": (0.12 * amount, 0.0, 0.0),
             "upper_arm_right": (0.12 * amount, 0.0, 0.0),
         },
-        "talk": {"mouth": (0.0, 0.0, 0.0)},
-        "idle_breath": {"torso": (0.0, 0.0, 0.0)},
+        "talk": {"mouth": {"scale": [1.0, 1.0, 1.8]}},
+        "idle_breath": {"torso": {"scale": [1.015, 1.0, 1.01]}},
     }
     if action not in poses:
         raise ValueError(
@@ -96,7 +96,7 @@ def compile_performance(events, fps, total_frames):
     for start, duration, pose, index in normalized:
         peak = start + duration * 0.45
         end = start + duration
-        for part, rotation in pose.items():
+        for part, transform in pose.items():
             previous_end = occupied.get(part, -1.0)
             if start < previous_end - 1e-6:
                 raise ValueError(
@@ -105,10 +105,15 @@ def compile_performance(events, fps, total_frames):
                 )
             occupied[part] = end
             track = tracks.setdefault(part, [])
+            if isinstance(transform, dict):
+                channel, value = next(iter(transform.items()))
+            else:
+                channel, value = "rotation", list(transform)
+            neutral = [1.0, 1.0, 1.0] if channel == "scale" else [0.0, 0.0, 0.0]
             track.extend([
-                {"time_seconds": round(start, 4), "rotation": [0.0, 0.0, 0.0]},
-                {"time_seconds": round(peak, 4), "rotation": list(rotation)},
-                {"time_seconds": round(end, 4), "rotation": [0.0, 0.0, 0.0]},
+                {"time_seconds": round(start, 4), channel: list(neutral)},
+                {"time_seconds": round(peak, 4), channel: list(value)},
+                {"time_seconds": round(end, 4), channel: list(neutral)},
             ])
     for track in tracks.values():
         track.sort(key=lambda item: item["time_seconds"])
