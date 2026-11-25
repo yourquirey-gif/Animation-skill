@@ -483,14 +483,20 @@ def main():
     scene = bpy.context.scene
     available_engines = scene.render.bl_rna.properties["engine"].enum_items.keys()
     requested_engine = os.environ.get("ANIMATION_RENDER_ENGINE")
-    if requested_engine and requested_engine in available_engines:
+    if requested_engine:
+        if requested_engine not in available_engines:
+            raise RuntimeError(
+                "Requested Blender render engine '" + requested_engine +
+                "' is not available in this Blender build. Available engines: " +
+                ", ".join(available_engines)
+            )
         scene.render.engine = requested_engine
     elif "BLENDER_EEVEE_NEXT" in available_engines:
         scene.render.engine = "BLENDER_EEVEE_NEXT"
     elif "BLENDER_EEVEE" in available_engines:
         scene.render.engine = "BLENDER_EEVEE"
     else:
-        scene.render.engine = "BLENDER_WORKBENCH"
+        raise RuntimeError("No supported Eevee render engine is available; refusing silent Workbench downgrade.")
     eevee = getattr(scene, "eevee", None)
     if eevee is not None and hasattr(eevee, "taa_render_samples"):
         eevee.taa_render_samples = max(8, args.samples)
