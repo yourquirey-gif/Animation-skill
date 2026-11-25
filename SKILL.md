@@ -167,3 +167,17 @@ Whenever the requested output is a YouTube Short or vertical short-form story, r
 - Plan a natural loop when appropriate, plus an accurate title, restrained hashtags, thumbnail frame suggestion, and story-related audience question.
 - Render and inspect the opening hook preview before rendering the entire Short. A static title card or slideshow does not pass.
 - If the user supplied a reference video, inspect its opening and use its hook technique as guidance. Never claim to have inspected unavailable reference media or copy protected footage, characters, dialogue, or music.
+
+
+## Story-specific 3D art direction, camera, captions, and acting
+
+For every new story, follow the extended requirements in docs/SHORTS_RETENTION_WORKFLOW.md. These requirements are mandatory:
+- Design a fresh, story-specific 3D environment/background for every story. Do not reuse another story's world by default. Different locations within a story need coherent separate 3D sets.
+- Keep the approved recurring character's identity, face, proportions, costume, palette, and defining details consistent. Change the world, props, camera language, lighting, and set dressing to fit each new story without redesigning the character.
+- Build all story elements other than the character as 3D scene elements wherever practical: terrain, buildings, sky, objects, vehicles, furniture, vegetation, and props. Never substitute a flat background or slideshow for a 3D environment.
+- Design lighting per scene and emotion using motivated key/fill/rim and practical lights, readable faces, contact shadows, and controlled contrast. Use atmospheric effects only when appropriate.
+- Plan camera shot size, lens, angle, movement, focus, composition, axis, and eyelines for every shot. Use intentional close-ups and reaction shots.
+- For the opening hook, make a story-specific strongest visual idea. A brief controlled camera shake may accent a meaningful impact, shock, near miss, or reveal, inspired by the user's second reference video. Keep shake short and readable; never shake continuously. Inspect the actual reference before claiming exact matching.
+- Animate captions word by word, synchronized to actual voice timestamps. Highlight the active/important word tastefully; keep text readable, accurate, centered in a safe zone, and clear of faces and platform UI.
+- Animate high-quality facial emotions and reactions: eyes, brows, mouth, head, hands, posture, recoil, anticipation, and follow-through. Use facial rigs/shape keys and lip sync where applicable. Keep the character recognizable and consistent.
+- For every new story, create fresh hook alternatives, environment concept, lighting/camera tests, caption timing preview, and acting close-up before full rendering.
