@@ -15,6 +15,32 @@ Create real animated shots with moving 3D geometry, rigs, objects, camera, and e
 
 Never promise exact replication of a reference. Aim for the closest achievable style and clearly report visual gaps, render time, hardware constraints, and technical limits.
 
+## Mandatory interactive intake and operating modes
+
+Before creating a new video, follow `docs/INTERACTIVE_INTAKE_AND_PRODUCTION.md`. This is the required conversation flow, not optional guidance.
+
+- First identify the input mode: (A) develop an idea, (B) user supplies a script, or (C) user supplies recorded voice/audio.
+- If the user uploads audio directly, detect that input and begin audio-led analysis immediately. Do not restart the intake by asking whether they want an idea or script.
+- For idea mode, ask for the topic only if absent; research/verify factual stories where needed, propose a premise, then write the complete script.
+- For script mode, accept the user's script as source material; fact-check factual claims and preserve intended meaning. Ask before making material story changes.
+- For audio mode, inspect duration, language, speech, pauses, transcript, and word/phrase timestamps. Treat the supplied recording as the narration master; do not rewrite or replace it unless asked. Build visuals to fit the actual recording, not the reverse.
+- After idea/script input is established, ask for duration (30 seconds, 60 seconds, or custom) and then format (YouTube Shorts 9:16 or YouTube Long 16:9). If user already specified either, do not ask again.
+- For direct audio input, infer duration from the actual file. Ask only the missing output format (Shorts or Long) unless the user's context already determines it. Never ask for an arbitrary duration that conflicts with the supplied audio.
+- Ask one concise question at a time. Remember answers within the current task; never repeat answered questions. If a ZIP contains multiple assets, inspect its contents before asking for anything.
+- After intake, take ownership of script timing, storyboard, characters, environments, animation, sound design, captions, rendering, and QA. Ask only when a genuine blocker or user approval is needed.
+
+## First-use application implementation requirement
+
+This repository is a Claude Code skill/instruction package, not a prebuilt renderer. When installed into a user's working project, inspect that project and implement a real reusable local video-production application before claiming the workflow is ready. Follow `docs/APP_IMPLEMENTATION_SPEC.md` and `docs/CODE_FIRST_PIPELINE.md`.
+
+- Create working Python orchestration, Blender `bpy` scene generation, FFmpeg assembly, audio/transcription/timestamp handling, subtitle rendering, job persistence, preview/render/resume/validate commands, and automated tests.
+- Do not merely create placeholder directories, pseudocode, fake progress bars, mock renders, or a sample slideshow and call it complete.
+- Detect Blender, FFmpeg, Python, available hardware, fonts, audio tools, and dependencies. Provide a setup report and a real smoke test.
+- Keep the app modular and story data separate from rendering code. Validate storyboard data against a schema.
+- Implement graceful missing-dependency handling and clearly explain installation steps. Never silently switch to still images if Blender is unavailable.
+- Build the first usable vertical/horizontal end-to-end sample with actual moving 3D geometry, real audio, subtitles, and ffprobe validation before declaring the app operational.
+- If environment limits prevent implementation or rendering, complete the parts that can be completed, list exact blockers and untested items, and do not claim success.
+
 ## Mandatory code-first production workflow
 
 1. Inspect the project, available assets, reference media, OS, CPU/GPU/RAM/disk, Python, Blender, FFmpeg/ffprobe, fonts, and audio tools before changing anything.
@@ -190,3 +216,19 @@ Read docs/REFERENCE_VIDEO_ANALYSIS.md before creating videos based on the two su
 - references/1000328717.mp4
 
 The repository currently contains the reference instructions and analysis, not the MP4 binaries. Verify both files exist before claiming full reference inspection. If either is missing, tell the user exactly which file needs to be copied into references/. Inspect the full videos, especially the first three seconds, audio, caption timing, facial acting, camera language, and the second clip's opening shake. Do not guess unverified details from the sampled-frame description.
+
+
+## Strict Shorts retention rules from the user's checklist
+
+For every Short, apply the following as a measurable production standard:
+- Target 25–40 seconds during early format testing unless the selected duration or story requires otherwise. A requested 30/60-second duration takes precedence; do not silently override it.
+- Frame 1 must contain an already-readable dynamic action or striking visual; no fade-in, title card, greeting, channel intro, or slow establishing shot.
+- Establish a clear unanswered curiosity question in the first five seconds and resolve it with a satisfying, truthful reveal in the final five seconds.
+- Design at least one meaningful escalation, clue, reversal, surprise, or mini-reveal through the middle. Do not rely on one reveal only at the end; maintain rising curiosity throughout.
+- Plan a natural loop where it genuinely fits. The final line/image/sound may lead back to the opening, but never force an incoherent loop.
+- As a default edit rhythm, introduce a new shot, angle, composition, meaningful action, or relevant insert every 1.5–2.5 seconds. Track this in the timeline and flag gaps longer than 2.5 seconds for review. A continuous shot may exceed this only when it contains clear evolving action/camera movement and the story benefits from it.
+- Remove dead air, unnecessary breaths, pauses, repeated information, and empty movement without making speech unnatural.
+- Use dynamic, high-contrast captions aligned to actual speech timestamps. Keep them clear of faces, hands, important props, right-side engagement controls, and bottom UI/title zones.
+- Voice must remain crisp and clearly louder than music; music and SFX must support rather than mask the story.
+- Finish with an accurate, intriguing title (aim under 50 characters when practical), restrained relevant hashtags, best thumbnail-frame suggestion, and one story-specific audience question.
+- Run the checklist before and after rendering. A failed critical item requires correction and re-render, or an explicit documented blocker—not a silent pass.
