@@ -161,7 +161,7 @@ jobs:
           [[ "$SAMPLES" =~ ^[0-9]+$ ]] && [ "$SAMPLES" -ge 1 ] && [ "$SAMPLES" -le 256 ]
           echo "Validated output profile: ${WIDTH}x${HEIGHT} @ ${FPS} FPS, samples=${SAMPLES}"
 
-      - name: Compile orchestration and validate asset catalog
+      - name: Compile code, run unit tests, and validate asset catalog
         run: |
           python3 -m py_compile runtime/animation_runtime.py runtime/render_story.py runtime/story_scene.py runtime/align_visemes.py runtime/asset_catalog.py runtime/rig_retarget.py runtime/semantic_actions.py
           python3 -m unittest discover -s tests -p 'test_*.py' -v
