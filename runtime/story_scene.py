@@ -147,6 +147,50 @@ def create_mesh(spec, cache, collection=None, base_dir=None):
             for armature in armatures:
                 armature.animation_data_create()
                 armature.animation_data.action = action
+
+        # Optional separate animation asset -> target character retarget.
+        # Explicit armature/action names and bone map prevent unsafe guessing.
+        retarget = spec.get("retarget")
+        if retarget:
+            animation_path = Path(retarget["animation_file"])
+            if not animation_path.is_absolute():
+                animation_path = (Path(base_dir or Path.cwd()) / animation_path).resolve()
+            if not animation_path.is_file():
+                raise FileNotFoundError("Retarget animation file not found: " + str(animation_path))
+            target_armatures = [o for o in imported if o.type == "ARMATURE"]
+            if len(target_armatures) != 1:
+                raise ValueError("Retarget target model must contain exactly one armature; found %d" % len(target_armatures))
+            before_animation = set(bpy.data.objects)
+            animation_suffix = animation_path.suffix.lower()
+            if animation_suffix in {".glb", ".gltf"}:
+                bpy.ops.import_scene.gltf(filepath=str(animation_path))
+            elif animation_suffix == ".fbx":
+                bpy.ops.import_scene.fbx(filepath=str(animation_path))
+            else:
+                raise ValueError("Retarget animation must be .glb, .gltf or .fbx")
+            source_objects = [o for o in bpy.data.objects if o not in before_animation]
+            source_armatures = [o for o in source_objects if o.type == "ARMATURE"]
+            source_armature_name = retarget.get("source_armature")
+            source_armature = next((o for o in source_armatures if o.name == source_armature_name), None) if source_armature_name else (source_armatures[0] if len(source_armatures) == 1 else None)
+            if source_armature is None:
+                raise ValueError("Set retarget.source_armature to an exact imported source armature name")
+            source_action_name = retarget.get("source_action")
+            source_action = bpy.data.actions.get(str(source_action_name)) if source_action_name else source_armature.animation_data.action if source_armature.animation_data else None
+            if source_action is None:
+                raise ValueError("Set retarget.source_action to an exact action name from the animation asset")
+            from rig_retarget import retarget_action
+            result = retarget_action(
+                source_armature, target_armatures[0], source_action,
+                retarget.get("bone_map", []),
+                frame_start=retarget.get("frame_start"),
+                frame_end=retarget.get("frame_end"),
+                copy_root_motion=bool(retarget.get("copy_root_motion", False)),
+                root_translation_scale=float(retarget.get("root_translation_scale", 1.0)),
+                action_name=str(retarget.get("action_name", "Story_Retargeted_" + name)),
+            )
+            print("RETARGET_RESULT", result, flush=True)
+            for source_object in source_objects:
+                bpy.data.objects.remove(source_object, do_unlink=True)
         return root
     if primitive == "terrain":
         terrain = spec.get("terrain", {})
