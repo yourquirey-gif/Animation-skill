@@ -1,0 +1,200 @@
+{
+  "project": {
+    "title": "Owl at Dusk",
+    "fps": 12,
+    "resolution": "shorts"
+  },
+  "shots": [
+    {
+      "id": "takeoff",
+      "duration_seconds": 2,
+      "environment": {
+        "world_color": [
+          0.02,
+          0.025,
+          0.07
+        ],
+        "objects": [
+          {
+            "name": "Branch",
+            "primitive": "cylinder",
+            "location": [
+              0,
+              0,
+              0.4
+            ],
+            "scale": [
+              0.12,
+              2.8,
+              0.12
+            ],
+            "rotation": [
+              0,
+              1.57,
+              0
+            ],
+            "material": {
+              "color": [
+                0.22,
+                0.1,
+                0.04
+              ]
+            }
+          }
+        ]
+      },
+      "subjects": [
+        {
+          "name": "Owl",
+          "parts": [
+            {
+              "name": "Body",
+              "primitive": "uv_sphere",
+              "location": [
+                0,
+                0,
+                1.1
+              ],
+              "scale": [
+                0.42,
+                0.32,
+                0.55
+              ],
+              "material": {
+                "color": [
+                  0.35,
+                  0.2,
+                  0.12
+                ]
+              }
+            },
+            {
+              "name": "Head",
+              "primitive": "uv_sphere",
+              "location": [
+                0,
+                0,
+                1.72
+              ],
+              "scale": [
+                0.36,
+                0.34,
+                0.34
+              ],
+              "material": {
+                "color": [
+                  0.48,
+                  0.3,
+                  0.16
+                ]
+              }
+            },
+            {
+              "name": "LeftWing",
+              "primitive": "uv_sphere",
+              "location": [
+                -0.42,
+                0,
+                1.15
+              ],
+              "scale": [
+                0.16,
+                0.12,
+                0.42
+              ],
+              "rotation": [
+                0,
+                0,
+                -0.35
+              ],
+              "material": {
+                "color": [
+                  0.25,
+                  0.13,
+                  0.08
+                ]
+              }
+            },
+            {
+              "name": "RightWing",
+              "primitive": "uv_sphere",
+              "location": [
+                0.42,
+                0,
+                1.15
+              ],
+              "scale": [
+                0.16,
+                0.12,
+                0.42
+              ],
+              "rotation": [
+                0,
+                0,
+                0.35
+              ],
+              "material": {
+                "color": [
+                  0.25,
+                  0.13,
+                  0.08
+                ]
+              }
+            }
+          ],
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 1,
+              "location": [
+                0,
+                0,
+                0.7
+              ]
+            },
+            {
+              "time_seconds": 2,
+              "location": [
+                0.4,
+                0,
+                1.4
+              ]
+            }
+          ]
+        }
+      ],
+      "camera": {
+        "location": [
+          4,
+          -7,
+          3
+        ],
+        "target": [
+          0,
+          0,
+          1.4
+        ],
+        "lens": 50
+      },
+      "lighting": [
+        {
+          "type": "AREA",
+          "location": [
+            1,
+            -4,
+            5
+          ],
+          "energy": 1000,
+          "size": 4
+        }
+      ]
+    }
+  ]
+}
