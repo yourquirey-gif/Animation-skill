@@ -615,11 +615,6 @@ def create_stylized_humanoid(spec, cache, root, fps, total_frames):
                 obj = parts[name]
                 obj.rotation_euler.x = math.sin(phase) * amplitude * sign
                 obj.keyframe_insert(data_path="rotation_euler", frame=frame)
-        for obj in parts.values():
-            if obj.animation_data and obj.animation_data.action:
-                for fc in obj.animation_data.action.fcurves:
-                    for key in fc.keyframe_points:
-                        key.interpolation = "BEZIER"
     return parts
 
 
@@ -689,7 +684,7 @@ def main():
         if item.get("asset_file"):
             model_root = create_mesh(item, cache, base_dir=story_path.parent)
             model_root.parent = root
-        elif item.get("character", {}).get("type") == "stylized_humanoid":
+        elif (item.get("character") or {}).get("type") == "stylized_humanoid":
             create_stylized_humanoid(item, cache, root, args.fps, scene.frame_end)
         else:
             for part in item.get("parts", []):
