@@ -15,7 +15,7 @@ def cues_to_keyframes(payload):
     for cue in cues:
         start, end = float(cue["start"]), float(cue["end"])
         label = str(cue["value"]).upper()
-        if start < 0 or end < start or label not in set("ABCDFX"):
+        if start < 0 or end < start or label not in set("ABCDEF X".replace(" ", "")):
             raise ValueError("Invalid Rhubarb cue: " + repr(cue))
         if previous is not None and start < previous:
             raise ValueError("Rhubarb cues must be ordered and non-overlapping")
