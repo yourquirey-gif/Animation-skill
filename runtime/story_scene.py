@@ -13,6 +13,11 @@ import sys
 import time
 from pathlib import Path
 
+# Blender may execute this file without adding its containing folder to sys.path.
+# Register the runtime directory so shared helpers (asset_catalog, semantic_actions,
+# rig_retarget) resolve consistently in headless cloud rendering.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
 import bpy
 from mathutils import Vector
 
