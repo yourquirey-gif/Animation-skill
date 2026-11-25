@@ -53,7 +53,7 @@ This repository includes executable Blender/Python helpers and a GitHub Actions 
 4. For each story, create a story-specific storyboard and use the existing renderer. Render a low-resolution preview first; inspect it before spending more runner time on final quality.
 5. Download the MP4, `final_report.json`, progress record and logs from the GitHub Actions artifact. Do not claim a file exists until the artifact is present and its metadata is checked.
 
-The cloud workflow's default settings are preview values. Full HD/30 FPS or Cycles renders must be selected intentionally and may exceed hosted-runner time, memory or disk limits. The workflow has a bounded timeout and seven-day artifact retention.
+The production workflow defaults to Full HD at 30 FPS: Shorts use 1080x1920 (9:16), while Long videos use 1920x1080 (16:9). Width and height can be overridden explicitly. Smoke tests remain low-resolution to conserve runner time. Full-HD rendering is CPU/software-rendered unless a GPU is actually detected; complex scenes may exceed hosted-runner time, memory or disk limits. The workflow has a bounded timeout and seven-day artifact retention.
 
 ## First-use application implementation requirement
 
