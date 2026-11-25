@@ -213,3 +213,23 @@ Before calling the application ready:
 9. QA report records pass/fail and actual evidence.
 
 Do not mark the app ready if any critical test is mocked or missing. If local resources prevent completion, explain what is implemented and what must be installed or supplied.
+
+
+## 12. Universal, genre-agnostic story compiler
+
+The story engine must not be built around one sample story, one historical event, or a fixed genre list. The input is arbitrary natural-language material. Genres such as documentary, mystery, history, fantasy, science, comedy, biography, emotional drama, action, nature, and children's stories are examples—not an exhaustive enum or routing limit.
+
+Required behavior:
+- Parse the actual story into entities, chronology, locations, time periods, props, goals, conflicts, emotional beats, and visual metaphors. Do not assume every story needs a human protagonist, a fight, a city, or a narrator.
+- Select visual treatment from the story itself. A space story may need spacecraft and zero gravity; a cooking story needs a kitchen, food and correct utensil interaction; an animal story needs appropriate animal anatomy and locomotion; an abstract explainer may use purpose-built 3D visual metaphors.
+- Generate a fresh visual bible and environment plan per project. Never use the technical smoke-test scene or previous story's world as a default production template.
+- Keep reusable systems generic: camera rigs, lighting controls, rig utilities, walk/run/talk cycles, object constraints, facial controls, render profiles, audio sync and QA. Keep character designs, locations, props, costumes, actions and art direction project-specific.
+- Support multiple character species/body plans and non-character subjects. Do not force a humanoid rig onto animals, vehicles, machines or abstract objects.
+- Every storyboard action must be executable as a sequence with start state, movement, contact/interaction, end state and timing. Validate physical plausibility and story continuity.
+- For unusual action, write a dedicated Blender Python action/asset module rather than mapping it to an unrelated generic preset.
+- Use procedural geometry as a foundation, not a quality ceiling. Use original project-specific meshes, materials, textures, rigging, set dressing and lighting. Disclose limitations where an asset cannot be created credibly.
+- Add regression fixtures from different genres and subject types. Passing one sample story is not proof of universal coverage.
+
+### Universal acceptance suite
+
+Before calling the story engine reusable, test at least three structurally different briefs: (1) a human character story with prop interaction and a location change; (2) a non-human subject story requiring species-appropriate movement and environment; (3) an explainer or abstract concept requiring custom 3D visual metaphors. For each, validate the storyboard, generated Blender scene, actual animated geometry, preview frames, audio/caption timeline and ffprobe-valid short MP4. Record what was rendered and inspected. These are engineering fixtures, not preset production styles.
