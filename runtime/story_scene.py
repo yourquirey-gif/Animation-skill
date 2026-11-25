@@ -348,9 +348,13 @@ def main():
             raise ValueError("Duplicate subject name in shot: " + subject_name)
         root = bpy.data.objects.new(subject_name + "_Root", None)
         scene.collection.objects.link(root)
-        for part in item.get("parts", []):
-            obj = create_mesh(part, cache, base_dir=story_path.parent)
-            obj.parent = root
+        if item.get("asset_file"):
+            model_root = create_mesh(item, cache, base_dir=story_path.parent)
+            model_root.parent = root
+        else:
+            for part in item.get("parts", []):
+                obj = create_mesh(part, cache, base_dir=story_path.parent)
+                obj.parent = root
         apply_keyframes(root, item.get("keyframes", []), args.fps, scene.frame_end)
         apply_rig_animation(
             root,
