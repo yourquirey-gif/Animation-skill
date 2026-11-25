@@ -41,7 +41,7 @@ Use Blender actions/NLA, armatures, exact bone mappings, IK constraints, shape k
 
 `.github/workflows/cloud-render.yml` supports manual dispatch with storyboard path, output name, format, render engine, dimensions, FPS, samples and optional narration/music/captions paths. The workflow validates paths and numeric bounds, reports runner resources, installs Blender/FFmpeg, validates the asset catalog, executes the real renderer, and uploads the MP4/report/logs for seven days.
 
-Default values are intentionally preview quality. Use full HD/30 FPS only after a preview and resource estimate. Jobs have timeouts; GitHub Actions minutes, disk, RAM, artifact size and retention are finite. No GPU or unlimited render capacity is assumed.
+Production defaults are Full HD at 30 FPS: Shorts 1080x1920 (9:16), Long 1920x1080 (16:9). Smoke tests remain low-resolution. Render a low-resolution preview first, inspect it, then run the production profile. The cloud workflow's push-triggered regression render uses the Shorts Full-HD/30 FPS defaults when no manual inputs are supplied. Jobs have timeouts; GitHub Actions minutes, disk, RAM, artifact size and retention are finite. No GPU or unlimited render capacity is assumed. A successful low-resolution smoke test does not validate Full-HD performance.
 
 ## Quality gates
 
