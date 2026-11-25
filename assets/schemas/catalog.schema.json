@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Animation Skill Asset Catalog",
+  "type": "object",
+  "required": ["schema_version", "assets"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "category", "name", "path", "format", "visual_style", "license", "source_url"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]+$"},
+          "category": {"type": "string"},
+          "name": {"type": "string"},
+          "path": {"type": "string"},
+          "format": {"enum": ["blend", "glb", "gltf", "fbx", "obj", "abc", "png", "jpg", "jpeg", "exr", "hdr", "wav", "mp3", "flac"]},
+          "visual_style": {"enum": ["stylized", "realistic", "neutral", "mixed"]},
+          "tags": {"type": "array", "items": {"type": "string"}},
+          "license": {"type": "string"},
+          "source_url": {"type": "string"},
+          "attribution": {"type": "string"},
+          "rig": {"type": ["object", "null"]},
+          "animation_compatibility": {"type": "array", "items": {"type": "string"}},
+          "preview": {"type": "string"}
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": false
+}
