@@ -203,3 +203,34 @@ Deliver:
 - QA report with known visual defects and limitations.
 
 A real code-generated animated video means rendered 3D frames with moving geometry, rigs, camera, and environment. A sequence of still images with transitions is not an acceptable substitute.
+
+
+## 16. Cinematic scene systems and reusable character identity
+
+### Per-story environment generation
+- Build a new environment brief for every story from its setting, genre, period, weather, time, emotional tone, and action.
+- Generate reusable Blender scene builders for terrain, architecture, sky, vegetation, roads, interiors, props, and atmospheric layers.
+- Every background should have real dimensional structure, lighting response, shadows, and camera parallax. Do not use a flat still image as the primary environment.
+- Reuse assets within a story only when continuity calls for it. Do not automatically reuse the previous story's location or palette.
+- Keep the approved character asset and identity locked across stories; allow environment and supporting assets to change independently.
+
+### Lighting and camera modules
+- Implement per-scene lighting configuration with key, fill, rim, practical sources, world illumination, shadow settings, and optional volumetrics.
+- Implement camera rigs supporting locked-off, dolly, tracking, orbit, pan, tilt, crane, handheld-style motion, focus target, and depth-of-field controls.
+- Store shot-level lens, camera height, angle, movement path, focus target, composition, and screen-direction data in the storyboard manifest.
+- Add continuity checks for axis, eyelines, character position, light direction, and environment geography.
+- Add a controlled impact-shake helper using brief decaying camera position/rotation offsets. Trigger it only for a designed impact, reveal, or shock beat. Expose amplitude, frequency, duration, and decay as shot parameters; preview before final use.
+
+### Character acting system
+- Extend the character rig with facial shape keys/controls for brows, eyelids, eye direction, mouth shapes, cheeks, and jaw where the model supports them.
+- Provide reusable expression/action presets, but keyframe them to the emotional context rather than applying one generic expression.
+- Support anticipation, reaction, recoil, breathing, gaze tracking, gestures, posture shifts, and follow-through.
+- Sync mouth shapes to actual dialogue timing when available.
+- Test expressions and reactions in close-up to catch identity drift, deformation artifacts, and lifeless acting.
+
+### Word-by-word caption renderer
+- Build a caption timing model from actual narration/dialogue timestamps, using forced alignment or verified manual timing.
+- Render one word at a time or phrase-by-phrase with a karaoke highlight, according to speech speed and readability.
+- Support Hindi, English, and Hinglish; preserve punctuation and Unicode font support.
+- Add configurable safe-zone margins for vertical video and avoid covering faces or critical action.
+- Preview fast speech sections frame by frame and validate caption onset, duration, overlap, clipping, contrast, and mobile readability.
