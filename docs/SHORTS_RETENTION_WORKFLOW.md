@@ -109,3 +109,71 @@ Before rendering, provide:
 5. Shot-by-shot storyboard with durations, actions, camera, captions, and audio cues.
 6. Planned title, description, hashtags, and optional pinned comment.
 Then implement the shots in the existing code-first Blender pipeline, render a hook preview first, inspect it, and only then render the complete Short. Report actual test/render results honestly.
+
+
+## 9. Cinematic 3D look, lighting, camera, and story-specific worlds
+
+These are mandatory requirements for every story, not optional polish.
+
+### Story-specific visual direction
+- Treat every new story as a fresh visual-production brief. Read its genre, location, time period, mood, weather, season, emotional arc, and action before designing its world.
+- Generate a distinct environment/background concept for each story. Do not reuse the previous story's background by default.
+- Build each environment as a coherent 3D world: terrain, ground, sky, buildings, vegetation, furniture, roads, mountains, props, atmosphere, and depth must be real 3D geometry or suitable 3D scene elements.
+- Reuse a background within the same story only when continuity requires the same location. Different locations in one story need their own designed 3D sets.
+- Only the approved recurring character design remains consistent across stories. Keep that character's identity, face, proportions, costume, colors, and recognizable details stable. The environment, props, lighting, camera language, color palette, and supporting set dressing may change to suit each story.
+- Build a per-story Visual Bible and Location Bible before final production. Include palette, materials, environment layout, weather, time of day, lighting mood, camera language, and recurring props.
+- Do not use a flat 2D background, static picture, or image slideshow as a substitute for the 3D world. If a specific element is genuinely best represented by a 2D texture (for example a label or distant matte detail), keep it integrated into an otherwise dimensional scene.
+
+### Lighting direction
+- Design lighting per scene and emotional beat, not one generic light setup for the whole video.
+- Use a deliberate key/fill/rim or motivated-light setup, contact shadows, ambient bounce, and practical lights where appropriate.
+- Create distinct moods such as warm/cold, soft/hard, high/low contrast, dawn/night, suspense/reveal, while preserving continuity within a location and time.
+- Ensure faces, eyes, and important actions remain readable. Avoid blown highlights, crushed shadows, flat lighting, and inconsistent light direction.
+- Use volumetric haze, god rays, fog, dust, rain, firelight, or atmospheric effects only when story-appropriate and render-performance allows.
+- Save lighting presets as reusable code/configuration, but choose and tune them separately for each story.
+
+### Camera direction
+- Plan camera language shot by shot: shot size, lens/focal length, angle, composition, depth of field, camera movement, focus target, and screen direction.
+- Use motivated push-ins, pull-backs, tracking, orbit, pan, tilt, handheld-style motion, low/high angles, and close-ups to express action or emotion.
+- Keep camera movement intentional and readable; avoid random shake or motion that hides the action.
+- Use close-ups for facial emotion and reactions, inserts for critical objects, and wide shots to establish spatial geography.
+- Maintain axis, eyelines, screen direction, character position, and geography across cuts unless a deliberate transition is planned.
+- Use physically coherent camera rigs and test camera motion at preview quality before final rendering.
+
+### Opening hook impact and frame shake
+- The opening must use a story-specific strongest hook, not a copied generic hook template. Generate multiple distinct visual/action ideas and choose the strongest honest match for that story.
+- For the first hook beat, consider a brief, controlled impact-style camera shake inspired by the user's second reference video. Apply only around a meaningful impact, sudden reveal, near miss, or shock; do not shake continuously.
+- Build shake as a camera transform animation (small position/rotation offsets with quick decay), optionally paired with a subtle impact sound and motion blur. Keep the subject and key action visible.
+- Provide a clean version and a shake version in the hook preview if the effect is uncertain. Tune amplitude, frequency, and duration to the actual reference after inspecting it; never invent exact settings from an unavailable clip.
+- Do not let shake cause nausea, obscure captions, create excessive blur, or reduce visual clarity. The shake must enhance the moment, not compensate for weak staging.
+
+## 10. Word-by-word animated captions
+- Captions must appear word by word, synchronized to the actual spoken audio timestamps—not as one full sentence appearing at once by default.
+- Use a karaoke-style timing model: reveal each spoken word at its speech onset, with sensible punctuation and phrase grouping. Keep already-spoken words visible only as long as needed for comfortable reading.
+- Emphasize the current or important word through scale, weight, highlight, color, or a brief pop animation. Avoid making every word flash or bounce excessively.
+- Use accurate speech-to-text alignment or manually verified timestamps. Do not guess timing when actual audio is available.
+- Keep captions centered in a consistent safe caption zone, but offset them as needed to avoid faces, hands, story-critical objects, and platform UI overlays.
+- Limit words per line and use high-contrast typography, readable stroke/shadow, consistent font hierarchy, and mobile-size previews.
+- Support Hindi, English, and mixed Hinglish text, including correct spelling, punctuation, and line breaks.
+- Inspect captions frame by frame at the opening hook and at least one fast dialogue section. Check timing, clipping, overlap, readability, and safe margins.
+
+## 11. Character acting, facial emotion, and reactions
+- Use expressive character acting in every relevant shot: facial expression, eye direction, brows, mouth shape, head movement, shoulders, hands, posture, and body weight must communicate the emotion.
+- Create a reusable facial rig/shape-key library for emotions such as fear, shock, joy, sadness, anger, confusion, suspicion, relief, pain, and determination, adapting the set to the character design.
+- Animate reactions to actual events: anticipation before impact, recoil after impact, eye tracking, flinch, breathing, hesitation, surprise, recovery, and emotional follow-through.
+- Do not leave characters with a blank face during dialogue or dramatic events. Avoid constant exaggerated expressions; match intensity to the story beat.
+- Use lip sync based on actual dialogue/audio timing where dialogue is present.
+- Preserve the exact approved character identity across all stories. Improve acting and animation quality without changing the character's signature face, silhouette, proportions, costume, or defining features.
+- Check hands, fingers, gaze, facial deformation, body balance, foot contact, and interaction with props in close-up previews.
+
+## 12. Mandatory per-story production gates
+Before full rendering of every new story:
+1. Create a fresh story-specific visual direction and 3D environment concept.
+2. Confirm the recurring character matches its approved character reference.
+3. Produce lighting and camera tests for the key locations.
+4. Produce at least three distinct story-specific opening hook concepts.
+5. Preview the selected hook with controlled impact shake when appropriate.
+6. Preview word-by-word captions against actual voice timing.
+7. Preview facial emotions and reactions in close-up.
+8. Inspect the opening and representative shots before full render.
+Do not carry over the previous story's environment, hook, camera setup, lighting, or caption timing without re-evaluating them.
