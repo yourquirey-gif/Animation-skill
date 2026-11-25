@@ -64,10 +64,7 @@ def retarget_action(source_armature, target_armature, source_action, bone_map,
     source_armature.animation_data_create()
     source_armature.animation_data.action = source_action
     target_armature.animation_data_create()
-    baked = target_armature.animation_data.action
-    target_action = source_action.copy()
-    target_action.name = action_name
-    target_action.fcurves.clear()
+    target_action = __import__("bpy").data.actions.new(action_name)
     target_armature.animation_data.action = target_action
 
     scene = __import__("bpy").context.scene
