@@ -84,7 +84,22 @@ def main():
     p.add_argument("--fps", type=int)
     p.add_argument("--samples", type=int, default=32)
     p.add_argument("--workdir", type=Path)
+    p.add_argument("--retries", type=int, default=1, help="Number of retries after the first failed shot render")
+    p.add_argument("--progress-file", type=Path, help="Write machine-readable job progress JSON")
     a = p.parse_args()
+    if a.retries < 0 or a.retries > 5:
+        raise ValueError("--retries must be between 0 and 5")
+
+    def progress(status, shot_index=None, shot_id=None, message=None):
+        payload = {"status": status, "completed_shots": len(shot_qc) if "shot_qc" in locals() else 0,
+                   "total_shots": len(shots), "current_shot_index": shot_index,
+                   "current_shot_id": shot_id, "message": message}
+        if a.progress_file:
+            a.progress_file.parent.mkdir(parents=True, exist_ok=True)
+            temporary = a.progress_file.with_suffix(a.progress_file.suffix + ".tmp")
+            temporary.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+            temporary.replace(a.progress_file)
+        print(json.dumps(payload), flush=True)
 
     storyboard = a.storyboard.resolve()
     data = json.loads(storyboard.read_text(encoding="utf-8"))
@@ -141,8 +156,25 @@ def main():
             "--output-dir", str(shot_dir), "--width", str(width), "--height", str(height),
             "--fps", str(fps), "--samples", str(a.samples)
         ]
-        print("Rendering shot", index + 1, "of", len(shots), "-", shot.get("id", index + 1))
-        run(blender_cmd, shot_dir / "blender.log")
+        shot_id = shot.get("id", index + 1)
+        progress("RENDERING", index + 1, shot_id)
+        print("Rendering shot", index + 1, "of", len(shots), "-", shot_id, flush=True)
+        last_error = None
+        for attempt in range(a.retries + 1):
+            for stale in shot_dir.glob("frame_*.png"):
+                stale.unlink()
+            try:
+                run(blender_cmd, shot_dir / ("blender_attempt_%02d.log" % (attempt + 1)))
+                last_error = None
+                break
+            except Exception as exc:
+                last_error = exc
+                print("Shot", shot_id, "attempt", attempt + 1, "failed:", str(exc), flush=True)
+                if attempt >= a.retries:
+                    progress("FAILED", index + 1, shot_id, str(exc))
+                    raise
+        if last_error:
+            raise last_error
         expected_frames = max(1, round(float(shot["duration_seconds"]) * fps))
         shot_qc.append({
             "shot_id": shot.get("id", index + 1),
@@ -156,7 +188,9 @@ def main():
         ]
         run(encode_cmd, shot_dir / "ffmpeg.log")
         segment_files.append(segment)
+        progress("SHOT_COMPLETE", index + 1, shot_id)
 
+    progress("ASSEMBLING")
     concat_file = work / "concat.txt"
     concat_file.write_text("".join("file '" + str(x).replace("'", "'\\''") + "'\n" for x in segment_files), encoding="utf-8")
     joined = work / "joined_video.mp4"
@@ -227,6 +261,7 @@ def main():
     }
     (work / "final_report.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
     print(json.dumps(report, indent=2))
+    progress("COMPLETE", message=str(output))
 
 
 if __name__ == "__main__":
