@@ -70,6 +70,11 @@ on:
         required: false
         default: ""
         type: string
+      auto_lip_sync:
+        description: "Run Rhubarb against the narration and animate characters with viseme_map shape keys"
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -95,7 +100,15 @@ jobs:
       - name: Install Blender, FFmpeg and headless graphics libraries
         run: |
           sudo apt-get update
-          sudo apt-get install -y blender ffmpeg libegl1 libgl1 libegl-mesa0 libglx-mesa0 libgl1-mesa-dri
+          sudo apt-get install -y blender ffmpeg unzip curl libegl1 libgl1 libegl-mesa0 libglx-mesa0 libgl1-mesa-dri
+          curl -fsSL -o /tmp/rhubarb.zip https://github.com/DanielSWolf/rhubarb-lip-sync/releases/download/v1.14.0/Rhubarb-Lip-Sync-1.14.0-Linux.zip
+          sudo mkdir -p /opt/rhubarb
+          sudo unzip -q /tmp/rhubarb.zip -d /opt/rhubarb
+          RHUBARB_BIN="$(find /opt/rhubarb -type f -name rhubarb -print -quit)"
+          test -n "$RHUBARB_BIN"
+          sudo chmod +x "$RHUBARB_BIN"
+          echo "$(dirname "$RHUBARB_BIN")" >> "$GITHUB_PATH"
+          echo "RHUBARB_BIN=$RHUBARB_BIN" >> "$GITHUB_ENV"
           blender --version
           ffmpeg -version | head -n 2
           ffprobe -version | head -n 1
@@ -119,6 +132,7 @@ jobs:
           VOICE_PATH: ${{ inputs.voice_path || '' }}
           MUSIC_PATH: ${{ inputs.music_path || '' }}
           CAPTIONS_PATH: ${{ inputs.captions_path || '' }}
+          AUTO_LIP_SYNC: ${{ inputs.auto_lip_sync || 'false' }}
           WIDTH: ${{ inputs.width || '' }}
           HEIGHT: ${{ inputs.height || '' }}
           FPS: ${{ inputs.fps || '30' }}
@@ -159,6 +173,7 @@ jobs:
           VOICE_PATH: ${{ inputs.voice_path || '' }}
           MUSIC_PATH: ${{ inputs.music_path || '' }}
           CAPTIONS_PATH: ${{ inputs.captions_path || '' }}
+          AUTO_LIP_SYNC: ${{ inputs.auto_lip_sync || 'false' }}
         run: |
           set -euo pipefail
           case "$FORMAT" in
@@ -177,6 +192,10 @@ jobs:
           [ -z "$VOICE_PATH" ] || args+=(--voice "$GITHUB_WORKSPACE/$VOICE_PATH")
           [ -z "$MUSIC_PATH" ] || args+=(--music "$GITHUB_WORKSPACE/$MUSIC_PATH")
           [ -z "$CAPTIONS_PATH" ] || args+=(--captions "$GITHUB_WORKSPACE/$CAPTIONS_PATH")
+          if [ "$AUTO_LIP_SYNC" = "true" ]; then
+            [ -n "$VOICE_PATH" ] || { echo "auto_lip_sync requires voice_path"; exit 2; }
+            args+=(--auto-lip-sync --rhubarb "$RHUBARB_BIN")
+          fi
           python3 runtime/render_story.py "${args[@]}"
 
       - name: Upload MP4, QA report and render logs
