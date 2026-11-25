@@ -30,7 +30,7 @@ def main():
     s.render.engine="BLENDER_EEVEE_NEXT"; s.eevee.taa_render_samples=16
     s.render.resolution_x=a.width; s.render.resolution_y=a.height; s.render.resolution_percentage=100
     s.render.fps=a.fps; s.frame_start=1; s.frame_end=a.frames
-    s.render.image_settings.file_format="PNG"; s.world.color=(0.025,0.025,0.04)
+    s.render.image_settings.file_format="PNG"; s.world=s.world or bpy.data.worlds.new("SmokeTest_World"); s.world.color=(0.025,0.025,0.04)
     ground=mat("Ground",(0.025,0.16,0.17)); skin=mat("Skin",(0.72,0.36,0.22))
     coat=mat("Coat",(0.85,0.31,0.075)); dark=mat("Boots",(0.035,0.045,0.065))
     gold=mat("Artifact",(0.95,0.63,0.16),0.35); rock=mat("Hills",(0.09,0.12,0.18))
