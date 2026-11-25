@@ -5,6 +5,7 @@ on:
       - "runtime/story_scene.py"
       - "runtime/align_visemes.py"
       - "tests/test_align_visemes.py"
+      - "tests/blender_rig_controls_smoke.py"
       - ".github/workflows/rig-controls-tests.yml"
   workflow_dispatch:
 jobs:
@@ -16,3 +17,9 @@ jobs:
         run: python3 -m py_compile runtime/story_scene.py runtime/align_visemes.py
       - name: Test viseme cue conversion
         run: python3 -m unittest tests.test_align_visemes
+      - name: Install Blender for rig integration test
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y blender
+      - name: Test Blender IK, locomotion and finger controls
+        run: blender --background --factory-startup --python-exit-code 1 --python tests/blender_rig_controls_smoke.py
