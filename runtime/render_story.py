@@ -27,11 +27,12 @@ def run(command, log_path=None):
     if log_path:
         with Path(log_path).open("w", encoding="utf-8") as log:
             result = subprocess.run(command, stdout=log, stderr=subprocess.STDOUT, text=True)
+        detail = Path(log_path).read_text(encoding="utf-8", errors="replace")[-6000:]
     else:
         result = subprocess.run(command, capture_output=True, text=True)
-    if result.returncode:
         detail = getattr(result, "stderr", "") or ""
-        raise RuntimeError("Command failed (" + str(result.returncode) + "): " + " ".join(command) + "\n" + detail[-4000:])
+    if result.returncode:
+        raise RuntimeError("Command failed (" + str(result.returncode) + "): " + " ".join(command) + "\\n" + detail[-6000:])
     return result
 
 
@@ -241,8 +242,19 @@ def main():
             "Final MP4 duration mismatch: expected %.3fs, got %.3fs." %
             (expected_duration, actual_duration)
         )
+    video = video_streams[0]
+    if int(video.get("width", 0)) != width or int(video.get("height", 0)) != height:
+        raise RuntimeError("Final MP4 dimensions do not match the requested output profile.")
+    rate = str(video.get("r_frame_rate", "0/1")).split("/")
+    actual_fps = float(rate[0]) / max(1.0, float(rate[1])) if len(rate) == 2 else 0.0
+    if abs(actual_fps - fps) > 0.01:
+        raise RuntimeError("Final MP4 FPS mismatch: requested %s, got %s." % (fps, actual_fps))
     if (a.voice or a.music) and not audio_streams:
         raise RuntimeError("Audio was requested but final MP4 contains no audio stream.")
+    black_probe = run([ffmpeg, "-hide_banner", "-i", str(output), "-vf",
+                       "blackdetect=d=1:pix_th=0.10", "-an", "-f", "null", "-"])
+    black_log = getattr(black_probe, "stderr", "") or ""
+    black_segments = [line.strip() for line in black_log.splitlines() if "black_start:" in line]
     report = {
         "status": "PASS_WITH_REVIEW_WARNINGS" if any(x["adjacent_identical_frame_pairs"] for x in shot_qc) else "PASS",
         "output": str(output),
@@ -252,6 +264,7 @@ def main():
         "qc_note": "Adjacent byte-identical frames are flagged for visual review; a duplicate may be intentional in a held/static shot.",
         "resolution": [width, height],
         "fps": fps,
+        "detected_black_segments_over_one_second": black_segments,
         "audio_inputs": {"voice": str(a.voice.resolve()) if a.voice else None,
                          "voice_duration_seconds": voice_duration,
                          "music": str(a.music.resolve()) if a.music else None,
