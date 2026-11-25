@@ -113,3 +113,22 @@ For a quick blocking pass, a `stylized_humanoid` subject may define a `character
 Currently supported generic blocking actions: `wave`, `point`, `raise_arms`, `cheer`, `look_left`, `look_right`, `look_up`, `look_down`, `nod`, `shake_head`, `surprised`, `sad`, `talk`, and `idle_breath`. Events must fit within the shot and overlapping events on the same body part are rejected. The procedural starter is a part-animated blockout character: it is not a skeletal rig, does not provide finger articulation, and is not suitable as a final close-up acting model. Use a real imported rig with authored bone/facial tracks for production acting.
 
 CI runs pure-Python unit tests for the semantic action compiler. Blender integration and visual inspection remain separate acceptance gates.
+
+### Stable asset IDs in generated storyboards
+
+The planner may refer to approved local assets by stable catalog ID rather than guessing filesystem paths. A subject, prop or environment object can use `asset_id`; the Blender scene compiler resolves that ID through `assets/catalog.json`, verifies that the registered file exists, and imports the exact file. For a separate motion file, use `retarget.animation_asset_id`. Do not set both an ID and a raw file path on the same entry.
+
+```json
+{
+  "name": "Main_Character",
+  "asset_id": "character_regular_female",
+  "retarget": {
+    "animation_asset_id": "animation_walk_cycle",
+    "source_armature": "ExactImportedArmature",
+    "source_action": "ExactImportedAction",
+    "bone_map": []
+  }
+}
+```
+
+The IDs above are illustrative only; a story must use IDs that actually exist in the catalog. The current repository catalog is empty, so no production character or animation asset is available until verified files are added. The resolver deliberately fails on unknown IDs or missing files rather than silently substituting a primitive.
