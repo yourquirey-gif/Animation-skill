@@ -233,3 +233,8 @@ Required behavior:
 ### Universal acceptance suite
 
 Before calling the story engine reusable, test at least three structurally different briefs: (1) a human character story with prop interaction and a location change; (2) a non-human subject story requiring species-appropriate movement and environment; (3) an explainer or abstract concept requiring custom 3D visual metaphors. For each, validate the storyboard, generated Blender scene, actual animated geometry, preview frames, audio/caption timeline and ffprobe-valid short MP4. Record what was rendered and inspected. These are engineering fixtures, not preset production styles.
+
+
+## 13. Rigged performance, facial animation and prop contact
+
+The Blender scene compiler supports imported rigged GLB/glTF/FBX assets, exact named Blender actions, explicit armature bone pose keyframes, facial shape-key/blendshape keyframes, and props parented to an exact character bone with local offset/rotation. Story generation should inspect imported rigs and shape keys before writing animation data. Use a prepared action clip or explicit pose keyframes for an armature; custom pose keys replace the active armature action. Facial shape keys animate separately. Bone parenting makes a prop follow a hand but does not solve finger closure, collision, grip pressure or physics; those require dedicated rig controls/constraints and visual review. Never claim lip-sync unless viseme/phoneme timing is actually generated and checked against the voice.
