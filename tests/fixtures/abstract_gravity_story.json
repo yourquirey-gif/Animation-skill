@@ -1,0 +1,141 @@
+{
+  "project": {
+    "title": "Gravity Explained",
+    "fps": 12,
+    "resolution": "long"
+  },
+  "shots": [
+    {
+      "id": "orbit",
+      "duration_seconds": 2,
+      "environment": {
+        "world_color": [
+          0.005,
+          0.008,
+          0.025
+        ],
+        "objects": [
+          {
+            "name": "CentralMass",
+            "primitive": "uv_sphere",
+            "location": [
+              0,
+              0,
+              0
+            ],
+            "scale": [
+              0.8,
+              0.8,
+              0.8
+            ],
+            "material": {
+              "color": [
+                0.95,
+                0.55,
+                0.12
+              ],
+              "metallic": 0.3
+            }
+          },
+          {
+            "name": "OrbitRing",
+            "primitive": "torus",
+            "location": [
+              0,
+              0,
+              0
+            ],
+            "scale": [
+              2.2,
+              2.2,
+              0.06
+            ],
+            "material": {
+              "color": [
+                0.2,
+                0.55,
+                0.9
+              ],
+              "metallic": 0.5
+            }
+          }
+        ]
+      },
+      "subjects": [],
+      "props": [
+        {
+          "name": "OrbitingBody",
+          "primitive": "uv_sphere",
+          "location": [
+            2.2,
+            0,
+            0
+          ],
+          "scale": [
+            0.18,
+            0.18,
+            0.18
+          ],
+          "material": {
+            "color": [
+              0.25,
+              0.75,
+              0.95
+            ]
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                2.2,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 1,
+              "location": [
+                0,
+                2.2,
+                0
+              ]
+            },
+            {
+              "time_seconds": 2,
+              "location": [
+                -2.2,
+                0,
+                0
+              ]
+            }
+          ]
+        }
+      ],
+      "camera": {
+        "location": [
+          4,
+          -7,
+          4
+        ],
+        "target": [
+          0,
+          0,
+          0
+        ],
+        "lens": 45
+      },
+      "lighting": [
+        {
+          "type": "AREA",
+          "location": [
+            1,
+            -4,
+            5
+          ],
+          "energy": 1200,
+          "size": 5
+        }
+      ]
+    }
+  ]
+}
