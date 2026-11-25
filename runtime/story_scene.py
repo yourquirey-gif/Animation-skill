@@ -16,7 +16,7 @@ import bpy
 from mathutils import Vector
 
 
-PRIMITIVES = {"cube", "uv_sphere", "ico_sphere", "cylinder", "cone", "torus", "plane"}
+PRIMITIVES = {"cube", "uv_sphere", "ico_sphere", "cylinder", "cone", "torus", "plane", "terrain"}
 DEFAULT_MATERIAL = {"color": [0.35, 0.42, 0.55], "roughness": 0.7, "metallic": 0.0}
 
 
@@ -148,6 +148,53 @@ def create_mesh(spec, cache, collection=None, base_dir=None):
                 armature.animation_data_create()
                 armature.animation_data.action = action
         return root
+    if primitive == "terrain":
+        terrain = spec.get("terrain", {})
+        sx = max(8, min(128, int(terrain.get("segments_x", 48))))
+        sy = max(8, min(128, int(terrain.get("segments_y", 48))))
+        width = float(terrain.get("width", 18.0))
+        depth = float(terrain.get("depth", 18.0))
+        base_height = float(terrain.get("base_height", 0.0))
+        peaks = terrain.get("peaks", [
+            {"x": -3.0, "y": 1.0, "height": 4.0, "radius_x": 3.0, "radius_y": 4.0},
+            {"x": 3.5, "y": 2.0, "height": 5.2, "radius_x": 2.8, "radius_y": 3.5},
+        ])
+        vertices = []
+        for row in range(sy + 1):
+            y = (row / sy - 0.5) * depth
+            for col in range(sx + 1):
+                x = (col / sx - 0.5) * width
+                z = base_height
+                for peak in peaks:
+                    rx = max(0.1, float(peak.get("radius_x", 3.0)))
+                    ry = max(0.1, float(peak.get("radius_y", 3.0)))
+                    dx = (x - float(peak.get("x", 0.0))) / rx
+                    dy = (y - float(peak.get("y", 0.0))) / ry
+                    z += float(peak.get("height", 2.0)) * math.exp(-1.25 * (dx * dx + dy * dy))
+                ridge = float(terrain.get("ridge_amplitude", 0.18))
+                z += ridge * math.sin(x * 1.7 + float(terrain.get("seed", 0))) * math.cos(y * 1.3)
+                vertices.append((x, y, z))
+        faces = []
+        stride = sx + 1
+        for row in range(sy):
+            for col in range(sx):
+                a = row * stride + col
+                faces.append((a, a + 1, a + stride + 1, a + stride))
+        mesh = bpy.data.meshes.new(name + "_TerrainMesh")
+        mesh.from_pydata(vertices, [], faces)
+        mesh.update()
+        obj = bpy.data.objects.new(name, mesh)
+        (collection or bpy.context.scene.collection).objects.link(obj)
+        obj.location = location
+        obj.rotation_euler = rotation
+        obj.scale = scale
+        obj.data.materials.append(make_material(spec.get("material"), cache))
+        for polygon in obj.data.polygons:
+            polygon.use_smooth = True
+        if spec.get("subdivision", 0):
+            modifier = obj.modifiers.new("Terrain_Smooth", "SUBSURF")
+            modifier.levels = max(1, min(2, int(spec["subdivision"])))
+        return obj
     if primitive == "cube":
         bpy.ops.mesh.primitive_cube_add(size=1, location=location)
     elif primitive == "uv_sphere":
