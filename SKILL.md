@@ -85,6 +85,15 @@ This repository is a Claude Code skill/instruction package, not a prebuilt rende
 
 Read docs/CODE_FIRST_PIPELINE.md before implementing a complete code-generated video. It defines the architecture, procedural modeling, rigging, animation, rendering, audio, performance, reference matching, commands, and acceptance gates.
 
+## Required reference-video visual target
+
+For this user's two reference videos, read `docs/REFERENCE_STYLE_GUIDE.md` before designing a character, set or shot. The references show stylized cinematic 3D storytelling: expressive characters, detailed palace/workshop environments, dramatic close-ups and varied camera angles, day/night and action beats, readable high-contrast captions, and strong mobile-first vertical composition. Reference 1 includes an emperor/palace/castle, dragon-head object, cage, explosion and pendulum; reference 2 includes a red-column palace, carpenter/workshop, reactions and miniature construction. These are style references, not stories to copy.
+
+- Use a real rigged stylized humanoid asset for close-up acting; procedural primitive people are preview-only, never final characters.
+- For separate motion packs, use `runtime/rig_retarget.py` with exact source/target armature names, action name and explicit bone map. Preview axis offsets, root motion, feet, hands and prop contacts on each rig.
+- For supplied narration, `render_story.py --voice <file> --auto-lip-sync --rhubarb <binary>` runs Rhubarb and distributes cues to subjects with exact `viseme_map` shape-key names. Neutral X/REST returns all mapped mouth shapes to zero. This requires a facially rigged model and a working Rhubarb binary.
+- Do not claim reference-level quality until actual textured model files are present and the acceptance shots in `docs/REFERENCE_STYLE_GUIDE.md` have been rendered and visually inspected.
+
 ## Character and scene continuity
 
 - Keep a canonical Character Bible entry and approved reference renders for each character.
