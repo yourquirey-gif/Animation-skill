@@ -41,6 +41,21 @@ on:
         required: true
         default: "16"
         type: string
+      voice_path:
+        description: Optional repository-relative narration audio
+        required: false
+        default: ""
+        type: string
+      music_path:
+        description: Optional repository-relative background music
+        required: false
+        default: ""
+        type: string
+      captions_path:
+        description: Optional repository-relative SRT captions
+        required: false
+        default: ""
+        type: string
 
 permissions:
   contents: read
@@ -89,12 +104,20 @@ jobs:
           HEIGHT: ${{ inputs.height }}
           FPS: ${{ inputs.fps }}
           SAMPLES: ${{ inputs.samples }}
+          VOICE_PATH: ${{ inputs.voice_path }}
+          MUSIC_PATH: ${{ inputs.music_path }}
+          CAPTIONS_PATH: ${{ inputs.captions_path }}
         run: |
           set -euo pipefail
           [[ "$OUTPUT_NAME" =~ ^[A-Za-z0-9._-]+$ ]]
           [[ "$WIDTH" =~ ^[0-9]+$ ]] && [[ "$HEIGHT" =~ ^[0-9]+$ ]]
           [[ "$FPS" =~ ^[0-9]+$ ]] && [[ "$SAMPLES" =~ ^[0-9]+$ ]]
           test -f "$STORYBOARD"
+          for media in "$VOICE_PATH" "$MUSIC_PATH" "$CAPTIONS_PATH"; do
+            [ -z "$media" ] && continue
+            case "$media" in /*|*..*) echo "Media paths must be safe repository-relative paths"; exit 2;; esac
+            test -f "$media"
+          done
           mkdir -p "$RUNNER_TEMP/packages"
           python3 runtime/export_sheepit.py \
             --storyboard "$STORYBOARD" \
