@@ -51,13 +51,13 @@ def main():
             "engine": report["render_engine"]})
     (work / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     (work / "SHEEPIT_README.md").write_text(
-        "# SheepIt upload package\\n\\n"
+        "# SheepIt upload package\n\n"
         "Upload each shot .blend as its own animation project through the SheepIt website. "
         "Keep its configured frame range, FPS and resolution. Download the rendered frame "
-        "sequence and assemble shots/audio/captions with the normal FFmpeg pipeline.\\n\\n"
+        "sequence and assemble shots/audio/captions with the normal FFmpeg pipeline.\n\n"
         "This ZIP does not automate account login, project submission or frame download. "
         "SheepIt does not execute owner-authored custom render scripts; the scene is baked "
-        "into each packed .blend before upload. Queue time and available compute vary.\\n",
+        "into each packed .blend before upload. Queue time and available compute vary.\n",
         encoding="utf-8")
     (work / "source_storyboard.json").write_text(json.dumps(data, indent=2), encoding="utf-8")
     a.output.parent.mkdir(parents=True, exist_ok=True)
