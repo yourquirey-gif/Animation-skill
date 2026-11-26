@@ -196,11 +196,34 @@ def create_mesh(spec, cache, collection=None, base_dir=None):
             source_action_name = retarget.get("source_action")
             source_action = bpy.data.actions.get(str(source_action_name)) if source_action_name else source_armature.animation_data.action if source_armature.animation_data else None
             if source_action is None:
-                raise ValueError("Set retarget.source_action to an exact action name from the animation asset")
+                # Some FBX exporters store the imported clip as a named action
+                # without assigning it to the source armature.
+                clip_stem = animation_path.stem.casefold()
+                candidates = [action for action in bpy.data.actions
+                              if clip_stem in action.name.casefold() or action.name.casefold() in clip_stem]
+                if len(candidates) == 1:
+                    source_action = candidates[0]
+            if source_action is None:
+                raise ValueError("No animation action found in imported clip: " + str(animation_path.name))
+            bone_map = retarget.get("bone_map", [])
+            if not bone_map and retarget.get("auto_map_by_name", True):
+                target_names = set(target_armatures[0].data.bones.keys())
+                source_names = set(source_armature.data.bones.keys())
+                shared_names = sorted(target_names.intersection(source_names))
+                if len(shared_names) < int(retarget.get("minimum_shared_bones", 12)):
+                    raise ValueError(
+                        "Automatic retarget refused: only %d exact bone-name matches between source and target. "
+                        "Provide an explicit retarget.bone_map." % len(shared_names)
+                    )
+                bone_map = [{"source": name, "target": name} for name in shared_names]
+                print("AUTO_RETARGET_BONE_MAP", {
+                    "source": source_armature.name, "target": target_armatures[0].name,
+                    "shared_bones": len(shared_names), "action": source_action.name,
+                }, flush=True)
             from rig_retarget import retarget_action
             result = retarget_action(
                 source_armature, target_armatures[0], source_action,
-                retarget.get("bone_map", []),
+                bone_map,
                 frame_start=retarget.get("frame_start"),
                 frame_end=retarget.get("frame_end"),
                 copy_root_motion=bool(retarget.get("copy_root_motion", False)),
