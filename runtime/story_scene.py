@@ -545,12 +545,29 @@ def aim(camera, target):
 
 
 def build_camera(spec):
+    """Create a physically-based camera with optional focus target and animated lens."""
     spec = spec or {}
     bpy.ops.object.camera_add(location=vector(spec.get("location"), [7, -10, 6]))
     camera = bpy.context.object
     camera.name = "Story_Camera"
     camera.data.lens = float(spec.get("lens", 50))
-    aim(camera, vector(spec.get("target"), [0, 0, 1]))
+    camera.data.sensor_fit = "AUTO"
+    target = vector(spec.get("target"), [0, 0, 1])
+    aim(camera, target)
+    dof = spec.get("dof", {}) or {}
+    if dof.get("enabled", False):
+        camera.data.dof.use_dof = True
+        camera.data.dof.aperture_fstop = max(0.7, float(dof.get("f_stop", 2.8)))
+        camera.data.dof.aperture_blades = max(0, min(16, int(dof.get("blades", 7))))
+        if dof.get("focus_distance") is not None:
+            camera.data.dof.focus_distance = max(0.01, float(dof["focus_distance"]))
+        else:
+            focus = bpy.data.objects.new("Camera_Focus_Target", None)
+            bpy.context.scene.collection.objects.link(focus)
+            focus.empty_display_type = "SPHERE"
+            focus.empty_display_size = 0.05
+            focus.location = vector(dof.get("focus_target"), target)
+            camera.data.dof.focus_object = focus
     bpy.context.scene.camera = camera
     for key in spec.get("keyframes", []):
         frame = max(1, min(bpy.context.scene.frame_end, 1 + round(float(key["time_seconds"]) * bpy.context.scene.render.fps)))
@@ -795,8 +812,21 @@ def main():
     scene.render.image_settings.file_format = "PNG"
     scene.render.film_transparent = False
     scene.world = bpy.data.worlds.new("Story_World")
-    scene.world.color = tuple(shot.get("environment", {}).get("world_color", [0.025, 0.03, 0.05]))
+    world_color = tuple(shot.get("environment", {}).get("world_color", [0.025, 0.03, 0.05]))
+    scene.world.color = world_color
+    scene.world.use_nodes = True
+    background = scene.world.node_tree.nodes.get("Background") if scene.world.node_tree else None
+    if background:
+        background.inputs["Color"].default_value = (*world_color, 1.0)
+        background.inputs["Strength"].default_value = float(shot.get("environment", {}).get("world_strength", 0.35))
+    # Consistent cinematic color pipeline; optional shot-level exposure/look overrides.
     scene.view_settings.view_transform = "AgX"
+    available_looks = {item.name for item in scene.view_settings.bl_rna.properties["look"].enum_items}
+    requested_look = shot.get("color_management", {}).get("look", "AgX - Medium High Contrast")
+    if requested_look in available_looks:
+        scene.view_settings.look = requested_look
+    scene.view_settings.exposure = float(shot.get("color_management", {}).get("exposure", 0.0))
+    scene.view_settings.gamma = float(shot.get("color_management", {}).get("gamma", 1.0))
     cache = {}
 
     env = shot.get("environment", {})
