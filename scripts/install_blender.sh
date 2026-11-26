@@ -36,4 +36,4 @@ fi
 
 "$BLENDER_BIN" --version
 "$BLENDER_BIN" --background --python-exit-code 1 --python-expr \
-  "import bpy, addon_utils; addon_utils.enable('cycles', default_set=True); engines=set(bpy.context.scene.render.bl_rna.properties['engine'].enum_items.keys()); print('AVAILABLE_RENDER_ENGINES', sorted(engines)); assert 'CYCLES' in engines, 'Cycles add-on must register the Cycles engine'"
+  "import bpy, addon_utils; print('CYCLES_BUILD_OPTION', bpy.app.build_options.cycles); mods=[(m.__name__,m.__file__) for m in addon_utils.modules() if 'cycle' in m.__name__.lower()]; print('CYCLES_MODULES', mods); print('CYCLES_BEFORE', addon_utils.check('cycles')); addon_utils.enable('cycles', default_set=True); print('CYCLES_AFTER', addon_utils.check('cycles')); engines=set(bpy.context.scene.render.bl_rna.properties['engine'].enum_items.keys()); print('AVAILABLE_RENDER_ENGINES', sorted(engines)); assert 'CYCLES' in engines, 'Cycles add-on must register the Cycles engine'"
