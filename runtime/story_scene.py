@@ -631,34 +631,54 @@ def apply_rig_controls(armature, controls, fps, total_frames):
                 bone.keyframe_insert(data_path="rotation_euler", frame=frame, group=bone_name)
 
 def apply_viseme_animation(root, viseme_keyframes, viseme_map, fps, total_frames):
-    """Map externally aligned viseme events onto imported facial shape keys."""
+    """Drive imported blendshapes OR named 2D mouth-cutout layers from aligned audio cues."""
     if not viseme_keyframes:
         return
     if not isinstance(viseme_map, dict) or not viseme_map:
-        raise ValueError("viseme_keyframes require a viseme_map from viseme labels to exact imported shape-key names")
+        raise ValueError("viseme_keyframes require a viseme_map to exact shape-key names or named 2D sprite mouth layers")
     shape_keys = {}
+    objects_by_name = {}
     stack = list(root.children)
     while stack:
         obj = stack.pop()
         stack.extend(list(obj.children))
+        objects_by_name[obj.name] = obj
         if obj.type == "MESH" and obj.data.shape_keys:
             for key in obj.data.shape_keys.key_blocks:
                 shape_keys[key.name] = key
-    for label, shape_name in viseme_map.items():
-        if shape_name not in shape_keys:
-            raise ValueError("Viseme '" + str(label) + "' maps to missing shape key '" + str(shape_name) + "'")
-    # Key every mapped shape at every event, so unused mouth poses return to zero.
+    if all(shape_name in shape_keys for shape_name in viseme_map.values()):
+        # 3D facial rig: animate actual imported blendshape values.
+        for entry in viseme_keyframes:
+            frame = max(1, min(total_frames, 1 + round(float(entry["time_seconds"]) * fps)))
+            label = str(entry.get("viseme", "REST"))
+            strength = max(0.0, min(1.0, float(entry.get("strength", 1.0))))
+            active_shape = viseme_map.get(label)
+            for shape_name in set(viseme_map.values()):
+                block = shape_keys[shape_name]
+                block.value = strength if shape_name == active_shape else 0.0
+                block.keyframe_insert(data_path="value", frame=frame)
+        return
+
+    # 2D puppet: each viseme is a separate transparent mouth cutout plane.
+    # The storyboard maps labels to the exact names of sprite parts.
+    sprite_layers = {}
+    for label, object_name in viseme_map.items():
+        obj = objects_by_name.get(str(object_name))
+        if obj is None or obj.type != "MESH" or obj.get("story_character_mode") != "2D_SPRITE_IN_3D_WORLD":
+            raise ValueError("Viseme '" + str(label) + "' maps to missing shape key or 2D sprite layer '" + str(object_name) + "'")
+        sprite_layers[str(label)] = obj
+    all_layers = list({obj.name: obj for obj in sprite_layers.values()}.values())
+    for obj in all_layers:
+        obj.hide_render = True
+        obj.keyframe_insert(data_path="hide_render", frame=1)
     for entry in viseme_keyframes:
         frame = max(1, min(total_frames, 1 + round(float(entry["time_seconds"]) * fps)))
         label = str(entry.get("viseme", "REST"))
         strength = max(0.0, min(1.0, float(entry.get("strength", 1.0))))
-        active_shape = viseme_map.get(label)
-        for mapped_label, shape_name in viseme_map.items():
-            block = shape_keys[shape_name]
-            block.value = strength if shape_name == active_shape else 0.0
-            block.keyframe_insert(data_path="value", frame=frame)
-    for shape_name in set(viseme_map.values()):
-        block = shape_keys[shape_name]
+        active = sprite_layers.get(label) if strength > 0 and label not in {"X", "REST"} else None
+        for obj in all_layers:
+            obj.hide_render = obj != active
+            obj.keyframe_insert(data_path="hide_render", frame=frame)
 
 
 
