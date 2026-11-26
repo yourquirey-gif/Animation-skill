@@ -27,7 +27,17 @@ jobs:
       - name: Install Blender and FFmpeg
         run: |
           sudo apt-get update
-          sudo apt-get install -y blender ffmpeg libegl1 libgl1 libegl-mesa0 libglx-mesa0 libgl1-mesa-dri
+          sudo apt-get install -y blender ffmpeg unzip curl python3-numpy libegl1 libgl1 libegl-mesa0 libglx-mesa0 libgl1-mesa-dri
+      - name: Download verified CC0 mannequin asset for story fixtures
+        run: |
+          set -euo pipefail
+          mkdir -p tests/fixtures/runtime-assets "$RUNNER_TEMP/kinemiq-assets"
+          curl -fL --retry 3 -o "$RUNNER_TEMP/kinemiq-assets/animations.zip" https://github.com/Kinemiq/free-game-animations/releases/download/v1.0/KinemIQ_Free_Animations_CC0_FBX.zip
+          echo "4ecea37e2117a762c8d2be10c7e0f06d9c7c9005af0f9caa64c8ce5d424efb0e  $RUNNER_TEMP/kinemiq-assets/animations.zip" | sha256sum -c -
+          unzip -q "$RUNNER_TEMP/kinemiq-assets/animations.zip" -d "$RUNNER_TEMP/kinemiq-assets/unpacked"
+          MANNEQUIN="$(find "$RUNNER_TEMP/kinemiq-assets/unpacked" -type f -iname 'KinemIQ_Mannequin.fbx' -print -quit)"
+          test -n "$MANNEQUIN"
+          cp "$MANNEQUIN" tests/fixtures/runtime-assets/KinemIQ_Mannequin.fbx
       - name: Test procedural terrain geometry inside Blender
         run: blender -b --python-exit-code 1 --python tests/blender/test_terrain.py
       - name: Test procedural humanoid character generation inside Blender
