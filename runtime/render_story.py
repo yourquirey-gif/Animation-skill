@@ -208,6 +208,9 @@ def main():
                 if elapsed - 1e-6 <= float(event["time_seconds"]) <= elapsed + duration + 1e-6
             ]
             for subject in shot.get("subjects", []):
+                character_cfg = subject.get("character", {}) or {}
+                if not subject.get("viseme_map") and character_cfg.get("auto_visemes"):
+                    subject["viseme_map"] = {label: "viseme_" + label for label in "ABCDEFGHX"}
                 if subject.get("viseme_map"):
                     subject["viseme_keyframes"] = shot_events
                     subjects_animated += 1
