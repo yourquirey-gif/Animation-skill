@@ -6,6 +6,10 @@ Use Cycles for NVIDIA CUDA/OptiX acceleration; Eevee is not automatically accele
 import argparse, json, sys
 from pathlib import Path
 import bpy
+import addon_utils
+
+# Blender 4.2+ ships Cycles as a bundled add-on; register it before rendering.
+addon_utils.enable("cycles")
 
 def main():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
