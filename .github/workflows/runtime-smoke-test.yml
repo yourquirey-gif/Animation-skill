@@ -38,6 +38,11 @@ jobs:
           MANNEQUIN="$(find "$RUNNER_TEMP/kinemiq-assets/unpacked" -type f -iname 'KinemIQ_Mannequin.fbx' -print -quit)"
           test -n "$MANNEQUIN"
           cp "$MANNEQUIN" tests/fixtures/runtime-assets/KinemIQ_Mannequin.fbx
+          mkdir -p tests/fixtures/runtime-assets/animations
+          find "$RUNNER_TEMP/kinemiq-assets/unpacked/FBX" -maxdepth 1 -type f -iname "*.fbx" ! -iname "KinemIQ_Mannequin.fbx" -exec cp {} tests/fixtures/runtime-assets/animations/ \\
+          test -s tests/fixtures/runtime-assets/animations/Walk_forwards.fbx
+          test -s tests/fixtures/runtime-assets/animations/Idle_relaxed.fbx
+          echo "Installed $(find tests/fixtures/runtime-assets/animations -maxdepth 1 -type f -iname "*.fbx" | wc -l) CC0 animation clips"
       - name: Test procedural terrain geometry inside Blender
         run: blender -b --python-exit-code 1 --python tests/blender/test_terrain.py
       - name: Test procedural humanoid character generation inside Blender
