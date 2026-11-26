@@ -205,7 +205,7 @@ jobs:
 
       - name: Compile code, run unit tests, and validate asset catalog
         run: |
-          python3 -m py_compile runtime/animation_runtime.py runtime/render_story.py runtime/story_scene.py runtime/align_visemes.py runtime/asset_catalog.py runtime/rig_retarget.py runtime/semantic_actions.py
+          python3 -m py_compile runtime/animation_runtime.py runtime/render_story.py runtime/story_scene.py runtime/align_visemes.py runtime/asset_catalog.py runtime/rig_retarget.py runtime/semantic_actions.py runtime/environment_builder.py
           python3 -m unittest discover -s tests -p 'test_*.py' -v
           python3 runtime/asset_catalog.py validate
 
