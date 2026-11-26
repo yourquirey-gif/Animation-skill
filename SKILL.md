@@ -11,7 +11,7 @@ Use this skill for every animated-story task. Treat user-provided reference vide
 
 ## Mandatory Claude Code Web cloud-rendering mode
 
-When operating in Claude Code Web, all production rendering must run on GitHub Actions Ubuntu. The user's Windows 7 PC is not a rendering host.
+When operating in Claude Code Web, all production rendering must run in cloud compute; the user's Windows 7 PC is not a rendering host. Select the backend based on the job: GitHub Actions for orchestration and CPU-compatible jobs, SheepIt for distributed Blender frame rendering, or Kaggle GPU for Cycles scenes when a free GPU session is available.
 
 - Use Blender installed by `.github/workflows/cloud-render.yml`; invoke it in background mode with `--background --python-exit-code 1 --python`.
 - Use Python for story orchestration, asset metadata, retries, progress and QA; use FFmpeg/ffprobe for assembly and verification.
