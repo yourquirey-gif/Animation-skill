@@ -2544,7 +2544,14 @@
               "roughness": 0.82
             }
           }
-        ]
+        ],
+        "procedural": {
+          "profile": "coast",
+          "seed": "bridge_sunset_crowd",
+          "dressing_count": 12,
+          "width": 30,
+          "depth": 30
+        }
       },
       "subjects": [
         {
