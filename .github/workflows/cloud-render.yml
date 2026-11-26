@@ -117,9 +117,17 @@ jobs:
           MANNEQUIN="$(find "$RUNNER_TEMP/kinemiq-assets/unpacked" -type f -iname 'KinemIQ_Mannequin.fbx' -print -quit)"
           test -n "$MANNEQUIN"
           cp "$MANNEQUIN" "$GITHUB_WORKSPACE/tests/fixtures/runtime-assets/KinemIQ_Mannequin.fbx"
-          echo "Verified CC0 character asset installed:"
+          # Keep every separately exported CC0 clip available to the runtime.
+          mkdir -p "$GITHUB_WORKSPACE/tests/fixtures/runtime-assets/animations"
+          find "$RUNNER_TEMP/kinemiq-assets/unpacked" -type f -iname '*.fbx' ! -path "$MANNEQUIN" -print0 |
+            while IFS= read -r -d '' clip; do
+              cp "$clip" "$GITHUB_WORKSPACE/tests/fixtures/runtime-assets/animations/"
+            done
+          echo "Verified CC0 character and animation assets installed:"
           find "$RUNNER_TEMP/kinemiq-assets/unpacked" -type f \( -iname '*.fbx' -o -iname '*.glb' \) | sort
           echo "Mannequin: $GITHUB_WORKSPACE/tests/fixtures/runtime-assets/KinemIQ_Mannequin.fbx"
+          echo "Animation clips copied:"
+          find "$GITHUB_WORKSPACE/tests/fixtures/runtime-assets/animations" -maxdepth 1 -type f -printf '%f\n' | sort
 
       - name: Install Rhubarb Lip Sync CLI (only when requested)
         if: ${{ inputs.auto_lip_sync == true }}
