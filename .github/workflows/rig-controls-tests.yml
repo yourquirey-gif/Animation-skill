@@ -9,6 +9,11 @@ on:
       - "scripts/**"
       - ".github/workflows/rig-controls-tests.yml"
   workflow_dispatch:
+
+concurrency:
+  group: rig-controls-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   python-tests:
     runs-on: ubuntu-latest
