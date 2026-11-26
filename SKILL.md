@@ -314,6 +314,8 @@ Before production, read `docs/UNIVERSAL_SCRIPT_TO_BLENDER_PIPELINE.md`. Claude C
 
 ## Mandatory story-by-story uniqueness — no generic reused worlds
 
+Follow the detailed production contract in `docs/STORY_UNIQUENESS_AND_ENVIRONMENT_PIPELINE.md` for every project.
+
 Every new story is a fresh production design. Do not reuse a previous story's complete environment, scene layout, background, prop arrangement, character cast, wardrobe, lighting setup, camera plan, or shot composition as a shortcut. Reusable libraries are component libraries only; they are not permission to recycle an entire scene.
 
 Before rendering each story, create and persist a Story Production Bible containing:
