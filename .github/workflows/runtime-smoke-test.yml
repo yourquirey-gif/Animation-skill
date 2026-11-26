@@ -24,6 +24,10 @@ jobs:
       LIBGL_ALWAYS_SOFTWARE: '1'
     steps:
       - uses: actions/checkout@v4
+      - name: Set up Node for procedural human character generation
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
       - name: Install Blender and FFmpeg
         run: |
           sudo apt-get update
@@ -43,6 +47,14 @@ jobs:
           test -s tests/fixtures/runtime-assets/animations/Walk_forwards.fbx
           test -s tests/fixtures/runtime-assets/animations/Idle_relaxed.fbx
           echo "Installed $(find tests/fixtures/runtime-assets/animations -maxdepth 1 -type f -iname "*.fbx" | wc -l) CC0 animation clips"
+      - name: Generate and validate Ara 3D human cast for story fixtures
+        run: |
+          set -euo pipefail
+          mkdir -p tests/fixtures/runtime-assets/ara-cast
+          npx --yes ara3d@0.9.0 export --random 1-6 --detail medium --animations walk,run,idle --formats glb --out tests/fixtures/runtime-assets/ara-cast
+          mapfile -t CAST_MODELS < <(find tests/fixtures/runtime-assets/ara-cast -maxdepth 1 -type f -iname '*.glb' | sort)
+          test "${#CAST_MODELS[@]}" -ge 6
+          blender -b --python-exit-code 1 --python runtime/validate_character_assets.py -- --asset-dir "$GITHUB_WORKSPACE/tests/fixtures/runtime-assets/ara-cast" --min-assets 6
       - name: Test procedural terrain geometry inside Blender
         run: blender -b --python-exit-code 1 --python tests/blender/test_terrain.py
       - name: Test procedural humanoid character generation inside Blender
@@ -85,5 +97,6 @@ jobs:
           path: |
             ${{ runner.temp }}/blender-smoke/
             ${{ runner.temp }}/story-fixtures/
+            ${{ github.workspace }}/tests/fixtures/runtime-assets/ara-cast/
           if-no-files-found: warn
           retention-days: 7
