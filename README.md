@@ -18,7 +18,7 @@ The user's local PC is not used for rendering. In Claude Code Web, use GitHub Ac
 
 The workflow installs Blender and FFmpeg on Ubuntu, renders each shot in background mode, encodes the video, verifies it with ffprobe and uploads a downloadable artifact. Standard runners are CPU/software-rendered unless a GPU is explicitly detected. Default settings are preview quality; full-HD jobs consume more time and runner resources.
 
-## Existing renderer
+## Free external render backends\n\n- **SheepIt:** run the `Export SheepIt Render Package` workflow to build self-contained per-shot `.blend` files, then upload them to SheepIt.\n- **Kaggle:** use `cloud/kaggle_blender_renderer.ipynb` with a free GPU session; export scenes with `CYCLES` for NVIDIA GPU acceleration.\n- Details and limitations: `docs/EXTERNAL_RENDER_BACKENDS.md`.\n\nThese services are not silently assumed to be connected. SheepIt account submission/download and Kaggle GPU session startup require the user's authenticated session.\n\n## Existing renderer
 
 - `runtime/story_scene.py`: JSON-to-Blender scene compiler.
 - `runtime/render_story.py`: scene-by-scene Blender rendering, bounded retries, progress, FFmpeg assembly and ffprobe validation.
