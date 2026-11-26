@@ -171,9 +171,37 @@ def create_mesh(spec, cache, collection=None, base_dir=None):
         # Explicit armature/action names and bone map prevent unsafe guessing.
         retarget = spec.get("retarget")
         if retarget:
-            animation_path = Path(retarget["animation_file"])
-            if not animation_path.is_absolute():
-                animation_path = (Path(base_dir or Path.cwd()) / animation_path).resolve()
+            if retarget.get("animation_file"):
+                animation_path = Path(retarget["animation_file"])
+                if not animation_path.is_absolute():
+                    animation_path = (Path(base_dir or Path.cwd()) / animation_path).resolve()
+            elif retarget.get("animation_query"):
+                animation_root = Path(retarget.get("animation_dir", "runtime-assets/animations"))
+                if not animation_root.is_absolute():
+                    animation_root = (Path(base_dir or Path.cwd()) / animation_root).resolve()
+                query = str(retarget["animation_query"]).casefold().replace("-", "_").replace(" ", "_")
+                candidates = sorted(
+                    path for path in animation_root.glob("*")
+                    if path.is_file() and path.suffix.casefold() in {".fbx", ".glb", ".gltf"}
+                    and query in path.stem.casefold().replace("-", "_").replace(" ", "_")
+                )
+                exact = [path for path in candidates
+                         if path.stem.casefold().replace("-", "_").replace(" ", "_") in
+                         {query, "kinemiq_" + query, "animation_" + query}]
+                if exact:
+                    candidates = exact
+                if len(candidates) != 1:
+                    raise ValueError(
+                        "animation_query %r must resolve to exactly one clip in %s; candidates=%s" %
+                        (retarget["animation_query"], animation_root,
+                         [path.name for path in candidates])
+                    )
+                animation_path = candidates[0]
+                print("RESOLVED_ANIMATION_QUERY", {
+                    "query": retarget["animation_query"], "file": str(animation_path)
+                }, flush=True)
+            else:
+                raise ValueError("retarget requires animation_file or animation_query")
             if not animation_path.is_file():
                 raise FileNotFoundError("Retarget animation file not found: " + str(animation_path))
             target_armatures = [o for o in imported if o.type == "ARMATURE"]
