@@ -351,7 +351,10 @@ def create_mesh(spec, cache, collection=None, base_dir=None):
             if not image_path.is_file():
                 raise FileNotFoundError("2D sprite image not found: " + str(image_path))
             image = bpy.data.images.load(str(image_path), check_existing=True)
-            sprite_material = make_material(spec.get("material"), cache)
+            if image.size[0] <= 0 or image.size[1] <= 0:
+                raise ValueError("2D sprite image has invalid dimensions: " + str(image_path))
+            sprite_material = make_material(spec.get("material"), cache).copy()
+            sprite_material.name = name + "_SpriteMaterial"
             nodes = sprite_material.node_tree.nodes
             links = sprite_material.node_tree.links
             bsdf = nodes.get("Principled BSDF")
@@ -369,11 +372,23 @@ def create_mesh(spec, cache, collection=None, base_dir=None):
                     sprite_material.blend_method = "BLEND"
             obj = bpy.context.object
             obj.name = name
-            obj.rotation_euler = rotation
-            obj.scale = scale
+            # Blender planes are XY-facing; rotate the cutout upright into XZ.
+            obj.rotation_euler = vector(spec.get("rotation"), [math.pi / 2, 0, 0])
+            if "scale" in spec:
+                obj.scale = scale
+            else:
+                target_height = float(spec.get("character_height", 2.0))
+                if target_height <= 0:
+                    raise ValueError("sprite character_height must be positive")
+                aspect = float(image.size[0]) / float(image.size[1])
+                obj.scale = (target_height * aspect / 2.0, target_height / 2.0, 1.0)
             obj.data.materials.append(sprite_material)
             obj["story_character_mode"] = "2D_SPRITE_IN_3D_WORLD"
             obj["sprite_source"] = str(image_path)
+            obj["sprite_aspect_ratio"] = float(image.size[0]) / float(image.size[1])
+            if spec.get("billboard", False):
+                obj["sprite_billboard"] = True
+                obj.rotation_mode = "XYZ"
             if collection is not None:
                 for col in list(obj.users_collection):
                     col.objects.unlink(obj)
