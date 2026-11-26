@@ -123,11 +123,14 @@ def main():
     p.add_argument("--samples", type=int, default=32)
     p.add_argument("--workdir", type=Path)
     p.add_argument("--retries", type=int, default=1, help="Number of retries after the first failed shot render")
+    p.add_argument("--parallel-shots", type=int, default=int(os.environ.get("ANIMATION_PARALLEL_SHOTS", "1")), help="Render independent shots concurrently; each Blender worker receives a CPU thread share")
     p.add_argument("--progress-file", type=Path, help="Write machine-readable job progress JSON")
     p.add_argument("--stall-timeout-seconds", type=int, default=900, help="Stop a Blender render if no log/progress output arrives within this many seconds")
     a = p.parse_args()
     if a.retries < 0 or a.retries > 5:
         raise ValueError("--retries must be between 0 and 5")
+    if a.parallel_shots < 1 or a.parallel_shots > 16:
+        raise ValueError("--parallel-shots must be between 1 and 16")
     if a.stall_timeout_seconds < 30 or a.stall_timeout_seconds > 7200:
         raise ValueError("--stall-timeout-seconds must be between 30 and 7200")
 
@@ -240,20 +243,21 @@ def main():
     segment_files = []
     shot_qc = []
 
-    for index, shot in enumerate(shots):
+    def render_one_shot(index, shot):
         shot_dir = work / ("shot_%03d" % (index + 1))
         shot_dir.mkdir(parents=True, exist_ok=True)
+        threads_per_worker = max(1, (os.cpu_count() or 2) // a.parallel_shots)
         blender_cmd = [
-            blender, "--background", "--factory-startup", "--python-exit-code", "1",
-            "--python", str(scene_script), "--",
+            blender, "--background", "--factory-startup", "--threads", str(threads_per_worker),
+            "--python-exit-code", "1", "--python", str(scene_script), "--",
             "--storyboard", str(storyboard), "--shot-index", str(index),
             "--output-dir", str(shot_dir), "--width", str(width), "--height", str(height),
             "--fps", str(fps), "--samples", str(a.samples),
             "--progress-file", str(shot_dir / "frame_progress.json")
         ]
         shot_id = shot.get("id", index + 1)
-        progress("RENDERING", index + 1, shot_id)
-        print("Rendering shot", index + 1, "of", len(shots), "-", shot_id, flush=True)
+        print("SHOT_WORKER_START", {"shot": index + 1, "total": len(shots), "id": shot_id,
+                                    "threads": threads_per_worker}, flush=True)
         shot_render_started = time.perf_counter()
         last_error = None
         for attempt in range(a.retries + 1):
@@ -268,18 +272,17 @@ def main():
                 last_error = exc
                 print("Shot", shot_id, "attempt", attempt + 1, "failed:", str(exc), flush=True)
                 if attempt >= a.retries:
-                    progress("FAILED", index + 1, shot_id, str(exc))
                     raise
         if last_error:
             raise last_error
         expected_frames = max(1, round(float(shot["duration_seconds"]) * fps))
         shot_render_seconds = time.perf_counter() - shot_render_started
-        shot_qc.append({
+        qc = {
             "shot_id": shot.get("id", index + 1),
             "render_seconds": round(shot_render_seconds, 3),
             "rendered_frames_per_second": round(expected_frames / max(shot_render_seconds, 0.001), 3),
             **validate_rendered_frames(shot_dir, expected_frames, width, height),
-        })
+        }
         segment = shot_dir / "segment.mp4"
         encode_cmd = [
             ffmpeg, "-y", "-framerate", str(fps), "-i", str(shot_dir / "frame_%04d.png"),
@@ -287,8 +290,36 @@ def main():
             "-pix_fmt", "yuv420p", "-an", str(segment)
         ]
         run(encode_cmd, shot_dir / "ffmpeg.log")
-        segment_files.append(segment)
-        progress("SHOT_COMPLETE", index + 1, shot_id)
+        print("SHOT_WORKER_DONE", {"shot": index + 1, "id": shot_id,
+                                  "frames": expected_frames, "render_seconds": round(shot_render_seconds, 3),
+                                  "fps": qc["rendered_frames_per_second"]}, flush=True)
+        return index, segment, qc
+
+    rendered = {}
+    worker_count = min(a.parallel_shots, len(shots))
+    print("PARALLEL_SHOT_RENDER_CONFIG", {
+        "shots": len(shots), "workers": worker_count, "cpu_count": os.cpu_count() or 2
+    }, flush=True)
+    if worker_count == 1:
+        for index, shot in enumerate(shots):
+            progress("RENDERING", index + 1, shot.get("id", index + 1))
+            result = render_one_shot(index, shot)
+            rendered[result[0]] = (result[1], result[2])
+            shot_qc.append(result[2])
+            progress("SHOT_COMPLETE", index + 1, shot.get("id", index + 1))
+    else:
+        from concurrent.futures import ThreadPoolExecutor, as_completed
+        with ThreadPoolExecutor(max_workers=worker_count) as pool:
+            futures = {pool.submit(render_one_shot, index, shot): (index, shot)
+                       for index, shot in enumerate(shots)}
+            for future in as_completed(futures):
+                index, shot = futures[future]
+                result = future.result()
+                rendered[result[0]] = (result[1], result[2])
+                shot_qc.append(result[2])
+                progress("SHOT_COMPLETE", index + 1, shot.get("id", index + 1))
+    segment_files = [rendered[index][0] for index in range(len(shots))]
+    shot_qc = [rendered[index][1] for index in range(len(shots))]
 
     progress("ASSEMBLING")
     concat_file = work / "concat.txt"
