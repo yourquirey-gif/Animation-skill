@@ -60,6 +60,9 @@ def main():
         "into each packed .blend before upload. Queue time and available compute vary.\n",
         encoding="utf-8")
     (work / "source_storyboard.json").write_text(json.dumps(data, indent=2), encoding="utf-8")
+    kaggle_worker = repo_root / "cloud" / "kaggle_gpu_render.py"
+    if kaggle_worker.is_file():
+        shutil.copy2(kaggle_worker, work / "kaggle_gpu_render.py")
     a.output.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(a.output, "w", zipfile.ZIP_DEFLATED, compresslevel=6) as archive:
         for file in sorted(work.rglob("*")):
