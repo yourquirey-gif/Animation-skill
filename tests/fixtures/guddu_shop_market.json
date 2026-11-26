@@ -374,7 +374,13 @@
               ]
             }
           ],
-          "asset_file": "runtime-assets/KinemIQ_Mannequin.fbx"
+          "asset_file": "runtime-assets/KinemIQ_Mannequin.fbx",
+          "retarget": {
+            "animation_query": "walk",
+            "auto_map_by_name": true,
+            "minimum_shared_bones": 12,
+            "action_name": "Crowd_Shopper_A"
+          }
         },
         {
           "name": "Shopper_B",
@@ -417,7 +423,13 @@
               ]
             }
           ],
-          "asset_file": "runtime-assets/KinemIQ_Mannequin.fbx"
+          "asset_file": "runtime-assets/KinemIQ_Mannequin.fbx",
+          "retarget": {
+            "animation_query": "idle",
+            "auto_map_by_name": true,
+            "minimum_shared_bones": 12,
+            "action_name": "Crowd_Shopper_B"
+          }
         },
         {
           "name": "Shopper_C",
@@ -460,7 +472,13 @@
               ]
             }
           ],
-          "asset_file": "runtime-assets/KinemIQ_Mannequin.fbx"
+          "asset_file": "runtime-assets/KinemIQ_Mannequin.fbx",
+          "retarget": {
+            "animation_query": "walk",
+            "auto_map_by_name": true,
+            "minimum_shared_bones": 12,
+            "action_name": "Crowd_Shopper_C"
+          }
         },
         {
           "name": "Shopper_D",
@@ -503,7 +521,13 @@
               ]
             }
           ],
-          "asset_file": "runtime-assets/KinemIQ_Mannequin.fbx"
+          "asset_file": "runtime-assets/KinemIQ_Mannequin.fbx",
+          "retarget": {
+            "animation_query": "idle",
+            "auto_map_by_name": true,
+            "minimum_shared_bones": 12,
+            "action_name": "Crowd_Shopper_D"
+          }
         },
         {
           "name": "Shopper_E",
@@ -546,7 +570,13 @@
               ]
             }
           ],
-          "asset_file": "runtime-assets/KinemIQ_Mannequin.fbx"
+          "asset_file": "runtime-assets/KinemIQ_Mannequin.fbx",
+          "retarget": {
+            "animation_query": "walk",
+            "auto_map_by_name": true,
+            "minimum_shared_bones": 12,
+            "action_name": "Crowd_Shopper_E"
+          }
         },
         {
           "name": "Shopper_F",
@@ -589,7 +619,13 @@
               ]
             }
           ],
-          "asset_file": "runtime-assets/KinemIQ_Mannequin.fbx"
+          "asset_file": "runtime-assets/KinemIQ_Mannequin.fbx",
+          "retarget": {
+            "animation_query": "idle",
+            "auto_map_by_name": true,
+            "minimum_shared_bones": 12,
+            "action_name": "Crowd_Shopper_F"
+          }
         },
         {
           "name": "Shopper_G",
@@ -632,7 +668,13 @@
               ]
             }
           ],
-          "asset_file": "runtime-assets/KinemIQ_Mannequin.fbx"
+          "asset_file": "runtime-assets/KinemIQ_Mannequin.fbx",
+          "retarget": {
+            "animation_query": "walk",
+            "auto_map_by_name": true,
+            "minimum_shared_bones": 12,
+            "action_name": "Crowd_Shopper_G"
+          }
         },
         {
           "name": "Guddu",
@@ -739,7 +781,7 @@
           {
             "time_seconds": 3,
             "location": [
-              2.0,
+              2,
               -13.4,
               5.65
             ],
