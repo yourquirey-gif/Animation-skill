@@ -23,7 +23,7 @@ import bpy
 from mathutils import Vector
 
 
-PRIMITIVES = {"cube", "uv_sphere", "ico_sphere", "cylinder", "cone", "torus", "plane", "terrain", "text"}
+PRIMITIVES = {"cube", "uv_sphere", "ico_sphere", "cylinder", "cone", "torus", "plane", "terrain", "text", "sprite"}
 DEFAULT_MATERIAL = {"color": [0.35, 0.42, 0.55], "roughness": 0.7, "metallic": 0.0}
 
 
@@ -70,6 +70,8 @@ def validate(story):
                     raise ValueError(f"shots[{i}].{group}[{j}] must be an object")
                 if entry.get("primitive", "cube") not in PRIMITIVES and not entry.get("asset_file") and not entry.get("asset_glob"):
                     raise ValueError(f"Unsupported primitive at shots[{i}].{group}[{j}]")
+                if entry.get("primitive") == "sprite" and not entry.get("image_file"):
+                    raise ValueError(f"Sprite at shots[{i}].{group}[{j}] requires image_file")
                 duration = float(shot["duration_seconds"])
                 for track_name in ("keyframes", "pose_keyframes", "facial_keyframes", "viseme_keyframes"):
                     for kf in entry.get(track_name, []):
@@ -340,8 +342,43 @@ def create_mesh(spec, cache, collection=None, base_dir=None):
         bpy.ops.mesh.primitive_cone_add(vertices=32, radius1=1, radius2=0, depth=2, location=location)
     elif primitive == "torus":
         bpy.ops.mesh.primitive_torus_add(major_segments=48, minor_segments=12, location=location)
-    elif primitive == "plane":
+    elif primitive in {"plane", "sprite"}:
         bpy.ops.mesh.primitive_plane_add(size=2, location=location)
+        if primitive == "sprite":
+            image_path = Path(spec["image_file"])
+            if not image_path.is_absolute():
+                image_path = (Path(base_dir or Path.cwd()) / image_path).resolve()
+            if not image_path.is_file():
+                raise FileNotFoundError("2D sprite image not found: " + str(image_path))
+            image = bpy.data.images.load(str(image_path), check_existing=True)
+            sprite_material = make_material(spec.get("material"), cache)
+            nodes = sprite_material.node_tree.nodes
+            links = sprite_material.node_tree.links
+            bsdf = nodes.get("Principled BSDF")
+            if bsdf is None:
+                raise RuntimeError("Sprite material has no Principled BSDF node")
+            texture = nodes.new("ShaderNodeTexImage")
+            texture.name = name + "_SpriteTexture"
+            texture.image = image
+            links.new(texture.outputs["Color"], bsdf.inputs["Base Color"])
+            if "Alpha" in texture.outputs and "Alpha" in bsdf.inputs:
+                links.new(texture.outputs["Alpha"], bsdf.inputs["Alpha"])
+                if hasattr(sprite_material, "surface_render_method"):
+                    sprite_material.surface_render_method = "DITHERED"
+                elif hasattr(sprite_material, "blend_method"):
+                    sprite_material.blend_method = "BLEND"
+            obj = bpy.context.object
+            obj.name = name
+            obj.rotation_euler = rotation
+            obj.scale = scale
+            obj.data.materials.append(sprite_material)
+            obj["story_character_mode"] = "2D_SPRITE_IN_3D_WORLD"
+            obj["sprite_source"] = str(image_path)
+            if collection is not None:
+                for col in list(obj.users_collection):
+                    col.objects.unlink(obj)
+                collection.objects.link(obj)
+            return obj
     elif primitive == "text":
         bpy.ops.object.text_add(location=location)
         text_obj = bpy.context.object
