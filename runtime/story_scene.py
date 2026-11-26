@@ -915,9 +915,43 @@ def main():
     eevee = getattr(scene, "eevee", None)
     if eevee is not None and hasattr(eevee, "taa_render_samples"):
         eevee.taa_render_samples = max(8, args.samples)
+    render_device_report = {"engine": scene.render.engine, "device": "DEFAULT"}
     if scene.render.engine == "CYCLES":
         scene.cycles.samples = max(1, args.samples)
         scene.cycles.use_denoising = True
+        scene.cycles.device = "CPU"
+        if os.environ.get("ANIMATION_CYCLES_DEVICE", "AUTO").upper() != "CPU":
+            try:
+                prefs = bpy.context.preferences.addons["cycles"].preferences
+                gpu_found = []
+                for backend in ("OPTIX", "CUDA", "HIP", "ONEAPI", "METAL"):
+                    try:
+                        prefs.compute_device_type = backend
+                        prefs.get_devices()
+                        devices = []
+                        for device in prefs.devices:
+                            device.use = device.type != "CPU"
+                            if device.type != "CPU":
+                                devices.append({"name": device.name, "type": device.type})
+                        if devices:
+                            gpu_found = devices
+                            render_device_report["backend"] = backend
+                            break
+                    except Exception:
+                        continue
+                if gpu_found:
+                    scene.cycles.device = "GPU"
+                    render_device_report.update({"device": "GPU", "gpu_devices": gpu_found})
+                else:
+                    render_device_report.update({"device": "CPU", "gpu_fallback": "No compatible GPU detected"})
+                    if os.environ.get("ANIMATION_REQUIRE_GPU", "0") == "1":
+                        raise RuntimeError("ANIMATION_REQUIRE_GPU=1 but Blender detected no compatible Cycles GPU")
+            except Exception as exc:
+                if os.environ.get("ANIMATION_REQUIRE_GPU", "0") == "1":
+                    raise
+                scene.cycles.device = "CPU"
+                render_device_report.update({"device": "CPU", "gpu_fallback": str(exc)})
+    print("RENDER_DEVICE_CONFIG " + json.dumps(render_device_report), flush=True)
     scene.render.resolution_x = args.width
     scene.render.resolution_y = args.height
     scene.render.resolution_percentage = 100
