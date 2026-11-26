@@ -330,7 +330,14 @@
               ]
             }
           }
-        ]
+        ],
+        "procedural": {
+          "profile": "market",
+          "seed": "guddu_shop_market",
+          "dressing_count": 12,
+          "width": 30,
+          "depth": 30
+        }
       },
       "subjects": [
         {
