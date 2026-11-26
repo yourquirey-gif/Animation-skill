@@ -16,13 +16,14 @@ def main():
         image.save()
         bpy.data.images.remove(image)
 
+        material_cache = {}
         obj = create_mesh({
             "name": "Hybrid_2D_Character",
             "primitive": "sprite",
             "image_file": str(image_path),
             "location": [0, 0, 1],
             "scale": [1, 2, 1],
-        }, {}, base_dir=tmp)
+        }, material_cache, base_dir=tmp)
 
         assert obj.type == "MESH"
         assert obj.get("story_character_mode") == "2D_SPRITE_IN_3D_WORLD"
@@ -40,7 +41,7 @@ def main():
             "primitive": "sprite",
             "image_file": str(image_path),
             "location": [2, 0, 1],
-        }, {}, base_dir=tmp)
+        }, material_cache, base_dir=tmp)
         assert second.data.materials[0] != material, "Sprite materials must not share image textures"
         print("HYBRID_2D_SPRITE_IN_3D_WORLD_OK", {
             "object": obj.name,
