@@ -659,6 +659,7 @@
               0.025,
               0.02
             ],
+            "auto_visemes": true,
             "performance": [
               {
                 "time_seconds": 0.3,
