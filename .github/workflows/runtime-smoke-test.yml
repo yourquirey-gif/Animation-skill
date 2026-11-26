@@ -109,7 +109,22 @@ jobs:
             tests/fixtures/abstract_gravity_story.json; do
             name="$(basename "$storyboard" .json)"
             echo "CROSS_GENRE_RENDER_START story=$name"
-            python3 runtime/render_story.py --storyboard "$storyboard" --output "$RUNNER_TEMP/story-fixtures/$name.mp4" --format shorts --width 240 --height 426 --fps 12 --samples 8 --retries 1 --stall-timeout-seconds 600 --progress-file "$RUNNER_TEMP/story-fixtures/$name-progress.json"
+            workdir="$RUNNER_TEMP/story-fixtures/$name-work"
+            python3 runtime/render_story.py --storyboard "$storyboard" --output "$RUNNER_TEMP/story-fixtures/$name.mp4" --workdir "$workdir" --format shorts --width 240 --height 426 --fps 12 --samples 8 --retries 1 --stall-timeout-seconds 600 --progress-file "$RUNNER_TEMP/story-fixtures/$name-progress.json" &
+            render_pid=$!
+            last_progress=""
+            while kill -0 "$render_pid" 2>/dev/null; do
+              for progress_file in "$workdir"/shot_*/frame_progress.json; do
+                [ -f "$progress_file" ] || continue
+                progress="$(python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); print("shot_frame={}/{} ({:.1f}%) elapsed={}s eta={}s fps={}".format(d.get("completed_frames",0),d.get("total_frames",0),d.get("percent",0),d.get("elapsed_seconds","?"),d.get("eta_seconds","?"),d.get("rendered_frames_per_second","?")))' "$progress_file")"
+                if [ "$progress" != "$last_progress" ]; then
+                  echo "LIVE_RENDER_PROGRESS story=$name $progress"
+                  last_progress="$progress"
+                fi
+              done
+              sleep 10
+            done
+            wait "$render_pid"
             test -s "$RUNNER_TEMP/story-fixtures/$name.mp4"
             ffprobe -v error -show_entries format=duration:stream=codec_name,width,height -of json "$RUNNER_TEMP/story-fixtures/$name.mp4"
             echo "CROSS_GENRE_RENDER_DONE story=$name"
