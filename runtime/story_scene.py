@@ -6,6 +6,7 @@ No story/genre is hard-coded here. Run inside Blender's bundled Python:
 blender --background --python-exit-code 1 --python story_scene.py -- --storyboard ... --shot-index 0 --output-dir ...
 """
 import argparse
+import glob
 import json
 import math
 import os
@@ -66,7 +67,7 @@ def validate(story):
             for j, entry in enumerate(entries):
                 if not isinstance(entry, dict):
                     raise ValueError(f"shots[{i}].{group}[{j}] must be an object")
-                if entry.get("primitive", "cube") not in PRIMITIVES and not entry.get("asset_file"):
+                if entry.get("primitive", "cube") not in PRIMITIVES and not entry.get("asset_file") and not entry.get("asset_glob"):
                     raise ValueError(f"Unsupported primitive at shots[{i}].{group}[{j}]")
                 duration = float(shot["duration_seconds"])
                 for track_name in ("keyframes", "pose_keyframes", "facial_keyframes", "viseme_keyframes"):
@@ -136,6 +137,7 @@ def create_mesh(spec, cache, collection=None, base_dir=None):
         if not asset_path.is_file():
             raise FileNotFoundError("3D asset file not found: " + str(asset_path))
         before = set(bpy.data.objects)
+        before_actions = set(bpy.data.actions)
         suffix = asset_path.suffix.lower()
         if suffix in {".glb", ".gltf"}:
             bpy.ops.import_scene.gltf(filepath=str(asset_path))
@@ -156,16 +158,32 @@ def create_mesh(spec, cache, collection=None, base_dir=None):
         root.rotation_euler = rotation
         root.scale = scale
         action_name = spec.get("asset_action")
+        animation_query = spec.get("asset_animation") or (spec.get("character") or {}).get("motion")
+        armatures = [o for o in imported if o.type == "ARMATURE"]
+        imported_actions = [a for a in bpy.data.actions if a not in before_actions]
+        selected_action = None
         if action_name:
-            action = bpy.data.actions.get(str(action_name))
-            if action is None:
+            selected_action = bpy.data.actions.get(str(action_name))
+            if selected_action is None:
                 raise ValueError("Requested imported animation action not found: " + str(action_name))
-            armatures = [o for o in imported if o.type == "ARMATURE"]
+        elif animation_query:
+            query = str(animation_query).casefold().replace("-", "_").replace(" ", "_")
+            candidates = [a for a in imported_actions if query in a.name.casefold().replace("-", "_").replace(" ", "_")]
+            if not candidates:
+                raise RuntimeError(
+                    "Imported character has no action matching asset_animation=%r; imported actions=%s" %
+                    (animation_query, [a.name for a in imported_actions])
+                )
+            selected_action = candidates[0]
+            print("SELECTED_IMPORTED_CHARACTER_ACTION", {
+                "asset": asset_path.name, "query": animation_query, "action": selected_action.name
+            }, flush=True)
+        if selected_action:
             if not armatures:
-                raise ValueError("asset_action was supplied but imported model has no armature")
+                raise ValueError("An imported animation was requested but the model has no armature")
             for armature in armatures:
                 armature.animation_data_create()
-                armature.animation_data.action = action
+                armature.animation_data.action = selected_action
 
         # Optional separate animation asset -> target character retarget.
         # Explicit armature/action names and bone map prevent unsafe guessing.
@@ -833,6 +851,25 @@ def resolve_story_assets(story):
                     "id": metadata["id"], "name": metadata["name"],
                     "license": metadata["license"], "source_url": metadata["source_url"]
                 }
+            asset_glob = entry.get("asset_glob")
+            if asset_glob:
+                if entry.get("asset_file"):
+                    raise ValueError("Use either asset_glob or asset_file, not both: " + str(entry.get("name", "asset")))
+                pattern = Path(str(asset_glob))
+                if not pattern.is_absolute():
+                    pattern = (Path(__file__).resolve().parent.parent / pattern).resolve()
+                matches = sorted(Path(p).resolve() for p in glob.glob(str(pattern)) if Path(p).is_file())
+                if not matches:
+                    raise FileNotFoundError("No generated character assets matched: " + str(pattern))
+                index = int(entry.get("asset_index", 0))
+                if index < 0 or index >= len(matches):
+                    raise IndexError("asset_index %d is outside %d generated character assets for %s" %
+                                     (index, len(matches), entry.get("name", "asset")))
+                entry["asset_file"] = str(matches[index])
+                print("RESOLVED_CHARACTER_CAST", {
+                    "subject": entry.get("name"), "asset_index": index,
+                    "asset_count": len(matches), "asset": matches[index].name
+                }, flush=True)
             retarget = entry.get("retarget", {})
             animation_asset_id = retarget.get("animation_asset_id")
             if animation_asset_id:
