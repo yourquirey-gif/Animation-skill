@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "sources": [
+    {
+      "id": "quaternius-universal-base-characters",
+      "provider": "Quaternius",
+      "category": ["characters", "humanoid_rigs", "hairstyles"],
+      "name": "Universal Base Characters",
+      "url": "https://quaternius.com/packs/universalbasecharacters.html",
+      "license_url": "https://quaternius.com/packs/universalbasecharacters.html",
+      "license": "CC0-1.0",
+      "formats_listed": ["FBX", "glTF", "OBJ"],
+      "notes": "The official pack page lists six rigged humanoid bases and twenty hairstyles. Download the free formats from the official page; verify exact included files and current license at download time."
+    },
+    {
+      "id": "quaternius-universal-animation-library",
+      "provider": "Quaternius",
+      "category": ["animations", "humanoid_retarget"],
+      "name": "Universal Animation Library",
+      "url": "https://quaternius.com/packs/universalanimationlibrary.html",
+      "license_url": "https://quaternius.com/packs/universalanimationlibrary.html",
+      "license": "CC0-1.0",
+      "formats_listed": ["FBX", "glTF", "GLB"],
+      "notes": "Official pack page lists 120+ animation clips. Confirm the downloaded archive's rig and export format before using it; retargeting is not assumed to be automatic."
+    },
+    {
+      "id": "poly-haven",
+      "provider": "Poly Haven",
+      "category": ["models", "materials", "textures", "hdris"],
+      "name": "Poly Haven",
+      "url": "https://polyhaven.com",
+      "license_url": "https://polyhaven.com/license",
+      "license": "CC0-1.0",
+      "formats_listed": ["glTF", "FBX", "EXR", "HDR", "PNG"],
+      "notes": "Poly Haven states that its HDRIs, textures and 3D models are CC0. Check the specific asset page and download original files."
+    }
+  ],
+  "policy": "These are verified discovery sources, not downloaded assets. The actual asset files must be added to assets/, inspected, and separately registered in catalog.json before the renderer can use them."
+}

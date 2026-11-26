@@ -6,8 +6,14 @@ on:
       - "runtime/align_visemes.py"
       - "tests/test_align_visemes.py"
       - "tests/blender_rig_controls_smoke.py"
+      - "scripts/**"
       - ".github/workflows/rig-controls-tests.yml"
   workflow_dispatch:
+
+concurrency:
+  group: rig-controls-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   python-tests:
     runs-on: ubuntu-latest
@@ -19,7 +25,6 @@ jobs:
         run: python3 -m unittest tests.test_align_visemes
       - name: Install Blender for rig integration test
         run: |
-          sudo apt-get update
-          sudo apt-get install -y blender
+          bash scripts/install_blender.sh
       - name: Test Blender IK, locomotion and finger controls
         run: blender --background --factory-startup --python-exit-code 1 --python tests/blender_rig_controls_smoke.py

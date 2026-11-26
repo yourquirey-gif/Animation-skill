@@ -5,39 +5,179 @@ on:
     paths:
       - "runtime/**"
       - "templates/**"
-      - "tests/fixtures/**"
+      - "tests/**"
+      - "assets/**"
+      - "scripts/**"
       - ".github/workflows/runtime-smoke-test.yml"
   workflow_dispatch:
+
+concurrency:
+  group: blender-smoke-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   blender-render:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
     env:
-      BLENDER_SMOKE_ENGINE: BLENDER_WORKBENCH
-      ANIMATION_RENDER_ENGINE: BLENDER_WORKBENCH
+      BLENDER_SMOKE_ENGINE: BLENDER_EEVEE
+      ANIMATION_RENDER_ENGINE: BLENDER_EEVEE
       LIBGL_ALWAYS_SOFTWARE: '1'
     steps:
       - uses: actions/checkout@v4
+      - name: Set up Node for procedural human character generation
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
       - name: Install Blender and FFmpeg
         run: |
-          sudo apt-get update
-          sudo apt-get install -y blender ffmpeg libegl1 libgl1 libegl-mesa0 libglx-mesa0 libgl1-mesa-dri
+          bash scripts/install_blender.sh
+      - name: Download verified CC0 mannequin asset for story fixtures
+        run: |
+          set -euo pipefail
+          mkdir -p tests/fixtures/runtime-assets "$RUNNER_TEMP/kinemiq-assets"
+          curl -fL --retry 3 -o "$RUNNER_TEMP/kinemiq-assets/animations.zip" https://github.com/Kinemiq/free-game-animations/releases/download/v1.0/KinemIQ_Free_Animations_CC0_FBX.zip
+          echo "4ecea37e2117a762c8d2be10c7e0f06d9c7c9005af0f9caa64c8ce5d424efb0e  $RUNNER_TEMP/kinemiq-assets/animations.zip" | sha256sum -c -
+          unzip -q "$RUNNER_TEMP/kinemiq-assets/animations.zip" -d "$RUNNER_TEMP/kinemiq-assets/unpacked"
+          MANNEQUIN="$(find "$RUNNER_TEMP/kinemiq-assets/unpacked" -type f -iname 'KinemIQ_Mannequin.fbx' -print -quit)"
+          test -n "$MANNEQUIN"
+          cp "$MANNEQUIN" tests/fixtures/runtime-assets/KinemIQ_Mannequin.fbx
+          mkdir -p tests/fixtures/runtime-assets/animations
+          cp "$RUNNER_TEMP/kinemiq-assets/unpacked/FBX/"*.fbx tests/fixtures/runtime-assets/animations/
+          test -s tests/fixtures/runtime-assets/animations/Walk_forwards.fbx
+          test -s tests/fixtures/runtime-assets/animations/Idle_relaxed.fbx
+          echo "Installed $(find tests/fixtures/runtime-assets/animations -maxdepth 1 -type f -iname "*.fbx" | wc -l) CC0 animation clips"
+      - name: Generate and validate Ara 3D human cast for story fixtures
+        run: |
+          set -euo pipefail
+          mkdir -p tests/fixtures/runtime-assets/ara-cast
+          npx --yes ara3d@0.9.0 export --random 1-6 --detail medium --animations walk,run,idle --formats glb --out tests/fixtures/runtime-assets/ara-cast
+          mapfile -t CAST_MODELS < <(find tests/fixtures/runtime-assets/ara-cast -maxdepth 1 -type f -iname '*.glb' | sort)
+          test "${#CAST_MODELS[@]}" -ge 6
+          blender -b --python-exit-code 1 --python runtime/validate_character_assets.py -- --asset-dir "$GITHUB_WORKSPACE/tests/fixtures/runtime-assets/ara-cast" --min-assets 6
+      - name: Test procedural terrain geometry inside Blender
+        run: blender -b --python-exit-code 1 --python tests/blender/test_terrain.py
+      - name: Test procedural humanoid character generation inside Blender
+        run: blender -b --python-exit-code 1 --python tests/blender_character_smoke.py
+      - name: Test transparent 2D character sprite inside 3D Blender scene
+        run: blender -b --python-exit-code 1 --python tests/blender/test_sprite_character.py
+      - name: Test explicit rig action retargeting inside Blender
+        run: blender -b --python-exit-code 1 --python tests/blender/test_rig_retarget.py
       - name: Compile Python orchestration scripts
         run: |
-          python3 -m py_compile runtime/animation_runtime.py runtime/render_story.py runtime/story_scene.py runtime/align_visemes.py
+          python3 -m py_compile runtime/animation_runtime.py runtime/render_story.py runtime/story_scene.py runtime/align_visemes.py runtime/asset_catalog.py runtime/rig_retarget.py runtime/environment_builder.py cloud/kaggle_gpu_render.py runtime/export_sheepit.py
+      - name: Verify self-contained SheepIt export package
+        run: |
+          set -euo pipefail
+          python3 runtime/export_sheepit.py --storyboard tests/fixtures/guddu_shop_market.json --output "$RUNNER_TEMP/sheepit-smoke.zip" --width 240 --height 426 --fps 12 --samples 8
+          unzip -l "$RUNNER_TEMP/sheepit-smoke.zip" | grep -q 'shot.blend'
+          unzip -l "$RUNNER_TEMP/sheepit-smoke.zip" | grep -q 'kaggle_gpu_render.py'
+      - name: Validate Kaggle notebook Python cells
+        run: |
+          python3 - <<'PY'
+          import ast, json
+          from pathlib import Path
+          notebook = json.loads(Path("cloud/kaggle_blender_renderer.ipynb").read_text(encoding="utf-8"))
+          checked = 0
+          for index, cell in enumerate(notebook.get("cells", [])):
+              if cell.get("cell_type") != "code":
+                  continue
+              source = "".join(cell.get("source", []))
+              source = "\n".join(line for line in source.splitlines() if not line.lstrip().startswith("!"))
+              if source.strip():
+                  ast.parse(source, filename="kaggle-cell-%d" % index)
+                  checked += 1
+          assert checked >= 2, "Expected executable Kaggle renderer cells"
+          print("Validated", checked, "Kaggle Python cells")
+          PY
+      - name: Validate reusable asset catalog
+        run: |
+          python3 runtime/asset_catalog.py validate
+          python3 -m unittest tests.test_asset_catalog tests.test_align_visemes
       - name: Inspect installed tools
         run: |
           python3 runtime/animation_runtime.py inspect
       - name: Render animated Blender smoke test
         run: |
           python3 runtime/animation_runtime.py smoke-test --workdir "$RUNNER_TEMP/blender-smoke" --width 240 --height 426 --fps 12 --frames 24
-      - name: Render three structurally different stories
+      - name: Upload Blender smoke and cross-genre render artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: blender-cross-genre-smoke-renders
+          path: |
+            ${{ runner.temp }}/blender-smoke/
+            ${{ github.workspace }}/tests/fixtures/runtime-assets/ara-cast/
+          if-no-files-found: warn
+          retention-days: 7
+
+  render-story:
+    name: Render ${{ matrix.name }} (parallel worker)
+    needs: blender-render
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        include:
+          - name: guddu-shop-market
+            storyboard: tests/fixtures/guddu_shop_market.json
+          - name: realistic-mountain
+            storyboard: tests/fixtures/realistic_mountain_story.json
+          - name: abstract-gravity
+            storyboard: tests/fixtures/abstract_gravity_story.json
+    env:
+      ANIMATION_RENDER_ENGINE: BLENDER_EEVEE
+      LIBGL_ALWAYS_SOFTWARE: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Blender and FFmpeg
+        run: bash scripts/install_blender.sh
+      - name: Download generated Ara 3D cast from prerequisite job
+        uses: actions/download-artifact@v4
+        with:
+          name: blender-cross-genre-smoke-renders
+          path: ${{ runner.temp }}/shared-render-assets
+      - name: Install generated character cast for this worker
         run: |
-          set -e
-          for storyboard in tests/fixtures/*.json; do
-            name="$(basename "$storyboard" .json)"
-            python3 runtime/render_story.py --storyboard "$storyboard" --output "$RUNNER_TEMP/$name.mp4" --format shorts --width 240 --height 426 --fps 12 --samples 8
-            test -s "$RUNNER_TEMP/$name.mp4"
-            ffprobe -v error -show_entries format=duration:stream=codec_name,width,height -of json "$RUNNER_TEMP/$name.mp4"
-          done
+          set -euo pipefail
+          SOURCE="$(find "$RUNNER_TEMP/shared-render-assets" -type f -name 'random_1.glb' -print -quit)"
+          test -n "$SOURCE"
+          CAST_DIR="$(dirname "$SOURCE")"
+          mkdir -p tests/fixtures/runtime-assets/ara-cast
+          cp "$CAST_DIR"/*.glb tests/fixtures/runtime-assets/ara-cast/
+          test "$(find tests/fixtures/runtime-assets/ara-cast -maxdepth 1 -name '*.glb' | wc -l)" -ge 6
+          echo "ARA_CAST_READY files=$(find tests/fixtures/runtime-assets/ara-cast -maxdepth 1 -name '*.glb' | wc -l)"
+      - name: Download verified CC0 animation assets
+        run: |
+          set -euo pipefail
+          mkdir -p tests/fixtures/runtime-assets/animations "$RUNNER_TEMP/kinemiq-assets"
+          curl -fL --retry 3 -o "$RUNNER_TEMP/kinemiq-assets/animations.zip" https://github.com/Kinemiq/free-game-animations/releases/download/v1.0/KinemIQ_Free_Animations_CC0_FBX.zip
+          echo "4ecea37e2117a762c8d2be10c7e0f06d9c7c9005af0f9caa64c8ce5d424efb0e  $RUNNER_TEMP/kinemiq-assets/animations.zip" | sha256sum -c -
+          unzip -q "$RUNNER_TEMP/kinemiq-assets/animations.zip" -d "$RUNNER_TEMP/kinemiq-assets/unpacked"
+          MANNEQUIN="$(find "$RUNNER_TEMP/kinemiq-assets/unpacked" -type f -iname 'KinemIQ_Mannequin.fbx' -print -quit)"
+          test -n "$MANNEQUIN"
+          cp "$MANNEQUIN" tests/fixtures/runtime-assets/KinemIQ_Mannequin.fbx
+          cp "$RUNNER_TEMP/kinemiq-assets/unpacked/FBX/"*.fbx tests/fixtures/runtime-assets/animations/
+      - name: Render story on its own parallel worker
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/story-output"
+          python3 runtime/render_story.py \
+            --storyboard "${{ matrix.storyboard }}" \
+            --output "$RUNNER_TEMP/story-output/${{ matrix.name }}.mp4" \
+            --workdir "$RUNNER_TEMP/story-output/work" \
+            --format shorts --width 240 --height 426 --fps 12 --samples 8 --parallel-shots 2 \
+            --retries 1 --stall-timeout-seconds 600 \
+            --progress-file "$RUNNER_TEMP/story-output/progress.json"
+          test -s "$RUNNER_TEMP/story-output/${{ matrix.name }}.mp4"
+          ffprobe -v error -show_entries format=duration:stream=codec_name,width,height -of json "$RUNNER_TEMP/story-output/${{ matrix.name }}.mp4"
+      - name: Upload rendered story
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: story-render-${{ matrix.name }}
+          path: ${{ runner.temp }}/story-output/
+          if-no-files-found: warn
+          retention-days: 7

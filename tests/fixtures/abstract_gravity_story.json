@@ -59,7 +59,14 @@
               "metallic": 0.5
             }
           }
-        ]
+        ],
+        "procedural": {
+          "profile": "fantasy",
+          "seed": "abstract_gravity_story",
+          "dressing_count": 12,
+          "width": 30,
+          "depth": 30
+        }
       },
       "subjects": [],
       "props": [

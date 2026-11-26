@@ -36,7 +36,14 @@
               ]
             }
           }
-        ]
+        ],
+        "procedural": {
+          "profile": "interior",
+          "seed": "human_prop_story",
+          "dressing_count": 12,
+          "width": 30,
+          "depth": 30
+        }
       },
       "subjects": [
         {

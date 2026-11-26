@@ -9,9 +9,23 @@ Use this skill for every animated-story task. Treat user-provided reference vide
 
 ## Core standard
 
+## Mandatory Claude Code Web cloud-rendering mode
+
+When operating in Claude Code Web, all production rendering must run in cloud compute; the user's Windows 7 PC is not a rendering host. Select the backend based on the job: GitHub Actions for orchestration and CPU-compatible jobs, SheepIt for distributed Blender frame rendering, or Kaggle GPU for Cycles scenes when a free GPU session is available.
+
+- Use Blender installed by `.github/workflows/cloud-render.yml`; invoke it in background mode with `--background --python-exit-code 1 --python`.
+- Use Python for story orchestration, asset metadata, retries, progress and QA; use FFmpeg/ffprobe for assembly and verification.
+- Do not require the user to install Blender, run a local renderer, or install modern local dependencies.
+- Inspect the connected repository and Git state first. Preserve unrelated changes and work on a feature branch. Do not push to the default branch or merge without explicit authorization.
+- Use GitHub Actions workflow artifacts for MP4/report/log delivery. Never commit generated MP4s or large render caches to the source repository.
+- Detect CPU, RAM, disk and GPU on the actual runner. Standard GitHub-hosted runners are treated as CPU/software-rendered; never assume GPU access or unlimited time.
+- Start with preview resolution/samples, inspect output, then use the requested final profile. Do not silently downgrade engine, resolution, FPS or quality.
+- Keep private narration, reference videos, credentials and personal assets out of this public repository. For private media, require an explicitly configured private storage/upload route or a private repository before processing.
+- A passing smoke test proves only the tested scene and runner configuration. Inspect actual video frames and report artistic/animation limitations separately.
+
 The default approach is to build the complete video using code. Claude Code writes the application, procedural assets, Blender Python scripts, animation timelines, audio/subtitle processing, render automation, and tests. Blender performs 3D rendering; FFmpeg performs media assembly. Do not assume a paid cloud AI video API is required.
 
-Create real animated shots with moving 3D geometry, rigs, objects, camera, and environments—not a slideshow. Static images with pan/zoom are not animation. A code-first Blender pipeline is the default. Optional external AI providers are enhancements only and require user approval if paid.
+Create real animated shots with moving 3D geometry, rigs, objects, camera, and environments—not a slideshow. The supported default is a hybrid pipeline: build the entire world, sets, props, lighting and camera in 3D; characters may be fully rigged 3D models OR animated 2D cutout/sprite characters composited as alpha-enabled image planes inside the 3D scene. For a 2D character use `primitive: sprite` plus `image_file` (PNG/WebP with transparency), transform keyframes and authored facial/pose layers where available. Build a cutout puppet by defining multiple named sprite entries in the subject's `parts` array (body, head, arms, hands, eyes, mouth); give each part its own `keyframes` for gestures and acting. For audio-driven 2D lip-sync, provide separate transparent mouth sprites and set the subject `viseme_map` to map Rhubarb labels (A-H/X) to the exact mouth-part object names; the renderer switches those mouth layers on the aligned audio frames. Keep character scale, perspective, shadows and location continuity coherent with the 3D set. A single still sprite is not acceptable as a finished animated character: use layered parts, a sprite sheet/frame sequence, or a rigged 2D puppet for body acting, gestures and expressions; validate actual movement. Follow `docs/hybrid-2d-3d-puppets.md` for the storyboard part/lip-sync contract and validation checklist. A code-first Blender pipeline is the default. Optional external AI providers are enhancements only and require user approval if paid.
 
 Never promise exact replication of a reference. Aim for the closest achievable style and clearly report visual gaps, render time, hardware constraints, and technical limits.
 
@@ -29,27 +43,27 @@ Before creating a new video, follow `docs/INTERACTIVE_INTAKE_AND_PRODUCTION.md`.
 - Ask one concise question at a time. Remember answers within the current task; never repeat answered questions. If a ZIP contains multiple assets, inspect its contents before asking for anything.
 - After intake, take ownership of script timing, storyboard, characters, environments, animation, sound design, captions, rendering, and QA. Ask only when a genuine blocker or user approval is needed.
 
-## Bundled executable runtime — run it, do not only describe it
+## Bundled cloud runtime — use it, do not only describe it
 
-This skill now ships executable helpers in runtime/. When a user starts a video task in Claude Code, use the terminal to run the bundled runtime from the skill directory before inventing a new setup:
+This repository includes executable Blender/Python helpers and a GitHub Actions cloud-render workflow.
 
-1. Run `python runtime/animation_runtime.py inspect` (Windows may use `py`). Read the actual report; do not assume Blender or FFmpeg is installed.
-2. If all three tools are available, run `python runtime/animation_runtime.py smoke-test`. This must create a real animated 3D Blender scene, render frames, encode an MP4 with FFmpeg, and validate it with ffprobe. Inspect the produced MP4 and report the real result.
-3. If a dependency is missing, identify OS and install route; ask before using administrator privileges, large downloads, or changing system configuration. Support BLENDER_BIN, FFMPEG_BIN and FFPROBE_BIN overrides.
-4. Do not pip-install bpy into arbitrary system Python as the default. Use Blender's own bundled Python for bpy scripts and invoke Blender in background mode with --python and --python-exit-code 1.
-5. The smoke test is only a technical integration check. It is not a finished story engine, not a production character benchmark, and not permission to reuse its sample scene as every story.
-6. For the actual user story, Claude Code must author a new story-specific Blender scene/asset code from the approved storyboard: unique world, set dressing, characters, props, physically coherent actions, camera, lighting and facial acting. Keep reusable rig/animation utilities separate from story data.
-7. Use a real preview render and inspect it. Fix defects before final render. Assemble audio/captions/music/SFX and validate the final export with ffprobe. In Claude chat, present the preview/result file paths and attach or surface the actual MP4 using the host's supported file workflow; never claim an attachment exists if it was not produced.
+1. In Claude Code Web, inspect the connected GitHub repository, current branch, working tree, existing application and workflow permissions. Do not inspect or depend on the user's Windows 7 rendering capabilities.
+2. Use `.github/workflows/cloud-render.yml` for production rendering. It installs Blender and FFmpeg on Ubuntu, validates inputs, checks runner resources, renders real Blender frames per shot, assembles the MP4, validates it with ffprobe, and uploads artifacts.
+3. Use `runtime/animation_runtime.py inspect` and `smoke-test` only in a compatible cloud runner or a developer's supported machine. Never tell this user that local Windows 7 Blender setup is required.
+4. For each story, create a story-specific storyboard and use the existing renderer. Render a low-resolution preview first; inspect it before spending more runner time on final quality.
+5. Download the MP4, `final_report.json`, progress record and logs from the GitHub Actions artifact. Do not claim a file exists until the artifact is present and its metadata is checked.
 
-The bundled runtime commands and requirements are documented in runtime/README.md. The Blender API's supported headless pattern is documented by Blender itself: `blender --background --python script.py`. See https://docs.blender.org/api/current/info_tips_and_tricks.html and https://docs.blender.org/api/current/info_advanced_blender_as_bpy.html.
+Render backend options are documented in docs/EXTERNAL_RENDER_BACKENDS.md. For free distributed rendering, use the Export SheepIt Render Package workflow to create packed per-shot .blend projects; for a free shared GPU, use the included Kaggle notebook with CYCLES scenes. SheepIt project upload/download still requires the user's SheepIt session, and Kaggle requires the user's Kaggle session/quota. Do not claim either remote backend is connected or rendering until its own run is verified.
+
+The production workflow defaults to Full HD at 30 FPS: Shorts use 1080x1920 (9:16), while Long videos use 1920x1080 (16:9). Width and height can be overridden explicitly. Smoke tests remain low-resolution to conserve runner time. Full-HD rendering is CPU/software-rendered unless a GPU is actually detected; complex scenes may exceed hosted-runner time, memory or disk limits. The workflow has a bounded timeout and seven-day artifact retention.
 
 ## First-use application implementation requirement
 
-This repository is a Claude Code skill/instruction package, not a prebuilt renderer. When installed into a user's working project, inspect that project and implement a real reusable local video-production application before claiming the workflow is ready. Follow `docs/APP_IMPLEMENTATION_SPEC.md` and `docs/CODE_FIRST_PIPELINE.md`.
+This repository is a Claude Code skill/instruction package, not a prebuilt renderer. When installed into a user's working project, inspect that project and implement a real reusable cloud-backed video-production application before claiming the workflow is ready. Follow `docs/APP_IMPLEMENTATION_SPEC.md` and `docs/CODE_FIRST_PIPELINE.md`.
 
-- Create working Python orchestration, Blender `bpy` scene generation, FFmpeg assembly, audio/transcription/timestamp handling, subtitle rendering, job persistence, preview/render/resume/validate commands, and automated tests.
+- Create working Python orchestration, Blender `bpy` scene generation, FFmpeg assembly, audio/transcription/timestamp handling, subtitle rendering, job persistence, preview/render/resume/validate commands, and automated tests. In Claude Code Web, run the renderer through GitHub Actions Ubuntu rather than on the user's Windows 7 PC.
 - Do not merely create placeholder directories, pseudocode, fake progress bars, mock renders, or a sample slideshow and call it complete.
-- Detect Blender, FFmpeg, Python, available hardware, fonts, audio tools, and dependencies. Provide a setup report and a real smoke test.
+- Detect Blender, FFmpeg, Python, CPU/RAM/disk/GPU, fonts, audio tools, and dependencies on the actual GitHub Actions Ubuntu runner. Provide a cloud setup report and a real smoke test.
 - Keep the app modular and story data separate from rendering code. Validate storyboard data against a schema.
 - Implement graceful missing-dependency handling and clearly explain installation steps. Never silently switch to still images if Blender is unavailable.
 - Build the first usable vertical/horizontal end-to-end sample with actual moving 3D geometry, real audio, subtitles, and ffprobe validation before declaring the app operational.
@@ -57,20 +71,30 @@ This repository is a Claude Code skill/instruction package, not a prebuilt rende
 
 ## Mandatory code-first production workflow
 
-1. Inspect the project, available assets, reference media, OS, CPU/GPU/RAM/disk, Python, Blender, FFmpeg/ffprobe, fonts, and audio tools before changing anything.
-2. If Blender is missing, assess whether it can be installed and explain requirements. Do not silently replace 3D animation with a slideshow.
+1. Inspect the connected target repository, Git state, application architecture, available assets, reference media, Actions workflows, permissions, and secrets requirements before changing anything. In Claude Code Web, inspect the actual Ubuntu runner resources, not the user's Windows 7 computer.
+2. Install Blender, FFmpeg and required system libraries inside the GitHub Actions Ubuntu workflow. Do not ask the user to install local Blender. If the cloud runner cannot render, report the blocker; do not silently replace 3D animation with a slideshow.
 3. Analyze references when supplied: sample frames across the whole clip; inspect aspect ratio, frame rate, shot length, palette, lighting, character design, camera language, motion, subtitles, sound, and transitions. Write findings to docs/REFERENCE_STYLE_GUIDE.md.
 4. Parse the story into beats, characters, locations, props, and chronological events. Preserve the user's plot and causal order.
 5. Create a structured storyboard/scene manifest before rendering. Each shot records ID, duration, location, characters, initial positions, action, emotion, props, framing, camera/lens/movement, lighting, environment motion, narration/dialogue, SFX/music, continuity constraints, output path, and status.
 6. Create a Character Bible and Location Bible. Record stable visual traits, wardrobe, scale, voice, props, geography, layout, lighting, and recurring details.
-7. Build reusable procedural 3D characters, props, and environments using Blender's Python API (bpy). Create meshes, materials, textures, armatures, named bones, facial shape keys, camera rigs, lighting, and reusable scene assets.
-8. Animate actual geometry using keyframes, action/NLA tracks, constraints, IK where practical, drivers, shape keys, particles, and physics where useful. Implement walk/run/idle/talk/gesture/action cycles and correct prop interactions.
-9. Render real frames from Blender. Use low-quality previews first, inspect them, fix defects, then render final shots. Save .blend files and per-shot renders.
-10. Generate or import narration, dialogue, music, and sound effects. Use locally available TTS/audio tools when suitable; otherwise ask for user-provided audio or approval for an optional provider. Do not fabricate audio.
-11. Generate subtitles from actual audio timing. Mix audio and assemble scenes using FFmpeg.
-12. Validate the final MP4 with ffprobe and visual/audio checks. Save manifests and intermediate assets so failed jobs can resume.
+7. Before building new assets, search `assets/catalog.json` with `python runtime/asset_catalog.py search --query "<story subject>"` and consult `docs/ASSET_SOURCES.md`. Reuse only downloaded, inspected, legally usable files; do not assume a source listing means the model is already present.
+8. Build reusable procedural 3D characters, props, and environments using Blender's Python API (bpy). The renderer includes a `stylized_humanoid` character builder with separated head/face/body/limb meshes, configurable palette/proportions, optional cape/hat, part-level keyframes and a preview walk cycle. Use imported inspected rigged models for close-up acting, natural finger contact, detailed facial performance and production-grade character animation; never present the procedural starter as a high-end sculpt or full skeletal rig. Create meshes, materials, textures, armatures, named bones, facial shape keys, camera rigs, lighting, and reusable scene assets.
+9. Animate actual geometry using keyframes, action/NLA tracks, constraints, IK where practical, drivers, shape keys, particles, and physics where useful. Implement walk/run/idle/talk/gesture/action cycles and correct prop interactions.
+10. Render real frames from Blender. Use low-quality previews first, inspect them, fix defects, then render final shots. Save .blend files and per-shot renders.
+11. Generate or import narration, dialogue, music, and sound effects. Use TTS/audio tools available on the cloud runner when suitable; otherwise ask for user-provided audio or approval for an optional provider. Do not fabricate audio.
+12. Generate subtitles from actual audio timing. Mix audio and assemble scenes using FFmpeg.
+13. Validate the final MP4 with ffprobe and visual/audio checks. Save manifests and intermediate assets so failed jobs can resume.
 
 Read docs/CODE_FIRST_PIPELINE.md before implementing a complete code-generated video. It defines the architecture, procedural modeling, rigging, animation, rendering, audio, performance, reference matching, commands, and acceptance gates.
+
+## Required reference-video visual target
+
+For this user's two reference videos, read `docs/REFERENCE_STYLE_GUIDE.md` before designing a character, set or shot. The references show stylized cinematic 3D storytelling: expressive characters, detailed palace/workshop environments, dramatic close-ups and varied camera angles, day/night and action beats, readable high-contrast captions, and strong mobile-first vertical composition. Reference 1 includes an emperor/palace/castle, dragon-head object, cage, explosion and pendulum; reference 2 includes a red-column palace, carpenter/workshop, reactions and miniature construction. These are style references, not stories to copy.
+
+- Use a real rigged stylized humanoid asset for close-up acting; procedural primitive people are preview-only, never final characters.
+- For separate motion packs, use `runtime/rig_retarget.py` with exact source/target armature names, action name and explicit bone map. Preview axis offsets, root motion, feet, hands and prop contacts on each rig.
+- For supplied narration, `render_story.py --voice <file> --auto-lip-sync --rhubarb <binary>` runs Rhubarb and distributes cues to subjects with exact `viseme_map` shape-key names. Neutral X/REST returns all mapped mouth shapes to zero. This requires a facially rigged model and a working Rhubarb binary.
+- Do not claim reference-level quality until actual textured model files are present and the acceptance shots in `docs/REFERENCE_STYLE_GUIDE.md` have been rendered and visually inspected.
 
 ## Character and scene continuity
 
@@ -109,10 +133,10 @@ Avoid contradictory instructions, overloaded action lists, and unnecessary style
 
 ## Tooling and provider rules
 
-- Prefer Blender + bpy, Python, and FFmpeg/ffprobe for the complete local pipeline.
+- Prefer Blender + bpy, Python, and FFmpeg/ffprobe for the complete cloud pipeline in Claude Code Web.
 - Inspect official documentation for tools and libraries before integration.
 - Do not add cloud APIs by default. If an optional AI image/video/TTS provider would materially improve a result, explain capability, pricing, limits, and required credentials; obtain approval before paid usage.
-- Keep optional providers behind adapters so the local pipeline remains usable without them.
+- Keep optional providers behind adapters so the Blender cloud pipeline remains usable without them.
 - Keep secrets in environment variables; provide .env.example with names only.
 - Do not expose keys in logs, UI, commits, or generated reports.
 - Distinguish implemented, tested, mocked, and pending functionality.
@@ -255,15 +279,11 @@ The video generator must handle arbitrary stories, not just the reference exampl
 Reuse only general-purpose systems (camera, lighting, animation utilities, render, audio, captions, QA). Generate story-specific characters/subjects, environments, props, actions and visual direction for every new project. Never reuse the diagnostic smoke-test scene as the user's story. Read docs/APP_IMPLEMENTATION_SPEC.md section 12 and pass its cross-genre acceptance suite before claiming the engine is universal.
 
 
-## Execute the bundled story renderer
+## Execute the cloud story renderer
 
-For a user-approved story, create a project-specific storyboard JSON using the structure in `templates/storyboard.universal.example.json`. Do not copy its sample scene as the finished story. Then execute the actual pipeline from the skill directory:
+For a user-approved story, create a project-specific storyboard JSON using `templates/storyboard.universal.example.json`; do not copy its sample scene as the finished story. In Claude Code Web, run `.github/workflows/cloud-render.yml` through GitHub Actions **Actions → Cloud Blender Video Render → Run workflow**. Supply the storyboard path, output name, format, engine, resolution, FPS, samples, and optional repository-relative audio/caption paths. For private audio/reference media, do not commit it to this public repository; first configure an approved private storage or private-repository workflow.
 
-- Shorts: `python runtime/render_story.py --storyboard projects/<id>/storyboard.json --output projects/<id>/final.mp4 --format shorts`
-- Long: `python runtime/render_story.py --storyboard projects/<id>/storyboard.json --output projects/<id>/final.mp4 --format long`
-- With supplied audio: add `--voice <path>`; optionally add `--music <path>` and `--captions <path-to-srt>`.
-
-The renderer invokes Blender once per shot, renders real PNG frames, encodes each shot with FFmpeg, concatenates shots, optionally burns SRT captions and muxes voice/music, then validates the final MP4 with ffprobe. Inspect Blender logs, previews and final video. Do not report success if any shot fails or the output file/metadata is missing.
+The workflow invokes Blender once per shot, renders real PNG frames, encodes each shot with FFmpeg, concatenates shots, optionally burns SRT captions and muxes voice/music, validates the final MP4 with ffprobe, and uploads the artifact. Inspect the MP4 and report actual metadata. Do not report success if any shot fails or the artifact/metadata is missing.
 
 The bundled renderer currently provides a procedural 3D foundation (primitive meshes, subject assemblies, transform keyframes, camera keyframes and lighting). For professional story-specific output, add suitable detailed models, rigs, facial performance, contact-aware interactions, scene-specific textures and refined acting. Do not pass off the primitive diagnostic look as finished cinematic quality. The user's supplied audio remains the timing/master track; plan shot durations against its actual duration.
 
@@ -288,3 +308,35 @@ When a character picks up, holds, carries, throws or hands over an object, prefe
 For speaking characters, use the renderer's `viseme_map` + `viseme_keyframes` when the imported face has corresponding shape keys. Generate event timestamps from a real phoneme/viseme alignment process against the supplied master audio, or author them carefully from actual dialogue timing. The bundled renderer applies these events but does not perform speech recognition or forced alignment by itself. Never invent phoneme timing or claim verified lip-sync without inspecting close-up renders against the actual audio. Account for coarticulation and natural rests; use real model blendshape names only.
 
 Before marking any render complete, require the renderer's per-shot PNG count/signature/dimension checks and final MP4 video/duration/audio checks to pass. Review `shot_frame_qc` duplicate-frame warnings in `final_report.json`; they are candidates, not automatic failures because intentional holds can repeat frames. Still visually inspect for black frames, freezes, flicker, framing, rig deformation, hand contact and audio-mouth sync. A technical PASS is not a cinematic quality PASS.
+
+
+## Universal script-to-Blender architecture (mandatory)
+
+Before production, read `docs/UNIVERSAL_SCRIPT_TO_BLENDER_PIPELINE.md`. Claude Code must interpret each new idea/script/audio and generate that project's story bible and storyboard; Blender Python must build the actual 3D scene dynamically from those project files. Do not hard-code a specific story, fixed crowd size, named cast, location or action into renderer source. Smoke-test fixtures are QA only and are never production templates. Entity counts, asset selection, environments, props, animation, camera and lighting must be driven by the generated project manifest. The Blender runtime executes structured scene instructions; Claude Code is responsible for translating natural-language stories into those instructions. Do not claim the complete script-to-video loop exists until planner, dynamic scene builder, asset resolver, render manager and final QA have each been implemented and tested end-to-end.
+
+## Mandatory story-by-story uniqueness — no generic reused worlds
+
+Follow the detailed production contract in `docs/STORY_UNIQUENESS_AND_ENVIRONMENT_PIPELINE.md` for every project.
+
+Every new story is a fresh production design. Do not reuse a previous story's complete environment, scene layout, background, prop arrangement, character cast, wardrobe, lighting setup, camera plan, or shot composition as a shortcut. Reusable libraries are component libraries only; they are not permission to recycle an entire scene.
+
+Before rendering each story, create and persist a Story Production Bible containing:
+- A unique `story_id`, visual concept, art direction, palette, texture language, and environment design brief.
+- A Character Bible for every named/visible character: distinct face/head, body proportions, hair, skin/material appearance, wardrobe, accessories, role, performance style, and continuity identifiers. Crowd members must not be duplicated clones; vary models, silhouettes, clothing, poses and placement.
+- A Location Bible for every distinct location: unique layout and geometry, architecture/landform, ground materials, background depth, landmarks, vegetation/props, weather, time of day, atmosphere, practical lights and color temperature.
+- A Prop Bible for story-critical objects, including design, dimensions, materials, ownership, state and continuity.
+- A shot-specific camera and lighting plan; camera angles, lens, framing and movement must serve the beat rather than default to one repeated setup.
+
+### Environment uniqueness rules
+1. Generate a new environment design from the actual story context. A village, market, palace, spaceship, forest, underwater city, classroom, battlefield, or home must have the right story-specific layout, architectural language, set dressing, geography, atmosphere and functional details.
+2. Every distinct location receives a stable unique `location_id` and a location-specific manifest. Shots in the same location reuse that location's approved geometry for continuity; a new location gets a separately designed environment.
+3. Record an `environment_fingerprint` from the location's design inputs (layout, landmark set, architecture/terrain, materials, dressing, weather, time-of-day and lighting concept). Compare it with other locations in the same story and with recent project history. If two supposedly different locations are near-identical, redesign one before rendering.
+4. Never use a generic empty plane, cube buildings, repeated stall blocks, or placeholder primitives as the final environment. Primitive geometry is allowed only for blocking/previsualization and must be replaced or detailed before final approval.
+5. Reuse individual licensed trees, rocks, furniture, vehicles, textures or modular components only when they fit. Recompose, rescale, recolor and dress them to the new design. Never copy a complete previous scene or environment collection unchanged.
+6. Every story must have its own environment palette, landmarks, prop dressing, weather/time cues and camera language. If two stories intentionally share a real-world location, preserve the factual location identity but create story-specific set dressing, time, weather, lighting and shot composition; do not pretend the place itself is different.
+7. Background crowds must be populated with distinct approved models/variants and varied animation states. No repeated mannequin rows or obvious clone loops. If enough distinct assets are unavailable, generate new variants or report the limitation instead of hiding it.
+
+### Story-specific production gate
+Before a final render, validate that every shot references a known `location_id`, every location has a non-empty design manifest and fingerprint, every character has a stable identity record, and every story-critical prop has continuity state. Check for duplicate environment fingerprints across different locations in the same story. Run a visual preview and inspect representative frames for repeated geometry, empty space, clipping, scale, crowd cloning, lighting mismatch and continuity errors. A failed gate blocks the final render; it must not be reported as complete.
+
+A reusable asset may appear in multiple stories, but the **story, characters, location design, scene composition, dressing, lighting and cinematic treatment must be newly authored for each story**. Do not claim that every element is unique if a shared asset or limitation remains; disclose exactly what was reused.

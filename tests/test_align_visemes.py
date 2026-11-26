@@ -3,12 +3,12 @@ from runtime.align_visemes import cues_to_keyframes
 
 
 class RhubarbCueTests(unittest.TestCase):
-    def test_converts_cues_and_final_rest(self):
+    def test_converts_cues_with_neutral_reset_after_each_cue(self):
         events = cues_to_keyframes({"mouthCues": [
             {"start": 0.0, "end": 0.2, "value": "A"},
             {"start": 0.2, "end": 0.5, "value": "C"},
         ]})
-        self.assertEqual([e["viseme"] for e in events], ["A", "C", "X"])
+        self.assertEqual([e["viseme"] for e in events], ["A", "X", "C", "X"])
         self.assertEqual(events[-1]["time_seconds"], 0.5)
 
     def test_rejects_unknown_shape(self):

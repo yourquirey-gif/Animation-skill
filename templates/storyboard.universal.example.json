@@ -2,7 +2,7 @@
   "project": {
     "title": "A story-specific title",
     "description": "Describe the actual story and its visual tone.",
-    "fps": 24,
+    "fps": 30,
     "resolution": "shorts"
   },
   "shots": [

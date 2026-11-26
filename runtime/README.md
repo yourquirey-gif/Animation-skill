@@ -1,115 +1,134 @@
-# Local Runtime
+# Blender Cloud Runtime
 
-The skill bundles executable Python tools for environment inspection and a real Blender-to-FFmpeg integration test.
+The production renderer is **Blender + bpy**, orchestrated by Python and assembled/validated by FFmpeg/ffprobe. In Claude Code Web, all 3D rendering must happen on GitHub Actions Ubuntu runners. The user's Windows 7 computer is not a rendering host and must not be asked to install Blender.
 
-Requirements: Blender executable (with bundled Python/bpy), FFmpeg with libx264, ffprobe, and Python 3.10+ for orchestration.
+## Cloud render workflow
 
-Run from the skill folder:
+GitHub Actions workflow: `.github/workflows/cloud-render.yml`
 
-    python runtime/animation_runtime.py inspect
-    python runtime/animation_runtime.py smoke-test --workdir animation_work/smoke_test
+1. Open the repository on GitHub.
+2. Select **Actions → Cloud Blender Video Render → Run workflow**.
+3. Choose a storyboard JSON already committed to the repository, output name, aspect ratio, Blender engine, resolution, FPS, samples, and optional repository-relative voice/music/SRT paths.
+4. The Ubuntu runner installs Blender, FFmpeg and headless graphics libraries, reports CPU/RAM/disk/GPU availability, validates inputs, and runs the real renderer.
+5. Each shot is rendered separately in Blender background mode as a single animation render, allowing Blender to retain render data between frames. Static, unanimated primitive environment meshes are joined into a shared environment mesh before rendering; animated subjects and imported rigs remain separate. Failed shots get a bounded retry; progress is written to JSON and logs are retained. Per-shot render time and frames-per-second are recorded for benchmarking.
+6. FFmpeg encodes and joins shot frames, applies captions and mixes audio. ffprobe validates the final MP4.
+7. The workflow uploads the MP4, final report, progress record and render logs as a downloadable Actions artifact (7-day retention).
 
-Optional executable overrides: BLENDER_BIN, FFMPEG_BIN, FFPROBE_BIN.
+Production workflow defaults: 1080x1920 (9:16) for Shorts and 1920x1080 (16:9) for Long, both at 30 FPS. Width/height inputs may override these defaults; FPS can also be changed. Smoke tests deliberately remain low-resolution. The cloud-render workflow also runs on pushes affecting runtime or story fixtures, using the Shorts Full-HD/30 FPS default when no manual inputs are supplied; this is the target-profile regression check, not a guarantee that every complex scene fits the hosted runner. Standard GitHub-hosted runners are CPU/software-rendered unless a GPU is explicitly detected; no GPU is assumed, so complex 1080p renders may be slow or hit the workflow's 45-minute limit.
 
-The smoke test creates actual animated 3D geometry, a prop, terrain, camera and lights; renders PNG frames with Blender; encodes MP4 with FFmpeg; and checks the result with ffprobe. It saves a .blend, frames, logs and a JSON report.
+## Local development / tests
 
-This is a technical integration test, not a finished story or proof of cinematic art quality. Each user story still needs its own characters, props, environments, actions, camera and lighting implementation, followed by preview inspection.
+A developer with Blender installed may run the same pipeline locally:
 
-Use Blender's embedded Python for bpy. The supported invocation is Blender background mode with --python and --python-exit-code 1. Do not assume system Python can import bpy, and avoid GUI-only operators in headless scripts.
+```bash
+python runtime/animation_runtime.py inspect
+python runtime/animation_runtime.py smoke-test
+python runtime/render_story.py --storyboard tests/fixtures/human_prop_story.json --output output/test.mp4 --format shorts
+python runtime/asset_catalog.py validate
+```
 
+Use Blender's bundled Python for `bpy`; do not pip-install `bpy` into arbitrary system Python. Set `BLENDER_BIN`, `FFMPEG_BIN`, and `FFPROBE_BIN` only when executable discovery needs an override.
 
-## Story-driven rendering
+## Storyboard renderer
 
-Claude should convert each arbitrary user story/script/audio plan into a project-specific JSON storyboard, then run:
+`runtime/render_story.py` reads story-specific JSON and launches Blender once per shot. It renders actual PNG frames using Blender's animation render path (with persistent render data enabled where supported), merges eligible static primitive environment geometry to reduce scene-object overhead, validates frame count/signature/dimensions, records per-shot render timing, encodes each shot with FFmpeg, concatenates the shots, optionally burns SRT captions and muxes voice/music, then checks the final MP4 with ffprobe. It supports bounded shot retries and machine-readable progress via `--progress-file`. Work directories contain `.blend` files, frames, logs, and `final_report.json` for diagnosis/resume.
 
-    python runtime/render_story.py --storyboard projects/<id>/storyboard.json --output projects/<id>/final.mp4 --format shorts
+## Detailed model assets
 
-For a horizontal long video:
+Storyboard entries may use `asset_file` instead of a procedural primitive. Supported imports are `.glb`, `.gltf`, and `.fbx`; relative paths resolve from the storyboard JSON file. GLB/glTF is preferred for embedded PBR materials and hierarchy. An optional `asset_action` selects an imported Blender action by exact name. Keep every model's source, license, attribution, rig and animation compatibility in `assets/catalog.json`. Use:
 
-    python runtime/render_story.py --storyboard projects/<id>/storyboard.json --output projects/<id>/final.mp4 --format long
+```bash
+python runtime/asset_catalog.py validate
+python runtime/asset_catalog.py search --query "roman soldier" --style realistic
+python runtime/asset_catalog.py list --category characters
+```
 
-Optional narration, music and subtitles:
+The registry contains metadata and presets, not a bundled collection of finished commercial-grade models. Add only assets whose files and licenses have been verified. The catalog tool checks metadata and file existence; it cannot certify model quality, rig compatibility or legal rights.
 
-    python runtime/render_story.py --storyboard projects/<id>/storyboard.json --output projects/<id>/final.mp4 --voice voice.wav --music music.wav --captions captions.srt
+## Rigged character animation and facial performance
 
-The storyboard contains a sequence of shots. Each shot defines its own environment objects, subject assemblies, props, keyframes, camera and lights. See `templates/storyboard.universal.example.json`. Claude must create a new storyboard and story-specific assets for every production; the example JSON is a schema illustration only.
+For a detailed character model, provide an imported rigged GLB/glTF or FBX with its armature and (for facial animation) shape keys/blendshapes. A subject entry may use `asset_file`, `asset_action`, `pose_keyframes`, `facial_keyframes`, and `rig_controls`. Bone and shape-key names are asset-specific: inspect the imported model and use its actual names. The runtime supports explicit bone pose keys, mapped IK targets, finger-control keys, locomotion mappings, facial shape keys and viseme events. These are rig-specific controls, not a universal auto-rigger or a fully automatic hand-grasp solver.
 
-The current scene compiler supports procedural mesh primitives and transform/camera keyframes. It is a working foundation for generated 3D scenes, not a claim that primitive geometry alone achieves feature-film character quality. Production art direction, detailed meshes/rigs, contact-aware hand/prop actions, facial performance and lip-sync still require story-specific asset/animation work and visual QA.
+## Props attached to character hands/bones
 
+Use `attach_to` on a prop with the subject name and exact armature bone name. Tune local offset/rotation from preview renders. Bone parenting makes the prop follow the animated hand; it does not itself solve finger closure, collision or contact physics.
 
-### Detailed model assets
+## Real humanoid animation retargeting
 
-Storyboard object/subject-part entries may use `asset_file` instead of a procedural primitive. Supported imports are `.glb`, `.gltf` and `.fbx`; relative paths resolve from the storyboard JSON file. GLB/glTF is preferred for embedded PBR materials and hierarchy. An optional `asset_action` selects an imported Blender action by exact action name for imported armatures. Keep asset licenses and source notes in the project asset manifest. The renderer does not download models or assume external asset access.
+A subject can import a rigged character and a separate animation pack, then bake the animation onto the character's own armature:
 
+```json
+{
+  "name": "Palace_Guard",
+  "asset_file": "characters/guard.glb",
+  "retarget": {
+    "animation_file": "animations/UAL1_Standard.glb",
+    "source_armature": "Armature",
+    "source_action": "Walk",
+    "action_name": "Guard_Walk",
+    "frame_start": 1,
+    "frame_end": 48,
+    "copy_root_motion": true,
+    "root_translation_scale": 1.0,
+    "bone_map": [
+      {"source": "root", "target": "Root"},
+      {"source": "hips", "target": "Hips"},
+      {"source": "spine", "target": "Spine"},
+      {"source": "head", "target": "Head"}
+    ]
+  }
+}
+```
 
-### Rigged character animation and facial performance
+Bone names and action names above are examples only. Inspect the exact imported rig/action first. `rotation_offset` accepts 3 Euler radians or 4 quaternion values for per-bone axis correction. The first mapped bone receives root translation when `copy_root_motion` is true. Retargeting bakes local bone rotations; it does not automatically solve foot sliding, contact, scale mismatch or facial motion. The `runtime/rig_retarget.py` helper is covered by a Blender integration test.
 
-For a detailed character model, provide an imported rigged GLB/glTF or FBX with its armature and (for facial animation) shape keys/blendshapes. A subject entry may use:
+The reference-style starting assets are documented in `assets/REFERENCE_STYLE_ASSETS.md`. The Quaternius character and animation packs are CC0 according to their official publisher pages, but their ZIP files are not bundled in this repository; download the Standard packs and place the extracted files under `assets/characters/` and `assets/animations/`. Keep large source packs out of Git unless intentionally required.
 
-- `asset_file`: model path relative to the storyboard.
-- `asset_action`: exact existing Blender action name to play from the imported asset.
-- `pose_keyframes`: per-time bone transforms keyed by exact armature bone names; each transform may contain Euler `rotation`, `location` or `scale` arrays.
-- `facial_keyframes`: per-time shape-key values keyed by exact imported shape-key names, with values from 0 to 1.
+## Audio-aligned lip-sync
 
-Example fragment:
+`runtime/align_visemes.py` converts Rhubarb cue JSON into viseme events and inserts a neutral-mouth reset at every cue end. For automatic orchestration, pass `--voice narration.wav --auto-lip-sync --rhubarb /path/to/rhubarb` to `render_story.py`. Each speaking subject must define a `viseme_map` with exact imported shape-key names (Rhubarb A-H); neutral X/REST resets all mapped mouth shapes to zero and needs no dedicated shape key. Rhubarb must be installed separately and run against the actual audio; the renderer does not invent phoneme timestamps. This is approximate mouth-shape alignment, not phoneme-perfect facial acting. Inspect close-up previews against the master narration.
 
-    {
-      "name": "StoryHero",
-      "asset_file": "assets/hero.glb",
-      "pose_keyframes": [
-        {"time_seconds": 0, "bones": {"upper_arm.L": {"rotation": [0, 0, 0]}}},
-        {"time_seconds": 1, "bones": {"upper_arm.L": {"rotation": [0, 0.8, 0]}}}
-      ],
-      "facial_keyframes": [
-        {"time_seconds": 0, "shapes": {"Smile": 0.0, "MouthOpen": 0.0}},
-        {"time_seconds": 1, "shapes": {"Smile": 0.7, "MouthOpen": 0.15}}
-      ]
-    }
+## Honest quality limits
 
-Bone and shape-key names are asset-specific: inspect the imported model first and use its actual names. `pose_keyframes` creates a dedicated action for the supplied bone poses; do not combine it with `asset_action` on the same armature because the pose action becomes the active action. Use an imported action for a prepared motion clip, or explicit pose keyframes for custom performance. Facial shape-key animation is a separate animation channel.
+Panda3D is not part of the active renderer. Blender is the only 3D render engine in this project. Blender's presence does not automatically provide high-quality models, universal retargeting, motion capture, perfect lipsync, physically correct contacts, cloth, or photorealistic assets. These require suitable assets, rig mappings, story-specific implementation and visual inspection. A successful CI smoke test proves the cloud toolchain can render its fixtures, not that every arbitrary story is cinematic or production-ready.
 
-This enables real rig-driven performance when suitable assets exist; it does not magically auto-rig arbitrary downloaded meshes. If a character asset has no rig, Claude must create/rig an appropriate model or state the limitation rather than pretending it can perform skeletal acting.
+## Story-driven semantic acting for the procedural starter
 
+For a quick blocking pass, a `stylized_humanoid` subject may define a `character.performance` array. The renderer compiles each semantic beat into timed part-level animation keyframes:
 
-### Props attached to character hands/bones
+```json
+{
+  "name": "Story_Character",
+  "character": {
+    "type": "stylized_humanoid",
+    "performance": [
+      {"time_seconds": 0.4, "duration_seconds": 0.8, "action": "look_left"},
+      {"time_seconds": 1.5, "duration_seconds": 0.9, "action": "wave", "side": "right"},
+      {"time_seconds": 2.6, "duration_seconds": 0.6, "action": "nod"}
+    ]
+  }
+}
+```
 
-To keep a prop attached to an animated hand or other rig bone, put `attach_to` on its prop entry. It references the subject name and exact armature bone name; `offset` and `rotation` are local to that bone:
+Currently supported generic blocking actions: `wave`, `point`, `raise_arms`, `cheer`, `look_left`, `look_right`, `look_up`, `look_down`, `nod`, `shake_head`, `surprised`, `sad`, `talk`, and `idle_breath`. Events must fit within the shot and overlapping events on the same body part are rejected. The procedural starter is a part-animated blockout character: it is not a skeletal rig, does not provide finger articulation, and is not suitable as a final close-up acting model. Use a real imported rig with authored bone/facial tracks for production acting.
 
-    {
-      "name": "Lantern",
-      "asset_file": "assets/lantern.glb",
-      "attach_to": {
-        "subject": "StoryHero",
-        "bone": "hand.R",
-        "offset": [0.02, 0.0, 0.08],
-        "rotation": [0.0, 0.0, 0.0]
-      }
-    }
+CI runs pure-Python unit tests for the semantic action compiler. Blender integration and visual inspection remain separate acceptance gates.
 
-This gives the prop a real Blender bone parent, so it follows the character's animated hand. Claude must inspect the model's real bone names and tune local offsets from a preview. It does not automatically solve finger gripping, collisions or contact physics; those need a suitable hand rig, constraints and story-specific animation.
+### Stable asset IDs in generated storyboards
 
+The planner may refer to approved local assets by stable catalog ID rather than guessing filesystem paths. A subject, prop or environment object can use `asset_id`; the Blender scene compiler resolves that ID through `assets/catalog.json`, verifies that the registered file exists, and imports the exact file. For a separate motion file, use `retarget.animation_asset_id`. Do not set both an ID and a raw file path on the same entry.
 
-### Audio-aligned lip-sync (viseme tracks)
+```json
+{
+  "name": "Main_Character",
+  "asset_id": "character_regular_female",
+  "retarget": {
+    "animation_asset_id": "animation_walk_cycle",
+    "source_armature": "ExactImportedArmature",
+    "source_action": "ExactImportedAction",
+    "bone_map": []
+  }
+}
+```
 
-A subject can use `viseme_map` and `viseme_keyframes` to animate imported facial blendshapes from a phoneme/viseme alignment track. The map keys are viseme labels and values are the exact imported shape-key names. Each event supplies `time_seconds`, `viseme`, and optional `strength` (0–1). Example:
-
-    {
-      "name": "NarratorCharacter",
-      "asset_file": "assets/character.glb",
-      "viseme_map": {
-        "REST": "Mouth_Closed", "AA": "Mouth_A", "EE": "Mouth_E",
-        "OH": "Mouth_O", "FV": "Mouth_FV"
-      },
-      "viseme_keyframes": [
-        {"time_seconds": 0.00, "viseme": "REST"},
-        {"time_seconds": 0.18, "viseme": "AA", "strength": 0.9},
-        {"time_seconds": 0.34, "viseme": "EE", "strength": 0.8},
-        {"time_seconds": 0.52, "viseme": "REST"}
-      ]
-    }
-
-The timestamps must come from actual audio/phoneme alignment (or carefully authored dialogue timing) on the same unmodified master-audio timeline. The Blender renderer animates the supplied viseme events; it does not itself recognize speech or infer phonemes from a WAV. If no trustworthy alignment tool is available, do not invent precise mouth timing. `viseme_map` must match the model's actual blendshape names. This is mouth-shape animation, not proof of perfect speech synchronization; inspect close-up previews and refine coarticulation/strengths.
-
-### Render integrity checks
-
-The end-to-end renderer verifies the exact expected number of PNG frames per shot, PNG signatures, each frame's dimensions, final video stream, final duration, and requested audio stream. It also flags adjacent byte-identical frames as review candidates in `final_report.json`; static holds can be intentional, so these are warnings rather than automatic failures. Visual review remains mandatory for black frames, camera framing, frozen motion, flicker, anatomy and contact quality.
+The IDs above are illustrative only; a story must use IDs that actually exist in the catalog. The current repository catalog is empty, so no production character or animation asset is available until verified files are added. The resolver deliberately fails on unknown IDs or missing files rather than silently substituting a primitive.

@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "presets": {
+    "establishing_wide": {"lens_mm": 24, "shot_size": "extreme_wide", "movement": "slow_dolly_in"},
+    "wide": {"lens_mm": 28, "shot_size": "wide", "movement": "locked_or_tracking"},
+    "medium": {"lens_mm": 50, "shot_size": "medium", "movement": "subtle_dolly"},
+    "close_up": {"lens_mm": 85, "shot_size": "close_up", "movement": "slow_push_in"},
+    "extreme_close_up": {"lens_mm": 100, "shot_size": "extreme_close_up", "movement": "locked"},
+    "overhead": {"lens_mm": 35, "shot_size": "top_down", "movement": "crane_or_locked"},
+    "pov": {"lens_mm": 35, "shot_size": "subjective", "movement": "motivated_handheld"}
+  }
+}

@@ -9,6 +9,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 from pathlib import Path
 
 
@@ -23,15 +24,50 @@ def locate(env, names):
     return None
 
 
-def run(command, log_path=None):
+def run(command, log_path=None, stream=False, stall_timeout=900):
     if log_path:
-        with Path(log_path).open("w", encoding="utf-8") as log:
-            result = subprocess.run(command, stdout=log, stderr=subprocess.STDOUT, text=True)
+        log_file = Path(log_path)
+        with log_file.open("w", encoding="utf-8") as log:
+            if stream:
+                process = subprocess.Popen(command, stdout=log, stderr=subprocess.STDOUT, text=True)
+                offset = 0
+                last_activity = time.monotonic()
+                while process.poll() is None:
+                    log.flush()
+                    with log_file.open("r", encoding="utf-8", errors="replace") as reader:
+                        reader.seek(offset)
+                        chunk = reader.read()
+                        offset = reader.tell()
+                    if chunk:
+                        print(chunk, end="", flush=True)
+                        last_activity = time.monotonic()
+                    elif time.monotonic() - last_activity > stall_timeout:
+                        process.terminate()
+                        try:
+                            process.wait(timeout=10)
+                        except subprocess.TimeoutExpired:
+                            process.kill()
+                            process.wait()
+                        raise RuntimeError(
+                            "No Blender log/progress output for " + str(stall_timeout) +
+                            " seconds; the render process was stopped as stalled."
+                        )
+                    time.sleep(2)
+                log.flush()
+                with log_file.open("r", encoding="utf-8", errors="replace") as reader:
+                    reader.seek(offset)
+                    tail = reader.read()
+                if tail:
+                    print(tail, end="", flush=True)
+                result = subprocess.CompletedProcess(command, process.returncode)
+            else:
+                result = subprocess.run(command, stdout=log, stderr=subprocess.STDOUT, text=True)
+        detail = log_file.read_text(encoding="utf-8", errors="replace")[-6000:]
     else:
         result = subprocess.run(command, capture_output=True, text=True)
-    if result.returncode:
         detail = getattr(result, "stderr", "") or ""
-        raise RuntimeError("Command failed (" + str(result.returncode) + "): " + " ".join(command) + "\n" + detail[-4000:])
+    if result.returncode:
+        raise RuntimeError("Command failed (" + str(result.returncode) + "): " + " ".join(command) + "\\n" + detail[-6000:])
     return result
 
 
@@ -76,6 +112,8 @@ def main():
     p.add_argument("--storyboard", required=True, type=Path)
     p.add_argument("--output", required=True, type=Path)
     p.add_argument("--voice", type=Path)
+    p.add_argument("--auto-lip-sync", action="store_true", help="Run Rhubarb on --voice and distribute viseme cues to 3D blendshapes or named 2D sprite mouth layers")
+    p.add_argument("--rhubarb", help="Optional path to Rhubarb Lip Sync CLI")
     p.add_argument("--music", type=Path)
     p.add_argument("--captions", type=Path, help="Optional SRT file burned into the final video")
     p.add_argument("--format", choices=("shorts", "long"), default=None)
@@ -84,7 +122,28 @@ def main():
     p.add_argument("--fps", type=int)
     p.add_argument("--samples", type=int, default=32)
     p.add_argument("--workdir", type=Path)
+    p.add_argument("--retries", type=int, default=1, help="Number of retries after the first failed shot render")
+    p.add_argument("--parallel-shots", type=int, default=int(os.environ.get("ANIMATION_PARALLEL_SHOTS", "1")), help="Render independent shots concurrently; each Blender worker receives a CPU thread share")
+    p.add_argument("--progress-file", type=Path, help="Write machine-readable job progress JSON")
+    p.add_argument("--stall-timeout-seconds", type=int, default=900, help="Stop a Blender render if no log/progress output arrives within this many seconds")
     a = p.parse_args()
+    if a.retries < 0 or a.retries > 5:
+        raise ValueError("--retries must be between 0 and 5")
+    if a.parallel_shots < 1 or a.parallel_shots > 16:
+        raise ValueError("--parallel-shots must be between 1 and 16")
+    if a.stall_timeout_seconds < 30 or a.stall_timeout_seconds > 7200:
+        raise ValueError("--stall-timeout-seconds must be between 30 and 7200")
+
+    def progress(status, shot_index=None, shot_id=None, message=None):
+        payload = {"status": status, "completed_shots": len(shot_qc),
+                   "total_shots": len(shots), "current_shot_index": shot_index,
+                   "current_shot_id": shot_id, "message": message}
+        if a.progress_file:
+            a.progress_file.parent.mkdir(parents=True, exist_ok=True)
+            temporary = a.progress_file.with_suffix(a.progress_file.suffix + ".tmp")
+            temporary.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+            temporary.replace(a.progress_file)
+        print(json.dumps(payload), flush=True)
 
     storyboard = a.storyboard.resolve()
     data = json.loads(storyboard.read_text(encoding="utf-8"))
@@ -127,27 +186,103 @@ def main():
     output.parent.mkdir(parents=True, exist_ok=True)
     work = a.workdir.resolve() if a.workdir else output.parent / (output.stem + "_work")
     work.mkdir(parents=True, exist_ok=True)
+
+    lip_sync_report = {"enabled": False, "subjects_animated": 0, "events": 0}
+    if a.auto_lip_sync:
+        if not a.voice:
+            raise ValueError("--auto-lip-sync requires --voice")
+        viseme_output = work / "audio_visemes.json"
+        align_script = Path(__file__).with_name("align_visemes.py").resolve()
+        align_command = [sys.executable, str(align_script), "--audio", str(a.voice),
+                         "--output", str(viseme_output)]
+        if a.rhubarb:
+            align_command += ["--rhubarb", a.rhubarb]
+        run(align_command, work / "rhubarb_alignment.log")
+        aligned = json.loads(viseme_output.read_text(encoding="utf-8"))
+        all_events = aligned.get("viseme_keyframes", [])
+        elapsed = 0.0
+        subjects_animated = 0
+        for shot in shots:
+            duration = float(shot["duration_seconds"])
+            shot_events = [
+                {"time_seconds": round(float(event["time_seconds"]) - elapsed, 4),
+                 "viseme": event["viseme"], "strength": event.get("strength", 1.0)}
+                for event in all_events
+                if elapsed - 1e-6 <= float(event["time_seconds"]) <= elapsed + duration + 1e-6
+            ]
+            for subject in shot.get("subjects", []):
+                character_cfg = subject.get("character", {}) or {}
+                if not subject.get("viseme_map") and character_cfg.get("auto_visemes"):
+                    subject["viseme_map"] = {label: "viseme_" + label for label in "ABCDEFGHX"}
+                if subject.get("viseme_map"):
+                    subject["viseme_keyframes"] = shot_events
+                    subjects_animated += 1
+            elapsed += duration
+        if subjects_animated == 0:
+            raise ValueError("--auto-lip-sync found no storyboard subject with a viseme_map. Add exact 3D shape-key names or named 2D mouth-sprite part names to the character subject.")
+        # Keep relative asset paths anchored to the original storyboard directory.
+        for shot in shots:
+            entries = list(shot.get("subjects", [])) + list(shot.get("props", []))
+            entries += list(shot.get("environment", {}).get("objects", []))
+            for entry in entries:
+                if entry.get("asset_file"):
+                    pth = Path(entry["asset_file"])
+                    if not pth.is_absolute():
+                        entry["asset_file"] = str((storyboard.parent / pth).resolve())
+                retarget_cfg = entry.get("retarget", {})
+                if retarget_cfg.get("animation_file"):
+                    pth = Path(retarget_cfg["animation_file"])
+                    if not pth.is_absolute():
+                        retarget_cfg["animation_file"] = str((storyboard.parent / pth).resolve())
+        storyboard = work / "storyboard_with_audio_lipsync.json"
+        storyboard.write_text(json.dumps(data, indent=2), encoding="utf-8")
+        lip_sync_report = {"enabled": True, "subjects_animated": subjects_animated,
+                           "events": len(all_events), "source": "Rhubarb Lip Sync"}
+
     scene_script = Path(__file__).with_name("story_scene.py").resolve()
     segment_files = []
     shot_qc = []
 
-    for index, shot in enumerate(shots):
+    def render_one_shot(index, shot):
         shot_dir = work / ("shot_%03d" % (index + 1))
         shot_dir.mkdir(parents=True, exist_ok=True)
+        threads_per_worker = max(1, (os.cpu_count() or 2) // a.parallel_shots)
         blender_cmd = [
-            blender, "--background", "--factory-startup", "--python-exit-code", "1",
-            "--python", str(scene_script), "--",
+            blender, "--background", "--factory-startup", "--threads", str(threads_per_worker),
+            "--python-exit-code", "1", "--python", str(scene_script), "--",
             "--storyboard", str(storyboard), "--shot-index", str(index),
             "--output-dir", str(shot_dir), "--width", str(width), "--height", str(height),
-            "--fps", str(fps), "--samples", str(a.samples)
+            "--fps", str(fps), "--samples", str(a.samples),
+            "--progress-file", str(shot_dir / "frame_progress.json")
         ]
-        print("Rendering shot", index + 1, "of", len(shots), "-", shot.get("id", index + 1))
-        run(blender_cmd, shot_dir / "blender.log")
+        shot_id = shot.get("id", index + 1)
+        print("SHOT_WORKER_START", {"shot": index + 1, "total": len(shots), "id": shot_id,
+                                    "threads": threads_per_worker}, flush=True)
+        shot_render_started = time.perf_counter()
+        last_error = None
+        for attempt in range(a.retries + 1):
+            for stale in shot_dir.glob("frame_*.png"):
+                stale.unlink()
+            try:
+                run(blender_cmd, shot_dir / ("blender_attempt_%02d.log" % (attempt + 1)),
+                    stream=True, stall_timeout=a.stall_timeout_seconds)
+                last_error = None
+                break
+            except Exception as exc:
+                last_error = exc
+                print("Shot", shot_id, "attempt", attempt + 1, "failed:", str(exc), flush=True)
+                if attempt >= a.retries:
+                    raise
+        if last_error:
+            raise last_error
         expected_frames = max(1, round(float(shot["duration_seconds"]) * fps))
-        shot_qc.append({
+        shot_render_seconds = time.perf_counter() - shot_render_started
+        qc = {
             "shot_id": shot.get("id", index + 1),
+            "render_seconds": round(shot_render_seconds, 3),
+            "rendered_frames_per_second": round(expected_frames / max(shot_render_seconds, 0.001), 3),
             **validate_rendered_frames(shot_dir, expected_frames, width, height),
-        })
+        }
         segment = shot_dir / "segment.mp4"
         encode_cmd = [
             ffmpeg, "-y", "-framerate", str(fps), "-i", str(shot_dir / "frame_%04d.png"),
@@ -155,8 +290,38 @@ def main():
             "-pix_fmt", "yuv420p", "-an", str(segment)
         ]
         run(encode_cmd, shot_dir / "ffmpeg.log")
-        segment_files.append(segment)
+        print("SHOT_WORKER_DONE", {"shot": index + 1, "id": shot_id,
+                                  "frames": expected_frames, "render_seconds": round(shot_render_seconds, 3),
+                                  "fps": qc["rendered_frames_per_second"]}, flush=True)
+        return index, segment, qc
 
+    rendered = {}
+    worker_count = min(a.parallel_shots, len(shots))
+    print("PARALLEL_SHOT_RENDER_CONFIG", {
+        "shots": len(shots), "workers": worker_count, "cpu_count": os.cpu_count() or 2
+    }, flush=True)
+    if worker_count == 1:
+        for index, shot in enumerate(shots):
+            progress("RENDERING", index + 1, shot.get("id", index + 1))
+            result = render_one_shot(index, shot)
+            rendered[result[0]] = (result[1], result[2])
+            shot_qc.append(result[2])
+            progress("SHOT_COMPLETE", index + 1, shot.get("id", index + 1))
+    else:
+        from concurrent.futures import ThreadPoolExecutor, as_completed
+        with ThreadPoolExecutor(max_workers=worker_count) as pool:
+            futures = {pool.submit(render_one_shot, index, shot): (index, shot)
+                       for index, shot in enumerate(shots)}
+            for future in as_completed(futures):
+                index, shot = futures[future]
+                result = future.result()
+                rendered[result[0]] = (result[1], result[2])
+                shot_qc.append(result[2])
+                progress("SHOT_COMPLETE", index + 1, shot.get("id", index + 1))
+    segment_files = [rendered[index][0] for index in range(len(shots))]
+    shot_qc = [rendered[index][1] for index in range(len(shots))]
+
+    progress("ASSEMBLING")
     concat_file = work / "concat.txt"
     concat_file.write_text("".join("file '" + str(x).replace("'", "'\\''") + "'\n" for x in segment_files), encoding="utf-8")
     joined = work / "joined_video.mp4"
@@ -207,8 +372,19 @@ def main():
             "Final MP4 duration mismatch: expected %.3fs, got %.3fs." %
             (expected_duration, actual_duration)
         )
+    video = video_streams[0]
+    if int(video.get("width", 0)) != width or int(video.get("height", 0)) != height:
+        raise RuntimeError("Final MP4 dimensions do not match the requested output profile.")
+    rate = str(video.get("r_frame_rate", "0/1")).split("/")
+    actual_fps = float(rate[0]) / max(1.0, float(rate[1])) if len(rate) == 2 else 0.0
+    if abs(actual_fps - fps) > 0.01:
+        raise RuntimeError("Final MP4 FPS mismatch: requested %s, got %s." % (fps, actual_fps))
     if (a.voice or a.music) and not audio_streams:
         raise RuntimeError("Audio was requested but final MP4 contains no audio stream.")
+    black_probe = run([ffmpeg, "-hide_banner", "-i", str(output), "-vf",
+                       "blackdetect=d=1:pix_th=0.10", "-an", "-f", "null", "-"])
+    black_log = getattr(black_probe, "stderr", "") or ""
+    black_segments = [line.strip() for line in black_log.splitlines() if "black_start:" in line]
     report = {
         "status": "PASS_WITH_REVIEW_WARNINGS" if any(x["adjacent_identical_frame_pairs"] for x in shot_qc) else "PASS",
         "output": str(output),
@@ -218,6 +394,8 @@ def main():
         "qc_note": "Adjacent byte-identical frames are flagged for visual review; a duplicate may be intentional in a held/static shot.",
         "resolution": [width, height],
         "fps": fps,
+        "detected_black_segments_over_one_second": black_segments,
+        "lip_sync": lip_sync_report,
         "audio_inputs": {"voice": str(a.voice.resolve()) if a.voice else None,
                          "voice_duration_seconds": voice_duration,
                          "music": str(a.music.resolve()) if a.music else None,
@@ -227,6 +405,7 @@ def main():
     }
     (work / "final_report.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
     print(json.dumps(report, indent=2))
+    progress("COMPLETE", message=str(output))
 
 
 if __name__ == "__main__":

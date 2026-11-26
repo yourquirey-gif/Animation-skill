@@ -41,7 +41,14 @@
               ]
             }
           }
-        ]
+        ],
+        "procedural": {
+          "profile": "forest",
+          "seed": "animal_flight_story",
+          "dressing_count": 12,
+          "width": 30,
+          "depth": 30
+        }
       },
       "subjects": [
         {

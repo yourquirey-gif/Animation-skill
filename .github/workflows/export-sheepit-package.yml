@@ -1,0 +1,133 @@
+name: Export SheepIt Render Package
+
+on:
+  workflow_dispatch:
+    inputs:
+      storyboard_path:
+        description: Repository-relative storyboard JSON
+        required: true
+        default: tests/fixtures/guddu_shop_market.json
+        type: string
+      output_name:
+        description: Output package name
+        required: true
+        default: sheepit-story-package
+        type: string
+      engine:
+        description: Blender scene engine
+        required: true
+        default: CYCLES
+        type: choice
+        options:
+          - BLENDER_EEVEE
+          - CYCLES
+      width:
+        description: Output width
+        required: true
+        default: "1080"
+        type: string
+      height:
+        description: Output height
+        required: true
+        default: "1920"
+        type: string
+      fps:
+        description: Frames per second
+        required: true
+        default: "30"
+        type: string
+      samples:
+        description: Eevee/Cycles samples
+        required: true
+        default: "16"
+        type: string
+      voice_path:
+        description: Optional repository-relative narration audio
+        required: false
+        default: ""
+        type: string
+      music_path:
+        description: Optional repository-relative background music
+        required: false
+        default: ""
+        type: string
+      captions_path:
+        description: Optional repository-relative SRT captions
+        required: false
+        default: ""
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sheepit-package-${{ github.ref }}-${{ inputs.output_name }}
+  cancel-in-progress: false
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Blender
+        run: |
+          bash scripts/install_blender.sh
+
+      - name: Set up Node for generated cast
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Generate required rigged character cast
+        run: |
+          set -euo pipefail
+          mkdir -p tests/fixtures/runtime-assets/ara-cast
+          npx --yes ara3d@0.9.0 export --random 1-6 --detail medium --animations walk,run,idle --formats glb --out tests/fixtures/runtime-assets/ara-cast
+          test "$(find tests/fixtures/runtime-assets/ara-cast -maxdepth 1 -type f -iname '*.glb' | wc -l)" -ge 6
+
+      - name: Compile backend scripts and run unit tests
+        run: |
+          python3 -m py_compile runtime/story_scene.py runtime/environment_builder.py runtime/export_sheepit.py cloud/kaggle_gpu_render.py
+          python3 -m unittest discover -s tests -p 'test_*.py' -v
+
+      - name: Build packed Blender projects for SheepIt
+        env:
+          STORYBOARD: ${{ inputs.storyboard_path }}
+          OUTPUT_NAME: ${{ inputs.output_name }}
+          ENGINE: ${{ inputs.engine }}
+          WIDTH: ${{ inputs.width }}
+          HEIGHT: ${{ inputs.height }}
+          FPS: ${{ inputs.fps }}
+          SAMPLES: ${{ inputs.samples }}
+          VOICE_PATH: ${{ inputs.voice_path }}
+          MUSIC_PATH: ${{ inputs.music_path }}
+          CAPTIONS_PATH: ${{ inputs.captions_path }}
+        run: |
+          set -euo pipefail
+          [[ "$OUTPUT_NAME" =~ ^[A-Za-z0-9._-]+$ ]]
+          [[ "$WIDTH" =~ ^[0-9]+$ ]] && [[ "$HEIGHT" =~ ^[0-9]+$ ]]
+          [[ "$FPS" =~ ^[0-9]+$ ]] && [[ "$SAMPLES" =~ ^[0-9]+$ ]]
+          test -f "$STORYBOARD"
+          for media in "$VOICE_PATH" "$MUSIC_PATH" "$CAPTIONS_PATH"; do
+            [ -z "$media" ] && continue
+            case "$media" in /*|*..*) echo "Media paths must be safe repository-relative paths"; exit 2;; esac
+            test -f "$media"
+          done
+          mkdir -p "$RUNNER_TEMP/packages"
+          args=(--storyboard "$STORYBOARD" --output "$RUNNER_TEMP/packages/$OUTPUT_NAME.zip"
+            --engine "$ENGINE" --width "$WIDTH" --height "$HEIGHT" --fps "$FPS" --samples "$SAMPLES")
+          if [ -n "$VOICE_PATH" ]; then args+=(--voice "$VOICE_PATH"); fi
+          if [ -n "$MUSIC_PATH" ]; then args+=(--music "$MUSIC_PATH"); fi
+          if [ -n "$CAPTIONS_PATH" ]; then args+=(--captions "$CAPTIONS_PATH"); fi
+          python3 runtime/export_sheepit.py "${args[@]}"
+
+      - name: Upload self-contained SheepIt package
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.output_name }}-${{ github.run_number }}
+          path: ${{ runner.temp }}/packages/*.zip
+          if-no-files-found: error
+          retention-days: 7

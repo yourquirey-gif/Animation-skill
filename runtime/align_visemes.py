@@ -20,9 +20,11 @@ def cues_to_keyframes(payload):
         if previous is not None and start < previous:
             raise ValueError("Rhubarb cues must be ordered and non-overlapping")
         events.append({"time_seconds": start, "viseme": label, "strength": 1.0})
+        # Explicit neutral event at every cue end prevents the previous mouth
+        # pose from being held through silence or the next phoneme.
+        events.append({"time_seconds": end, "viseme": "X", "strength": 1.0})
         previous = end
-    if cues:
-        events.append({"time_seconds": float(cues[-1]["end"]), "viseme": "X", "strength": 1.0})
+    events.sort(key=lambda item: item["time_seconds"])
     return events
 
 

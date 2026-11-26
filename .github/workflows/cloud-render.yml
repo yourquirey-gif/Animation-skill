@@ -1,0 +1,253 @@
+name: Cloud Blender Video Render
+
+on:
+  workflow_dispatch:
+    inputs:
+      storyboard_path:
+        description: "Repository-relative storyboard JSON path"
+        required: true
+        default: "tests/fixtures/guddu_shop_market.json"
+        type: string
+      output_name:
+        description: "Output MP4 filename without extension"
+        required: true
+        default: "guddu-shop-market-test"
+        type: string
+      format:
+        description: "Output aspect ratio profile"
+        required: true
+        default: "shorts"
+        type: choice
+        options:
+          - shorts
+          - long
+      render_engine:
+        description: "Blender render engine"
+        required: true
+        default: "BLENDER_EEVEE"
+        type: choice
+        options:
+          - BLENDER_EEVEE
+          - CYCLES
+      width:
+        description: "Optional custom width; leave blank for 1080p profile"
+        required: false
+        default: "1080"
+        type: string
+      height:
+        description: "Optional custom height; leave blank for 1080p profile"
+        required: false
+        default: "1920"
+        type: string
+      fps:
+        description: "Frames per second (default 30)"
+        required: true
+        default: "30"
+        type: string
+      samples:
+        description: "Render samples (default 16)"
+        required: true
+        default: "16"
+        type: string
+      voice_path:
+        description: "Optional repository-relative narration audio path"
+        required: false
+        default: ""
+        type: string
+      music_path:
+        description: "Optional repository-relative background music path"
+        required: false
+        default: ""
+        type: string
+      captions_path:
+        description: "Optional repository-relative SRT captions path"
+        required: false
+        default: ""
+        type: string
+      auto_lip_sync:
+        description: "Run Rhubarb against the narration and animate characters with viseme_map shape keys"
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: blender-render-${{ github.ref }}-${{ inputs.output_name || 'guddu-shop-market-test' }}
+  cancel-in-progress: false
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      ANIMATION_RENDER_ENGINE: ${{ inputs.render_engine || 'BLENDER_EEVEE' }}
+      LIBGL_ALWAYS_SOFTWARE: "1"
+      BLENDER_BIN: blender
+      FFMPEG_BIN: ffmpeg
+      FFPROBE_BIN: ffprobe
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Blender, FFmpeg and headless graphics libraries
+        run: |
+          bash scripts/install_blender.sh
+          ffmpeg -version | head -n 2
+          ffprobe -version | head -n 1
+
+      - name: Set up Node for procedural production character generation
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Download verified CC0 rigged character and animation pack
+        run: |
+          set -euo pipefail
+          mkdir -p "$GITHUB_WORKSPACE/tests/fixtures/runtime-assets" "$RUNNER_TEMP/kinemiq-assets"
+          curl -fL --retry 3 -o "$RUNNER_TEMP/kinemiq-assets/animations.zip" \
+            https://github.com/Kinemiq/free-game-animations/releases/download/v1.0/KinemIQ_Free_Animations_CC0_FBX.zip
+          echo "4ecea37e2117a762c8d2be10c7e0f06d9c7c9005af0f9caa64c8ce5d424efb0e  $RUNNER_TEMP/kinemiq-assets/animations.zip" | sha256sum -c -
+          unzip -q "$RUNNER_TEMP/kinemiq-assets/animations.zip" -d "$RUNNER_TEMP/kinemiq-assets/unpacked"
+          MANNEQUIN="$(find "$RUNNER_TEMP/kinemiq-assets/unpacked" -type f -iname 'KinemIQ_Mannequin.fbx' -print -quit)"
+          test -n "$MANNEQUIN"
+          cp "$MANNEQUIN" "$GITHUB_WORKSPACE/tests/fixtures/runtime-assets/KinemIQ_Mannequin.fbx"
+          # Keep every separately exported CC0 clip available to the runtime.
+          mkdir -p "$GITHUB_WORKSPACE/tests/fixtures/runtime-assets/animations"
+          find "$RUNNER_TEMP/kinemiq-assets/unpacked" -type f -iname '*.fbx' ! -path "$MANNEQUIN" -print0 |
+            while IFS= read -r -d '' clip; do
+              cp "$clip" "$GITHUB_WORKSPACE/tests/fixtures/runtime-assets/animations/"
+            done
+          echo "Verified CC0 character and animation assets installed:"
+          find "$RUNNER_TEMP/kinemiq-assets/unpacked" -type f \( -iname '*.fbx' -o -iname '*.glb' \) | sort
+          echo "Mannequin: $GITHUB_WORKSPACE/tests/fixtures/runtime-assets/KinemIQ_Mannequin.fbx"
+          echo "Animation clips copied:"
+          find "$GITHUB_WORKSPACE/tests/fixtures/runtime-assets/animations" -maxdepth 1 -type f -printf '%f\n' | sort
+
+      - name: Generate rigged human cast with Ara 3D Gen
+        run: |
+          set -euo pipefail
+          mkdir -p "$GITHUB_WORKSPACE/tests/fixtures/runtime-assets/ara-cast"
+          npx --yes ara3d@0.9.0 export --random 1-6 --detail medium --animations walk,run,idle --formats glb --out "$GITHUB_WORKSPACE/tests/fixtures/runtime-assets/ara-cast"
+          mapfile -t CAST_MODELS < <(find "$GITHUB_WORKSPACE/tests/fixtures/runtime-assets/ara-cast" -maxdepth 1 -type f -iname "*.glb" | sort)
+          test "${#CAST_MODELS[@]}" -ge 6
+          printf "Generated production human cast models:\n"
+          printf "%s\n" "${CAST_MODELS[@]}"
+
+      - name: Validate generated character rigs, animation clips and facial blend shapes in Blender
+        run: |
+          blender -b --python-exit-code 1 --python runtime/validate_character_assets.py -- --asset-dir "$GITHUB_WORKSPACE/tests/fixtures/runtime-assets/ara-cast" --min-assets 6
+
+      - name: Install Rhubarb Lip Sync CLI (only when requested)
+        if: ${{ inputs.auto_lip_sync == true }}
+        run: |
+          curl -fsSL -o /tmp/rhubarb.zip https://github.com/DanielSWolf/rhubarb-lip-sync/releases/download/v1.14.0/Rhubarb-Lip-Sync-1.14.0-Linux.zip
+          sudo mkdir -p /opt/rhubarb
+          sudo unzip -q /tmp/rhubarb.zip -d /opt/rhubarb
+          RHUBARB_BIN="$(find /opt/rhubarb -type f -name rhubarb -print -quit)"
+          test -n "$RHUBARB_BIN"
+          sudo chmod +x "$RHUBARB_BIN"
+          echo "$(dirname "$RHUBARB_BIN")" >> "$GITHUB_PATH"
+          echo "RHUBARB_BIN=$RHUBARB_BIN" >> "$GITHUB_ENV"
+
+      - name: Inspect cloud runner resources
+        run: |
+          echo "CPU:"
+          nproc
+          echo "Memory:"
+          free -h
+          echo "Disk:"
+          df -h "$GITHUB_WORKSPACE" "$RUNNER_TEMP"
+          echo "GPU (optional; absence is expected on standard hosted runners):"
+          (command -v nvidia-smi && nvidia-smi) || echo "No NVIDIA GPU exposed; using CPU/software-compatible rendering."
+
+      - name: Validate workflow inputs
+        env:
+          STORYBOARD: ${{ inputs.storyboard_path || 'tests/fixtures/guddu_shop_market.json' }}
+          OUTPUT_NAME: ${{ inputs.output_name || 'guddu-shop-market-test' }}
+          FORMAT: ${{ inputs.format || 'shorts' }}
+          VOICE_PATH: ${{ inputs.voice_path || '' }}
+          MUSIC_PATH: ${{ inputs.music_path || '' }}
+          CAPTIONS_PATH: ${{ inputs.captions_path || '' }}
+          AUTO_LIP_SYNC: ${{ inputs.auto_lip_sync || 'false' }}
+          WIDTH: ${{ inputs.width || '1080' }}
+          HEIGHT: ${{ inputs.height || '1920' }}
+          FPS: ${{ inputs.fps || '30' }}
+          SAMPLES: ${{ inputs.samples || '16' }}
+        run: |
+          set -euo pipefail
+          [[ "$OUTPUT_NAME" =~ ^[A-Za-z0-9._-]+$ ]] || { echo "Invalid output_name"; exit 2; }
+          case "$FORMAT" in
+            shorts) WIDTH="${WIDTH:-1080}"; HEIGHT="${HEIGHT:-1920}" ;;
+            long) WIDTH="${WIDTH:-1920}"; HEIGHT="${HEIGHT:-1080}" ;;
+            *) echo "FORMAT must be shorts or long"; exit 2 ;;
+          esac
+          for path in "$STORYBOARD" "$VOICE_PATH" "$MUSIC_PATH" "$CAPTIONS_PATH"; do
+            [ -z "$path" ] && continue
+            case "$path" in /*|*..*) echo "Paths must be safe repository-relative paths: $path"; exit 2;; esac
+            [ -f "$GITHUB_WORKSPACE/$path" ] || { echo "File not found: $path"; exit 2; }
+          done
+          [[ "$WIDTH" =~ ^[0-9]+$ ]] && [ "$WIDTH" -ge 16 ] && [ "$WIDTH" -le 1920 ]
+          [[ "$HEIGHT" =~ ^[0-9]+$ ]] && [ "$HEIGHT" -ge 16 ] && [ "$HEIGHT" -le 1920 ]
+          [[ "$FPS" =~ ^[0-9]+$ ]] && [ "$FPS" -ge 1 ] && [ "$FPS" -le 60 ]
+          [[ "$SAMPLES" =~ ^[0-9]+$ ]] && [ "$SAMPLES" -ge 1 ] && [ "$SAMPLES" -le 256 ]
+          echo "Validated output profile: ${WIDTH}x${HEIGHT} @ ${FPS} FPS, samples=${SAMPLES}"
+
+      - name: Compile code, run unit tests, and validate asset catalog
+        run: |
+          python3 -m py_compile runtime/animation_runtime.py runtime/render_story.py runtime/story_scene.py runtime/align_visemes.py runtime/asset_catalog.py runtime/rig_retarget.py runtime/semantic_actions.py runtime/environment_builder.py runtime/export_sheepit.py cloud/kaggle_gpu_render.py
+          python3 -m unittest discover -s tests -p 'test_*.py' -v
+          python3 runtime/asset_catalog.py validate
+
+      - name: Render Blender scenes and assemble MP4
+        env:
+          STORYBOARD: ${{ inputs.storyboard_path || 'tests/fixtures/guddu_shop_market.json' }}
+          OUTPUT_NAME: ${{ inputs.output_name || 'guddu-shop-market-test' }}
+          FORMAT: ${{ inputs.format || 'shorts' }}
+          WIDTH: ${{ inputs.width || '1080' }}
+          HEIGHT: ${{ inputs.height || '1920' }}
+          FPS: ${{ inputs.fps || '30' }}
+          SAMPLES: ${{ inputs.samples || '16' }}
+          VOICE_PATH: ${{ inputs.voice_path || '' }}
+          MUSIC_PATH: ${{ inputs.music_path || '' }}
+          CAPTIONS_PATH: ${{ inputs.captions_path || '' }}
+          AUTO_LIP_SYNC: ${{ inputs.auto_lip_sync || 'false' }}
+        run: |
+          set -euo pipefail
+          case "$FORMAT" in
+            shorts) WIDTH="${WIDTH:-1080}"; HEIGHT="${HEIGHT:-1920}" ;;
+            long) WIDTH="${WIDTH:-1920}"; HEIGHT="${HEIGHT:-1080}" ;;
+            *) echo "FORMAT must be shorts or long"; exit 2 ;;
+          esac
+          echo "Rendering ${WIDTH}x${HEIGHT} at ${FPS} FPS"
+          mkdir -p "$RUNNER_TEMP/video-output" "$RUNNER_TEMP/video-work"
+          args=(--storyboard "$GITHUB_WORKSPACE/$STORYBOARD"
+                --output "$RUNNER_TEMP/video-output/$OUTPUT_NAME.mp4"
+                --format "$FORMAT" --width "$WIDTH" --height "$HEIGHT"
+                --fps "$FPS" --samples "$SAMPLES" --retries 1
+                --workdir "$RUNNER_TEMP/video-work"
+                --progress-file "$RUNNER_TEMP/video-work/progress.json")
+          [ -z "$VOICE_PATH" ] || args+=(--voice "$GITHUB_WORKSPACE/$VOICE_PATH")
+          [ -z "$MUSIC_PATH" ] || args+=(--music "$GITHUB_WORKSPACE/$MUSIC_PATH")
+          [ -z "$CAPTIONS_PATH" ] || args+=(--captions "$GITHUB_WORKSPACE/$CAPTIONS_PATH")
+          if [ "$AUTO_LIP_SYNC" = "true" ]; then
+            [ -n "$VOICE_PATH" ] || { echo "auto_lip_sync requires voice_path"; exit 2; }
+            args+=(--auto-lip-sync --rhubarb "$RHUBARB_BIN")
+          fi
+          python3 runtime/render_story.py "${args[@]}"
+
+      - name: Upload MP4, QA report and render logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.output_name || 'guddu-shop-market-test' }}-${{ github.run_number }}
+          path: |
+            ${{ runner.temp }}/video-output/
+            ${{ github.workspace }}/tests/fixtures/runtime-assets/ara-cast/
+            ${{ runner.temp }}/video-work/final_report.json
+            ${{ runner.temp }}/video-work/progress.json
+            ${{ runner.temp }}/video-work/shot_*/blender_attempt_*.log
+            ${{ runner.temp }}/video-work/shot_*/ffmpeg.log
+          if-no-files-found: warn
+          retention-days: 7

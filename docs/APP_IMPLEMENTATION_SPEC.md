@@ -212,7 +212,7 @@ Before calling the application ready:
 8. Project can resume after an intentionally interrupted shot.
 9. QA report records pass/fail and actual evidence.
 
-Do not mark the app ready if any critical test is mocked or missing. If local resources prevent completion, explain what is implemented and what must be installed or supplied.
+Do not mark the app ready if any critical test is mocked or missing. If cloud runner resources, Actions permissions or quotas prevent completion, explain what is implemented and the exact cloud-side blocker. Do not require the user's Windows 7 computer to install Blender.
 
 
 ## 12. Universal, genre-agnostic story compiler
@@ -238,3 +238,17 @@ Before calling the story engine reusable, test at least three structurally diffe
 ## 13. Rigged performance, facial animation and prop contact
 
 The Blender scene compiler supports imported rigged GLB/glTF/FBX assets, exact named Blender actions, explicit armature bone pose keyframes, facial shape-key/blendshape keyframes, and props parented to an exact character bone with local offset/rotation. Story generation should inspect imported rigs and shape keys before writing animation data. Use a prepared action clip or explicit pose keyframes for an armature; custom pose keys replace the active armature action. Facial shape keys animate separately. Bone parenting makes a prop follow a hand but does not solve finger closure, collision, grip pressure or physics; those require dedicated rig controls/constraints and visual review. Never claim lip-sync unless viseme/phoneme timing is actually generated and checked against the voice.
+
+
+## 14. Mandatory Blender cloud rendering for Claude Code Web
+
+- Production rendering runs on GitHub Actions Ubuntu runners, not the user's local Windows 7 computer.
+- Install Blender, FFmpeg and required graphics libraries inside the workflow. Use Blender background mode and the bundled Blender Python API.
+- Expose a manual workflow dispatch for storyboard path, output profile, engine, resolution, FPS, samples and optional media inputs.
+- Validate repository-relative paths, filenames and numeric resource bounds before executing jobs.
+- Detect and report CPU, RAM, disk and GPU. Standard runners must be treated as CPU/software-rendered unless a GPU is actually exposed.
+- Render per shot, preserve logs, write machine-readable progress, retry failed shots a bounded number of times, and retain intermediate files for diagnosis.
+- Upload MP4, final report and logs as workflow artifacts. Never commit generated videos or render caches to source control.
+- Public repositories must not contain private narration, reference videos, user secrets or unlicensed assets. Private media requires a configured private repository or approved private storage adapter.
+- Full HD/30 FPS and Cycles are quality options, not guaranteed within every hosted-runner time/memory/disk limit. Begin with previews and report any resource-driven compromise.
+- Technical success requires actual Blender execution, rendered frames, MP4 encoding and ffprobe validation. Cinematic quality requires separate visual review.

@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "templates": {
+    "mountain_landscape": {"style": "realistic", "components": ["connected_terrain_mesh", "rock_scatter", "distant_ridge_layers", "sky_atmosphere", "ground_plane"]},
+    "forest_clearing": {"style": "mixed", "components": ["terrain", "tree_groups", "understory", "clearing", "atmospheric_depth"]},
+    "ancient_city": {"style": "realistic", "components": ["street_layout", "modular_buildings", "architecture_details", "ground_materials", "distant_silhouette"]},
+    "stylized_village": {"style": "stylized", "components": ["terrain", "modular_houses", "roads", "vegetation", "story_props"]}
+  }
+}

@@ -1,0 +1,4474 @@
+{
+  "project": {
+    "title": "Bridge Sunset Crowd — 24 Stylized Visitors",
+    "fps": 30,
+    "resolution": "shorts"
+  },
+  "shots": [
+    {
+      "id": "sunset-crowd-wide",
+      "duration_seconds": 3,
+      "environment": {
+        "world_color": [
+          0.22,
+          0.075,
+          0.055
+        ],
+        "objects": [
+          {
+            "name": "Bridge deck",
+            "primitive": "cube",
+            "location": [
+              0,
+              2,
+              0
+            ],
+            "scale": [
+              18,
+              52,
+              0.45
+            ],
+            "material": {
+              "color": [
+                0.2,
+                0.23,
+                0.27
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "River surface",
+            "primitive": "plane",
+            "location": [
+              0,
+              17,
+              -1.2
+            ],
+            "scale": [
+              95,
+              100,
+              1
+            ],
+            "material": {
+              "color": [
+                0.035,
+                0.16,
+                0.23
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Left bridge railing",
+            "primitive": "cube",
+            "location": [
+              -8.5,
+              2,
+              1.15
+            ],
+            "scale": [
+              0.22,
+              52,
+              0.22
+            ],
+            "material": {
+              "color": [
+                0.12,
+                0.15,
+                0.19
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Right bridge railing",
+            "primitive": "cube",
+            "location": [
+              8.5,
+              2,
+              1.15
+            ],
+            "scale": [
+              0.22,
+              52,
+              0.22
+            ],
+            "material": {
+              "color": [
+                0.12,
+                0.15,
+                0.19
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post -8.5 -22",
+            "primitive": "cube",
+            "location": [
+              -8.5,
+              -22,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post 8.5 -22",
+            "primitive": "cube",
+            "location": [
+              8.5,
+              -22,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post -8.5 -18",
+            "primitive": "cube",
+            "location": [
+              -8.5,
+              -18,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post 8.5 -18",
+            "primitive": "cube",
+            "location": [
+              8.5,
+              -18,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post -8.5 -14",
+            "primitive": "cube",
+            "location": [
+              -8.5,
+              -14,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post 8.5 -14",
+            "primitive": "cube",
+            "location": [
+              8.5,
+              -14,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post -8.5 -10",
+            "primitive": "cube",
+            "location": [
+              -8.5,
+              -10,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post 8.5 -10",
+            "primitive": "cube",
+            "location": [
+              8.5,
+              -10,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post -8.5 -6",
+            "primitive": "cube",
+            "location": [
+              -8.5,
+              -6,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post 8.5 -6",
+            "primitive": "cube",
+            "location": [
+              8.5,
+              -6,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post -8.5 -2",
+            "primitive": "cube",
+            "location": [
+              -8.5,
+              -2,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post 8.5 -2",
+            "primitive": "cube",
+            "location": [
+              8.5,
+              -2,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post -8.5 2",
+            "primitive": "cube",
+            "location": [
+              -8.5,
+              2,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post 8.5 2",
+            "primitive": "cube",
+            "location": [
+              8.5,
+              2,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post -8.5 6",
+            "primitive": "cube",
+            "location": [
+              -8.5,
+              6,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post 8.5 6",
+            "primitive": "cube",
+            "location": [
+              8.5,
+              6,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post -8.5 10",
+            "primitive": "cube",
+            "location": [
+              -8.5,
+              10,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post 8.5 10",
+            "primitive": "cube",
+            "location": [
+              8.5,
+              10,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post -8.5 14",
+            "primitive": "cube",
+            "location": [
+              -8.5,
+              14,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post 8.5 14",
+            "primitive": "cube",
+            "location": [
+              8.5,
+              14,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post -8.5 18",
+            "primitive": "cube",
+            "location": [
+              -8.5,
+              18,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post 8.5 18",
+            "primitive": "cube",
+            "location": [
+              8.5,
+              18,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post -8.5 22",
+            "primitive": "cube",
+            "location": [
+              -8.5,
+              22,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post 8.5 22",
+            "primitive": "cube",
+            "location": [
+              8.5,
+              22,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post -8.5 26",
+            "primitive": "cube",
+            "location": [
+              -8.5,
+              26,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Rail post 8.5 26",
+            "primitive": "cube",
+            "location": [
+              8.5,
+              26,
+              1
+            ],
+            "scale": [
+              0.22,
+              0.24,
+              1.7
+            ],
+            "material": {
+              "color": [
+                0.17,
+                0.19,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Sun",
+            "primitive": "uv_sphere",
+            "location": [
+              0,
+              48,
+              14
+            ],
+            "scale": [
+              3.3,
+              3.3,
+              3.3
+            ],
+            "material": {
+              "color": [
+                1,
+                0.38,
+                0.09
+              ],
+              "roughness": 0.2,
+              "emission_strength": 1.5
+            }
+          },
+          {
+            "name": "Person 1 torso",
+            "primitive": "cylinder",
+            "location": [
+              -6.1499999999999995,
+              -9,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.754
+            ],
+            "material": {
+              "color": [
+                0.12,
+                0.18,
+                0.28
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 1 head",
+            "primitive": "uv_sphere",
+            "location": [
+              -6.1499999999999995,
+              -9,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 1 legs",
+            "primitive": "cube",
+            "location": [
+              -6.1499999999999995,
+              -9,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 2 torso",
+            "primitive": "cylinder",
+            "location": [
+              -4.1,
+              -9,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.7904
+            ],
+            "material": {
+              "color": [
+                0.28,
+                0.16,
+                0.13
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 2 head",
+            "primitive": "uv_sphere",
+            "location": [
+              -4.1,
+              -9,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 2 legs",
+            "primitive": "cube",
+            "location": [
+              -4.1,
+              -9,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 3 torso",
+            "primitive": "cylinder",
+            "location": [
+              -2.05,
+              -9,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.8268
+            ],
+            "material": {
+              "color": [
+                0.16,
+                0.25,
+                0.21
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 3 head",
+            "primitive": "uv_sphere",
+            "location": [
+              -2.05,
+              -9,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 3 legs",
+            "primitive": "cube",
+            "location": [
+              -2.05,
+              -9,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 4 torso",
+            "primitive": "cylinder",
+            "location": [
+              0,
+              -9,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.8632
+            ],
+            "material": {
+              "color": [
+                0.32,
+                0.28,
+                0.24
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 4 head",
+            "primitive": "uv_sphere",
+            "location": [
+              0,
+              -9,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 4 legs",
+            "primitive": "cube",
+            "location": [
+              0,
+              -9,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 5 torso",
+            "primitive": "cylinder",
+            "location": [
+              2.05,
+              -9,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.754
+            ],
+            "material": {
+              "color": [
+                0.12,
+                0.13,
+                0.18
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 5 head",
+            "primitive": "uv_sphere",
+            "location": [
+              2.05,
+              -9,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 5 legs",
+            "primitive": "cube",
+            "location": [
+              2.05,
+              -9,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 6 torso",
+            "primitive": "cylinder",
+            "location": [
+              4.1,
+              -9,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.7904
+            ],
+            "material": {
+              "color": [
+                0.12,
+                0.18,
+                0.28
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 6 head",
+            "primitive": "uv_sphere",
+            "location": [
+              4.1,
+              -9,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 6 legs",
+            "primitive": "cube",
+            "location": [
+              4.1,
+              -9,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 7 torso",
+            "primitive": "cylinder",
+            "location": [
+              6.1499999999999995,
+              -9,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.8268
+            ],
+            "material": {
+              "color": [
+                0.28,
+                0.16,
+                0.13
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 7 head",
+            "primitive": "uv_sphere",
+            "location": [
+              6.1499999999999995,
+              -9,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 7 legs",
+            "primitive": "cube",
+            "location": [
+              6.1499999999999995,
+              -9,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 8 torso",
+            "primitive": "cylinder",
+            "location": [
+              -5.699999999999999,
+              -4.4,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.8632
+            ],
+            "material": {
+              "color": [
+                0.16,
+                0.25,
+                0.21
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 8 head",
+            "primitive": "uv_sphere",
+            "location": [
+              -5.699999999999999,
+              -4.4,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 8 legs",
+            "primitive": "cube",
+            "location": [
+              -5.699999999999999,
+              -4.4,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 9 torso",
+            "primitive": "cylinder",
+            "location": [
+              -3.6499999999999995,
+              -4.4,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.754
+            ],
+            "material": {
+              "color": [
+                0.32,
+                0.28,
+                0.24
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 9 head",
+            "primitive": "uv_sphere",
+            "location": [
+              -3.6499999999999995,
+              -4.4,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 9 legs",
+            "primitive": "cube",
+            "location": [
+              -3.6499999999999995,
+              -4.4,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 10 torso",
+            "primitive": "cylinder",
+            "location": [
+              -1.5999999999999999,
+              -4.4,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.7904
+            ],
+            "material": {
+              "color": [
+                0.12,
+                0.13,
+                0.18
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 10 head",
+            "primitive": "uv_sphere",
+            "location": [
+              -1.5999999999999999,
+              -4.4,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 10 legs",
+            "primitive": "cube",
+            "location": [
+              -1.5999999999999999,
+              -4.4,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 11 torso",
+            "primitive": "cylinder",
+            "location": [
+              0.45,
+              -4.4,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.8268
+            ],
+            "material": {
+              "color": [
+                0.12,
+                0.18,
+                0.28
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 11 head",
+            "primitive": "uv_sphere",
+            "location": [
+              0.45,
+              -4.4,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 11 legs",
+            "primitive": "cube",
+            "location": [
+              0.45,
+              -4.4,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 12 torso",
+            "primitive": "cylinder",
+            "location": [
+              2.5,
+              -4.4,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.8632
+            ],
+            "material": {
+              "color": [
+                0.28,
+                0.16,
+                0.13
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 12 head",
+            "primitive": "uv_sphere",
+            "location": [
+              2.5,
+              -4.4,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 12 legs",
+            "primitive": "cube",
+            "location": [
+              2.5,
+              -4.4,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 13 torso",
+            "primitive": "cylinder",
+            "location": [
+              4.55,
+              -4.4,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.754
+            ],
+            "material": {
+              "color": [
+                0.16,
+                0.25,
+                0.21
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 13 head",
+            "primitive": "uv_sphere",
+            "location": [
+              4.55,
+              -4.4,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 13 legs",
+            "primitive": "cube",
+            "location": [
+              4.55,
+              -4.4,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 14 torso",
+            "primitive": "cylinder",
+            "location": [
+              6.6,
+              -4.4,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.7904
+            ],
+            "material": {
+              "color": [
+                0.32,
+                0.28,
+                0.24
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 14 head",
+            "primitive": "uv_sphere",
+            "location": [
+              6.6,
+              -4.4,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 14 legs",
+            "primitive": "cube",
+            "location": [
+              6.6,
+              -4.4,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 15 torso",
+            "primitive": "cylinder",
+            "location": [
+              -6.1499999999999995,
+              0.1999999999999993,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.8268
+            ],
+            "material": {
+              "color": [
+                0.12,
+                0.13,
+                0.18
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 15 head",
+            "primitive": "uv_sphere",
+            "location": [
+              -6.1499999999999995,
+              0.1999999999999993,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 15 legs",
+            "primitive": "cube",
+            "location": [
+              -6.1499999999999995,
+              0.1999999999999993,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 16 torso",
+            "primitive": "cylinder",
+            "location": [
+              -4.1,
+              0.1999999999999993,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.8632
+            ],
+            "material": {
+              "color": [
+                0.12,
+                0.18,
+                0.28
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 16 head",
+            "primitive": "uv_sphere",
+            "location": [
+              -4.1,
+              0.1999999999999993,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 16 legs",
+            "primitive": "cube",
+            "location": [
+              -4.1,
+              0.1999999999999993,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 17 torso",
+            "primitive": "cylinder",
+            "location": [
+              -2.05,
+              0.1999999999999993,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.754
+            ],
+            "material": {
+              "color": [
+                0.28,
+                0.16,
+                0.13
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 17 head",
+            "primitive": "uv_sphere",
+            "location": [
+              -2.05,
+              0.1999999999999993,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 17 legs",
+            "primitive": "cube",
+            "location": [
+              -2.05,
+              0.1999999999999993,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 18 torso",
+            "primitive": "cylinder",
+            "location": [
+              0,
+              0.1999999999999993,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.7904
+            ],
+            "material": {
+              "color": [
+                0.16,
+                0.25,
+                0.21
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 18 head",
+            "primitive": "uv_sphere",
+            "location": [
+              0,
+              0.1999999999999993,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 18 legs",
+            "primitive": "cube",
+            "location": [
+              0,
+              0.1999999999999993,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 19 torso",
+            "primitive": "cylinder",
+            "location": [
+              2.05,
+              0.1999999999999993,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.8268
+            ],
+            "material": {
+              "color": [
+                0.32,
+                0.28,
+                0.24
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 19 head",
+            "primitive": "uv_sphere",
+            "location": [
+              2.05,
+              0.1999999999999993,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 19 legs",
+            "primitive": "cube",
+            "location": [
+              2.05,
+              0.1999999999999993,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 20 torso",
+            "primitive": "cylinder",
+            "location": [
+              4.1,
+              0.1999999999999993,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.8632
+            ],
+            "material": {
+              "color": [
+                0.12,
+                0.13,
+                0.18
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 20 head",
+            "primitive": "uv_sphere",
+            "location": [
+              4.1,
+              0.1999999999999993,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 20 legs",
+            "primitive": "cube",
+            "location": [
+              4.1,
+              0.1999999999999993,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 21 torso",
+            "primitive": "cylinder",
+            "location": [
+              6.1499999999999995,
+              0.1999999999999993,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.754
+            ],
+            "material": {
+              "color": [
+                0.12,
+                0.18,
+                0.28
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 21 head",
+            "primitive": "uv_sphere",
+            "location": [
+              6.1499999999999995,
+              0.1999999999999993,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 21 legs",
+            "primitive": "cube",
+            "location": [
+              6.1499999999999995,
+              0.1999999999999993,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 22 torso",
+            "primitive": "cylinder",
+            "location": [
+              -5.699999999999999,
+              4.799999999999999,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.7904
+            ],
+            "material": {
+              "color": [
+                0.28,
+                0.16,
+                0.13
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 22 head",
+            "primitive": "uv_sphere",
+            "location": [
+              -5.699999999999999,
+              4.799999999999999,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 22 legs",
+            "primitive": "cube",
+            "location": [
+              -5.699999999999999,
+              4.799999999999999,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 23 torso",
+            "primitive": "cylinder",
+            "location": [
+              -3.6499999999999995,
+              4.799999999999999,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.8268
+            ],
+            "material": {
+              "color": [
+                0.16,
+                0.25,
+                0.21
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 23 head",
+            "primitive": "uv_sphere",
+            "location": [
+              -3.6499999999999995,
+              4.799999999999999,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 23 legs",
+            "primitive": "cube",
+            "location": [
+              -3.6499999999999995,
+              4.799999999999999,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 24 torso",
+            "primitive": "cylinder",
+            "location": [
+              -1.5999999999999999,
+              4.799999999999999,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.8632
+            ],
+            "material": {
+              "color": [
+                0.32,
+                0.28,
+                0.24
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 24 head",
+            "primitive": "uv_sphere",
+            "location": [
+              -1.5999999999999999,
+              4.799999999999999,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 24 legs",
+            "primitive": "cube",
+            "location": [
+              -1.5999999999999999,
+              4.799999999999999,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 25 torso",
+            "primitive": "cylinder",
+            "location": [
+              0.45,
+              4.799999999999999,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.754
+            ],
+            "material": {
+              "color": [
+                0.12,
+                0.13,
+                0.18
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 25 head",
+            "primitive": "uv_sphere",
+            "location": [
+              0.45,
+              4.799999999999999,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 25 legs",
+            "primitive": "cube",
+            "location": [
+              0.45,
+              4.799999999999999,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 26 torso",
+            "primitive": "cylinder",
+            "location": [
+              2.5,
+              4.799999999999999,
+              0.95
+            ],
+            "scale": [
+              0.34,
+              0.28,
+              0.7904
+            ],
+            "material": {
+              "color": [
+                0.12,
+                0.18,
+                0.28
+              ],
+              "roughness": 0.82
+            },
+            "rotation": [
+              1.5707963267948966,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Person 26 head",
+            "primitive": "uv_sphere",
+            "location": [
+              2.5,
+              4.799999999999999,
+              1.88
+            ],
+            "scale": [
+              0.27,
+              0.27,
+              0.3
+            ],
+            "material": {
+              "color": [
+                0.52,
+                0.32,
+                0.22
+              ],
+              "roughness": 0.82
+            }
+          },
+          {
+            "name": "Person 26 legs",
+            "primitive": "cube",
+            "location": [
+              2.5,
+              4.799999999999999,
+              0.25
+            ],
+            "scale": [
+              0.34,
+              0.22,
+              0.55
+            ],
+            "material": {
+              "color": [
+                0.08,
+                0.09,
+                0.11
+              ],
+              "roughness": 0.82
+            }
+          }
+        ],
+        "procedural": {
+          "profile": "coast",
+          "seed": "bridge_sunset_crowd",
+          "dressing_count": 12,
+          "width": 30,
+          "depth": 30
+        }
+      },
+      "subjects": [
+        {
+          "name": "Bridge_Visitor_01",
+          "location": [
+            -5.13,
+            -10,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 3.15,
+            "skin_color": [
+              0.68,
+              0.43,
+              0.29
+            ],
+            "clothing_color": [
+              0.12,
+              0.24,
+              0.55
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.035,
+              0.025,
+              0.02
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                -5.13,
+                -10,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                -5.13,
+                -10,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                -0.05
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_02",
+          "location": [
+            -3.07,
+            -10,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 3.15,
+            "skin_color": [
+              0.48,
+              0.29,
+              0.19
+            ],
+            "clothing_color": [
+              0.55,
+              0.16,
+              0.12
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.12,
+              0.07,
+              0.035
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                -3.07,
+                -10,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                -3.07,
+                -10,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                -0.025
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_03",
+          "location": [
+            -1.02,
+            -10,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 3.15,
+            "skin_color": [
+              0.78,
+              0.57,
+              0.4
+            ],
+            "clothing_color": [
+              0.12,
+              0.38,
+              0.3
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.18,
+              0.12,
+              0.08
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                -1.02,
+                -10,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                -1.02,
+                -10,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_04",
+          "location": [
+            1.02,
+            -10,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 3.15,
+            "skin_color": [
+              0.57,
+              0.36,
+              0.25
+            ],
+            "clothing_color": [
+              0.42,
+              0.25,
+              0.58
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.035,
+              0.025,
+              0.02
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                1.02,
+                -10,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                1.02,
+                -10,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0.025
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_05",
+          "location": [
+            3.07,
+            -10,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 3.15,
+            "skin_color": [
+              0.68,
+              0.43,
+              0.29
+            ],
+            "clothing_color": [
+              0.72,
+              0.4,
+              0.12
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.12,
+              0.07,
+              0.035
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                3.07,
+                -10,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                3.07,
+                -10,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0.05
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_06",
+          "location": [
+            5.13,
+            -10,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 3.15,
+            "skin_color": [
+              0.48,
+              0.29,
+              0.19
+            ],
+            "clothing_color": [
+              0.16,
+              0.32,
+              0.42
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.18,
+              0.12,
+              0.08
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                5.13,
+                -10,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                5.13,
+                -10,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                -0.05
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_07",
+          "location": [
+            -4.67,
+            -3.8,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 3.15,
+            "skin_color": [
+              0.78,
+              0.57,
+              0.4
+            ],
+            "clothing_color": [
+              0.12,
+              0.24,
+              0.55
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.035,
+              0.025,
+              0.02
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                -4.67,
+                -3.8,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                -4.67,
+                -3.8,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                -0.025
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_08",
+          "location": [
+            -2.62,
+            -3.8,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 3.15,
+            "skin_color": [
+              0.57,
+              0.36,
+              0.25
+            ],
+            "clothing_color": [
+              0.55,
+              0.16,
+              0.12
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.12,
+              0.07,
+              0.035
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                -2.62,
+                -3.8,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                -2.62,
+                -3.8,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_09",
+          "location": [
+            -0.57,
+            -3.8,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 3.15,
+            "skin_color": [
+              0.68,
+              0.43,
+              0.29
+            ],
+            "clothing_color": [
+              0.12,
+              0.38,
+              0.3
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.18,
+              0.12,
+              0.08
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                -0.57,
+                -3.8,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                -0.57,
+                -3.8,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0.025
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_10",
+          "location": [
+            1.47,
+            -3.8,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 3.15,
+            "skin_color": [
+              0.48,
+              0.29,
+              0.19
+            ],
+            "clothing_color": [
+              0.42,
+              0.25,
+              0.58
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.035,
+              0.025,
+              0.02
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                1.47,
+                -3.8,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                1.47,
+                -3.8,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0.05
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_11",
+          "location": [
+            3.52,
+            -3.8,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 3.15,
+            "skin_color": [
+              0.78,
+              0.57,
+              0.4
+            ],
+            "clothing_color": [
+              0.72,
+              0.4,
+              0.12
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.12,
+              0.07,
+              0.035
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                3.52,
+                -3.8,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                3.52,
+                -3.8,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                -0.05
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_12",
+          "location": [
+            5.58,
+            -3.8,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 3.15,
+            "skin_color": [
+              0.57,
+              0.36,
+              0.25
+            ],
+            "clothing_color": [
+              0.16,
+              0.32,
+              0.42
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.18,
+              0.12,
+              0.08
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                5.58,
+                -3.8,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                5.58,
+                -3.8,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                -0.025
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_13",
+          "location": [
+            -5.13,
+            2.4,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 2.75,
+            "skin_color": [
+              0.68,
+              0.43,
+              0.29
+            ],
+            "clothing_color": [
+              0.12,
+              0.24,
+              0.55
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.035,
+              0.025,
+              0.02
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                -5.13,
+                2.4,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                -5.13,
+                2.4,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_14",
+          "location": [
+            -3.07,
+            2.4,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 2.75,
+            "skin_color": [
+              0.48,
+              0.29,
+              0.19
+            ],
+            "clothing_color": [
+              0.55,
+              0.16,
+              0.12
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.12,
+              0.07,
+              0.035
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                -3.07,
+                2.4,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                -3.07,
+                2.4,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0.025
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_15",
+          "location": [
+            -1.02,
+            2.4,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 2.75,
+            "skin_color": [
+              0.78,
+              0.57,
+              0.4
+            ],
+            "clothing_color": [
+              0.12,
+              0.38,
+              0.3
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.18,
+              0.12,
+              0.08
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                -1.02,
+                2.4,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                -1.02,
+                2.4,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0.05
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_16",
+          "location": [
+            1.02,
+            2.4,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 2.75,
+            "skin_color": [
+              0.57,
+              0.36,
+              0.25
+            ],
+            "clothing_color": [
+              0.42,
+              0.25,
+              0.58
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.035,
+              0.025,
+              0.02
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                1.02,
+                2.4,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                1.02,
+                2.4,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                -0.05
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_17",
+          "location": [
+            3.07,
+            2.4,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 2.75,
+            "skin_color": [
+              0.68,
+              0.43,
+              0.29
+            ],
+            "clothing_color": [
+              0.72,
+              0.4,
+              0.12
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.12,
+              0.07,
+              0.035
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                3.07,
+                2.4,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                3.07,
+                2.4,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                -0.025
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_18",
+          "location": [
+            5.13,
+            2.4,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 2.75,
+            "skin_color": [
+              0.48,
+              0.29,
+              0.19
+            ],
+            "clothing_color": [
+              0.16,
+              0.32,
+              0.42
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.18,
+              0.12,
+              0.08
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                5.13,
+                2.4,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                5.13,
+                2.4,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_19",
+          "location": [
+            -4.67,
+            8.6,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 2.75,
+            "skin_color": [
+              0.78,
+              0.57,
+              0.4
+            ],
+            "clothing_color": [
+              0.12,
+              0.24,
+              0.55
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.035,
+              0.025,
+              0.02
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                -4.67,
+                8.6,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                -4.67,
+                8.6,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0.025
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_20",
+          "location": [
+            -2.62,
+            8.6,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 2.75,
+            "skin_color": [
+              0.57,
+              0.36,
+              0.25
+            ],
+            "clothing_color": [
+              0.55,
+              0.16,
+              0.12
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.12,
+              0.07,
+              0.035
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                -2.62,
+                8.6,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                -2.62,
+                8.6,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0.05
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_21",
+          "location": [
+            -0.57,
+            8.6,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 2.75,
+            "skin_color": [
+              0.68,
+              0.43,
+              0.29
+            ],
+            "clothing_color": [
+              0.12,
+              0.38,
+              0.3
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.18,
+              0.12,
+              0.08
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                -0.57,
+                8.6,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                -0.57,
+                8.6,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                -0.05
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_22",
+          "location": [
+            1.47,
+            8.6,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 2.75,
+            "skin_color": [
+              0.48,
+              0.29,
+              0.19
+            ],
+            "clothing_color": [
+              0.42,
+              0.25,
+              0.58
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.035,
+              0.025,
+              0.02
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                1.47,
+                8.6,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                1.47,
+                8.6,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                -0.025
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_23",
+          "location": [
+            3.52,
+            8.6,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 2.75,
+            "skin_color": [
+              0.78,
+              0.57,
+              0.4
+            ],
+            "clothing_color": [
+              0.72,
+              0.4,
+              0.12
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.12,
+              0.07,
+              0.035
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                3.52,
+                8.6,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                3.52,
+                8.6,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Bridge_Visitor_24",
+          "location": [
+            5.58,
+            8.6,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "character": {
+            "type": "stylized_humanoid",
+            "height": 2.75,
+            "skin_color": [
+              0.57,
+              0.36,
+              0.25
+            ],
+            "clothing_color": [
+              0.16,
+              0.32,
+              0.42
+            ],
+            "accent_color": [
+              0.78,
+              0.48,
+              0.18
+            ],
+            "hair_color": [
+              0.18,
+              0.12,
+              0.08
+            ],
+            "eye_color": [
+              0.018,
+              0.014,
+              0.012
+            ],
+            "shoe_color": [
+              0.025,
+              0.03,
+              0.04
+            ],
+            "motion": "idle"
+          },
+          "keyframes": [
+            {
+              "time_seconds": 0,
+              "location": [
+                5.58,
+                8.6,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time_seconds": 3,
+              "location": [
+                5.58,
+                8.6,
+                0.48
+              ],
+              "rotation": [
+                0,
+                0,
+                0.025
+              ]
+            }
+          ]
+        }
+      ],
+      "props": [],
+      "camera": {
+        "location": [
+          0,
+          -27,
+          9
+        ],
+        "target": [
+          0,
+          2,
+          3.2
+        ],
+        "lens": 38,
+        "keyframes": [
+          {
+            "time_seconds": 0,
+            "location": [
+              0,
+              -27,
+              9
+            ],
+            "target": [
+              0,
+              2,
+              3.2
+            ],
+            "lens": 38
+          },
+          {
+            "time_seconds": 3,
+            "location": [
+              0,
+              -23,
+              8
+            ],
+            "target": [
+              0,
+              5,
+              3
+            ],
+            "lens": 40
+          }
+        ]
+      },
+      "lighting": [
+        {
+          "type": "SUN",
+          "location": [
+            -8,
+            -10,
+            18
+          ],
+          "energy": 1.4,
+          "color": [
+            1,
+            0.52,
+            0.27
+          ]
+        },
+        {
+          "type": "AREA",
+          "location": [
+            0,
+            -8,
+            10
+          ],
+          "energy": 1800,
+          "size": 12,
+          "color": [
+            1,
+            0.58,
+            0.34
+          ]
+        },
+        {
+          "type": "AREA",
+          "location": [
+            0,
+            20,
+            8
+          ],
+          "energy": 900,
+          "size": 18,
+          "color": [
+            0.28,
+            0.42,
+            0.75
+          ]
+        }
+      ]
+    }
+  ]
+}
