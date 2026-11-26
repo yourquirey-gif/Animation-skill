@@ -13,6 +13,9 @@ def main():
     p.add_argument("--fps", type=int, default=30)
     p.add_argument("--samples", type=int, default=16)
     p.add_argument("--engine", choices=("BLENDER_EEVEE", "CYCLES"), default="BLENDER_EEVEE")
+    p.add_argument("--voice", type=Path)
+    p.add_argument("--music", type=Path)
+    p.add_argument("--captions", type=Path)
     a = p.parse_args()
     storyboard = a.storyboard.resolve()
     data = json.loads(storyboard.read_text(encoding="utf-8"))
@@ -26,7 +29,7 @@ def main():
         shutil.rmtree(work)
     work.mkdir(parents=True)
     manifest = {"story_id": data.get("story_id") or data.get("title") or storyboard.stem,
-                "backend": "SheepIt manual project upload", "shots": []}
+                "backend": "SheepIt/Kaggle external render package", "shots": [], "media": {}}
     env = os.environ.copy()
     env["ANIMATION_RENDER_ENGINE"] = a.engine
     for index, shot in enumerate(shots):
@@ -59,6 +62,16 @@ def main():
         "SheepIt does not execute owner-authored custom render scripts; the scene is baked "
         "into each packed .blend before upload. Queue time and available compute vary.\n",
         encoding="utf-8")
+    media_dir = work / "media"
+    for media_name, media_path in (("voice", a.voice), ("music", a.music), ("captions", a.captions)):
+        if media_path:
+            source = media_path.resolve()
+            if not source.is_file():
+                raise FileNotFoundError(str(source))
+            media_dir.mkdir(parents=True, exist_ok=True)
+            destination = media_dir / (media_name + source.suffix.lower())
+            shutil.copy2(source, destination)
+            manifest["media"][media_name] = str(destination.relative_to(work))
     (work / "source_storyboard.json").write_text(json.dumps(data, indent=2), encoding="utf-8")
     kaggle_worker = repo_root / "cloud" / "kaggle_gpu_render.py"
     if kaggle_worker.is_file():
