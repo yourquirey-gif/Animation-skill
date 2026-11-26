@@ -311,3 +311,28 @@ Before marking any render complete, require the renderer's per-shot PNG count/si
 ## Universal script-to-Blender architecture (mandatory)
 
 Before production, read `docs/UNIVERSAL_SCRIPT_TO_BLENDER_PIPELINE.md`. Claude Code must interpret each new idea/script/audio and generate that project's story bible and storyboard; Blender Python must build the actual 3D scene dynamically from those project files. Do not hard-code a specific story, fixed crowd size, named cast, location or action into renderer source. Smoke-test fixtures are QA only and are never production templates. Entity counts, asset selection, environments, props, animation, camera and lighting must be driven by the generated project manifest. The Blender runtime executes structured scene instructions; Claude Code is responsible for translating natural-language stories into those instructions. Do not claim the complete script-to-video loop exists until planner, dynamic scene builder, asset resolver, render manager and final QA have each been implemented and tested end-to-end.
+
+## Mandatory story-by-story uniqueness — no generic reused worlds
+
+Every new story is a fresh production design. Do not reuse a previous story's complete environment, scene layout, background, prop arrangement, character cast, wardrobe, lighting setup, camera plan, or shot composition as a shortcut. Reusable libraries are component libraries only; they are not permission to recycle an entire scene.
+
+Before rendering each story, create and persist a Story Production Bible containing:
+- A unique `story_id`, visual concept, art direction, palette, texture language, and environment design brief.
+- A Character Bible for every named/visible character: distinct face/head, body proportions, hair, skin/material appearance, wardrobe, accessories, role, performance style, and continuity identifiers. Crowd members must not be duplicated clones; vary models, silhouettes, clothing, poses and placement.
+- A Location Bible for every distinct location: unique layout and geometry, architecture/landform, ground materials, background depth, landmarks, vegetation/props, weather, time of day, atmosphere, practical lights and color temperature.
+- A Prop Bible for story-critical objects, including design, dimensions, materials, ownership, state and continuity.
+- A shot-specific camera and lighting plan; camera angles, lens, framing and movement must serve the beat rather than default to one repeated setup.
+
+### Environment uniqueness rules
+1. Generate a new environment design from the actual story context. A village, market, palace, spaceship, forest, underwater city, classroom, battlefield, or home must have the right story-specific layout, architectural language, set dressing, geography, atmosphere and functional details.
+2. Every distinct location receives a stable unique `location_id` and a location-specific manifest. Shots in the same location reuse that location's approved geometry for continuity; a new location gets a separately designed environment.
+3. Record an `environment_fingerprint` from the location's design inputs (layout, landmark set, architecture/terrain, materials, dressing, weather, time-of-day and lighting concept). Compare it with other locations in the same story and with recent project history. If two supposedly different locations are near-identical, redesign one before rendering.
+4. Never use a generic empty plane, cube buildings, repeated stall blocks, or placeholder primitives as the final environment. Primitive geometry is allowed only for blocking/previsualization and must be replaced or detailed before final approval.
+5. Reuse individual licensed trees, rocks, furniture, vehicles, textures or modular components only when they fit. Recompose, rescale, recolor and dress them to the new design. Never copy a complete previous scene or environment collection unchanged.
+6. Every story must have its own environment palette, landmarks, prop dressing, weather/time cues and camera language. If two stories intentionally share a real-world location, preserve the factual location identity but create story-specific set dressing, time, weather, lighting and shot composition; do not pretend the place itself is different.
+7. Background crowds must be populated with distinct approved models/variants and varied animation states. No repeated mannequin rows or obvious clone loops. If enough distinct assets are unavailable, generate new variants or report the limitation instead of hiding it.
+
+### Story-specific production gate
+Before a final render, validate that every shot references a known `location_id`, every location has a non-empty design manifest and fingerprint, every character has a stable identity record, and every story-critical prop has continuity state. Check for duplicate environment fingerprints across different locations in the same story. Run a visual preview and inspect representative frames for repeated geometry, empty space, clipping, scale, crowd cloning, lighting mismatch and continuity errors. A failed gate blocks the final render; it must not be reported as complete.
+
+A reusable asset may appear in multiple stories, but the **story, characters, location design, scene composition, dressing, lighting and cinematic treatment must be newly authored for each story**. Do not claim that every element is unique if a shared asset or limitation remains; disclose exactly what was reused.
