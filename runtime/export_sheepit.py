@@ -12,7 +12,7 @@ def main():
     p.add_argument("--height", type=int, default=1920)
     p.add_argument("--fps", type=int, default=30)
     p.add_argument("--samples", type=int, default=16)
-    p.add_argument("--engine", choices=("BLENDER_EEVEE", "CYCLES"), default="BLENDER_EEVEE")
+    p.add_argument("--engine", choices=("BLENDER_EEVEE", "CYCLES"), default="CYCLES")
     p.add_argument("--voice", type=Path)
     p.add_argument("--music", type=Path)
     p.add_argument("--captions", type=Path)
