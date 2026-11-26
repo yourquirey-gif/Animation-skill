@@ -90,6 +90,18 @@ def validate(story):
     return story
 
 
+def import_fbx_asset(filepath):
+    """Import FBX using Blender 5's maintained C++ importer, with legacy fallback."""
+    filepath = str(Path(filepath).resolve())
+    wm_ops = getattr(bpy.ops, "wm", None)
+    if wm_ops is not None and hasattr(wm_ops, "fbx_import"):
+        return bpy.ops.wm.fbx_import(filepath=filepath)
+    legacy_ops = getattr(bpy.ops, "import_scene", None)
+    if legacy_ops is None or not hasattr(legacy_ops, "fbx"):
+        raise RuntimeError("This Blender build has no supported FBX importer")
+    return bpy.ops.import_scene.fbx(filepath=filepath)
+
+
 def make_material(spec, cache):
     spec = {**DEFAULT_MATERIAL, **(spec or {})}
     key = json.dumps(spec, sort_keys=True)
@@ -128,7 +140,7 @@ def create_mesh(spec, cache, collection=None, base_dir=None):
         if suffix in {".glb", ".gltf"}:
             bpy.ops.import_scene.gltf(filepath=str(asset_path))
         elif suffix == ".fbx":
-            bpy.ops.import_scene.fbx(filepath=str(asset_path))
+            import_fbx_asset(asset_path)
         else:
             raise ValueError("Supported detailed model formats are .glb, .gltf and .fbx: " + suffix)
         imported = [o for o in bpy.data.objects if o not in before and o.type not in {"CAMERA", "LIGHT"}]
@@ -172,7 +184,7 @@ def create_mesh(spec, cache, collection=None, base_dir=None):
             if animation_suffix in {".glb", ".gltf"}:
                 bpy.ops.import_scene.gltf(filepath=str(animation_path))
             elif animation_suffix == ".fbx":
-                bpy.ops.import_scene.fbx(filepath=str(animation_path))
+                import_fbx_asset(animation_path)
             else:
                 raise ValueError("Retarget animation must be .glb, .gltf or .fbx")
             source_objects = [o for o in bpy.data.objects if o not in before_animation]
