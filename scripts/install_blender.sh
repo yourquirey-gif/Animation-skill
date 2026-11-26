@@ -18,7 +18,11 @@ sudo apt-get install -y ffmpeg unzip curl xz-utils python3-numpy \
 
 curl -fL --retry 3 "$BASE_URL$ARCHIVE" -o "$INSTALL_ROOT/$ARCHIVE"
 curl -fL --retry 3 "$BASE_URL/blender-$BLENDER_VERSION.sha256" -o "$INSTALL_ROOT/checksums.sha256"
-grep -F "$ARCHIVE" "$INSTALL_ROOT/checksums.sha256" | (cd "$INSTALL_ROOT" && sha256sum -c -)
+CHECKSUM_LINE="$(grep -F "$ARCHIVE" "$INSTALL_ROOT/checksums.sha256" | head -n 1)"
+EXPECTED_SHA256="$(printf '%s' "$CHECKSUM_LINE" | grep -oE '[0-9a-fA-F]{64}' | head -n 1)"
+ACTUAL_SHA256="$(sha256sum "$INSTALL_ROOT/$ARCHIVE" | awk '{print $1}')"
+test -n "$EXPECTED_SHA256"
+test "$EXPECTED_SHA256" = "$ACTUAL_SHA256"
 tar -xJf "$INSTALL_ROOT/$ARCHIVE" -C "$INSTALL_ROOT"
 BLENDER_BIN="$INSTALL_ROOT/blender-$BLENDER_VERSION-linux-x64/blender"
 test -x "$BLENDER_BIN"
