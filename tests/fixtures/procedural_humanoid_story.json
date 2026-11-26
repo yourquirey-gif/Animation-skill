@@ -38,7 +38,14 @@
               "roughness": 0.92
             }
           }
-        ]
+        ],
+        "procedural": {
+          "profile": "urban",
+          "seed": "procedural_humanoid_story",
+          "dressing_count": 12,
+          "width": 30,
+          "depth": 30
+        }
       },
       "subjects": [
         {
