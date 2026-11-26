@@ -6,6 +6,7 @@ on:
       - "runtime/align_visemes.py"
       - "tests/test_align_visemes.py"
       - "tests/blender_rig_controls_smoke.py"
+      - "scripts/**"
       - ".github/workflows/rig-controls-tests.yml"
   workflow_dispatch:
 jobs:
