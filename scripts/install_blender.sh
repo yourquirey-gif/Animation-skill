@@ -17,7 +17,7 @@ sudo apt-get install -y ffmpeg unzip curl xz-utils python3-numpy \
   libxcursor1 libxcomposite1 libxdamage1 libxext6
 
 curl -A "Mozilla/5.0 (compatible; AnimationSkill/1.0)" -fL --retry 3 "$BASE_URL$ARCHIVE" -o "$INSTALL_ROOT/$ARCHIVE"
-curl -fL --retry 3 "$BASE_URL/blender-$BLENDER_VERSION.sha256" -o "$INSTALL_ROOT/checksums.sha256"
+curl -A "Mozilla/5.0 (compatible; AnimationSkill/1.0)" -fL --retry 3 "$BASE_URL/blender-$BLENDER_VERSION.sha256" -o "$INSTALL_ROOT/checksums.sha256"
 CHECKSUM_LINE="$(grep -F "$ARCHIVE" "$INSTALL_ROOT/checksums.sha256" | head -n 1)"
 EXPECTED_SHA256="$(printf '%s' "$CHECKSUM_LINE" | grep -oE '[0-9a-fA-F]{64}' | head -n 1)"
 ACTUAL_SHA256="$(sha256sum "$INSTALL_ROOT/$ARCHIVE" | awk '{print $1}')"
