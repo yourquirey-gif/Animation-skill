@@ -32,6 +32,25 @@ class StoryEnvironmentBuilderTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Unknown procedural environment"):
             generate_environment_specs({"profile": "underwater_city"}, "a", "1")
 
+    def test_all_story_fixtures_have_distinct_environment_profiles(self):
+        import json
+        from pathlib import Path
+        fixture_dir = Path(__file__).parent / "fixtures"
+        profiles = {}
+        for path in sorted(fixture_dir.glob("*.json")):
+            data = json.loads(path.read_text(encoding="utf-8"))
+            shot_profiles = {
+                (shot.get("environment", {}).get("procedural", {}) or {}).get("profile")
+                for shot in data.get("shots", [])
+            }
+            shot_profiles.discard(None)
+            if shot_profiles:
+                self.assertEqual(len(shot_profiles), 1, "%s mixes multiple profiles without explicit location manifests" % path.name)
+                profile = next(iter(shot_profiles))
+                self.assertNotIn(profile, profiles, "%s reuses %s from %s" % (path.name, profile, profiles.get(profile)))
+                profiles[profile] = path.name
+        self.assertGreaterEqual(len(profiles), 7)
+
 
 if __name__ == "__main__":
     unittest.main()
