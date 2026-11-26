@@ -35,5 +35,5 @@ if [[ -n "${GITHUB_ENV:-}" ]]; then
 fi
 
 "$BLENDER_BIN" --version
-"$BLENDER_BIN" --background --python-expr \
+"$BLENDER_BIN" --background --python-exit-code 1 --python-expr \
   "import bpy, addon_utils; addon_utils.enable('cycles', default_set=True); engines=set(bpy.context.scene.render.bl_rna.properties['engine'].enum_items.keys()); print('AVAILABLE_RENDER_ENGINES', sorted(engines)); assert 'CYCLES' in engines, 'Cycles add-on must register the Cycles engine'"
