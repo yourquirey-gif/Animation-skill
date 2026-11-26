@@ -93,9 +93,7 @@ jobs:
 
       - name: Install Blender, FFmpeg and headless graphics libraries
         run: |
-          sudo apt-get update
-          sudo apt-get install -y blender ffmpeg unzip curl python3-numpy libegl1 libgl1 libegl-mesa0 libglx-mesa0 libgl1-mesa-dri
-          blender --version
+          bash scripts/install_blender.sh
           ffmpeg -version | head -n 2
           ffprobe -version | head -n 1
 
