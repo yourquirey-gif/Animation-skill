@@ -4,7 +4,7 @@ set -euo pipefail
 # Use the official Blender Foundation binary: distro builds may omit Cycles.
 BLENDER_VERSION="${BLENDER_VERSION:-5.2.5}"
 ARCHIVE="blender-${BLENDER_VERSION}-linux-x64.tar.xz"
-BASE_URL="https://download.blender.org/release/Blender${BLENDER_VERSION%.*}/"
+BASE_URL="https://mirror.blender.org/release/Blender${BLENDER_VERSION%.*}/"
 INSTALL_ROOT="${RUNNER_TEMP:-/tmp}/blender-${BLENDER_VERSION}"
 mkdir -p "$INSTALL_ROOT"
 
@@ -16,7 +16,7 @@ sudo apt-get install -y ffmpeg unzip curl xz-utils python3-numpy \
   libwayland-egl1 libwayland-cursor0 libxrandr2 libxinerama1 \
   libxcursor1 libxcomposite1 libxdamage1 libxext6
 
-curl -fL --retry 3 "$BASE_URL$ARCHIVE" -o "$INSTALL_ROOT/$ARCHIVE"
+curl -A "Mozilla/5.0 (compatible; AnimationSkill/1.0)" -fL --retry 3 "$BASE_URL$ARCHIVE" -o "$INSTALL_ROOT/$ARCHIVE"
 curl -fL --retry 3 "$BASE_URL/blender-$BLENDER_VERSION.sha256" -o "$INSTALL_ROOT/checksums.sha256"
 CHECKSUM_LINE="$(grep -F "$ARCHIVE" "$INSTALL_ROOT/checksums.sha256" | head -n 1)"
 EXPECTED_SHA256="$(printf '%s' "$CHECKSUM_LINE" | grep -oE '[0-9a-fA-F]{64}' | head -n 1)"
