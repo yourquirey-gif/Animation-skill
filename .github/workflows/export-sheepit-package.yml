@@ -16,7 +16,7 @@ on:
       engine:
         description: Blender scene engine
         required: true
-        default: BLENDER_EEVEE
+        default: CYCLES
         type: choice
         options:
           - BLENDER_EEVEE
