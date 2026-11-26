@@ -683,7 +683,26 @@ def create_stylized_humanoid(spec, cache, root, fps, total_frames):
         part("eye_white_" + side, [x, -0.275, 2.72], [0.075, 0.035, 0.055], "eyes")
         part("eyebrow_" + side, [x, -0.285, 2.82], [0.09, 0.035, 0.025], "hair")
     part("nose", [0, -0.31, 2.64], [0.055, 0.07, 0.09], "skin")
-    part("mouth", [0, -0.286, 2.53], [0.09, 0.025, 0.025], "hair")
+    mouth = part("mouth", [0, -0.286, 2.53], [0.09, 0.025, 0.025], "hair")
+    # Procedural face gets real Blender shape keys so Rhubarb cues can animate
+    # mouth poses even when a story uses the built-in stylized character.
+    basis = mouth.shape_key_add(name="Basis")
+    viseme_profiles = {
+        "A": (1.00, 1.00, 1.00, 0.00),  # closed lips (M/B/P)
+        "B": (1.35, 1.12, 1.00, 0.00),  # wide EE
+        "C": (1.18, 1.42, 1.00, 0.00),  # EH
+        "D": (1.00, 2.10, 1.00, 0.00),  # open AH
+        "E": (0.72, 1.72, 1.00, 0.00),  # rounded OH
+        "F": (0.62, 1.18, 1.00, 0.02),  # tight OO
+        "G": (1.20, 1.00, 0.70, 0.025), # teeth/lip contact F/V
+        "H": (1.08, 1.20, 1.00, 0.00),  # tongue/alveolar L approximation
+        "X": (1.00, 1.00, 1.00, 0.00),  # rest
+    }
+    for label, (width, height, depth, forward) in viseme_profiles.items():
+        key = mouth.shape_key_add(name="viseme_" + label)
+        for index, vertex in enumerate(basis.data):
+            co = vertex.co
+            key.data[index].co = (co.x * width, co.y * depth - forward, co.z * height)
 
     # Upper arms, forearms, hands, thighs, shins and shoes are separate objects
     # so authored motion keys can animate them independently.
@@ -908,10 +927,13 @@ def main():
             scene.frame_end,
             item.get("rig_controls", {}),
         )
+        viseme_map = item.get("viseme_map", {})
+        if not viseme_map and (item.get("character") or {}).get("auto_visemes"):
+            viseme_map = {label: "viseme_" + label for label in "ABCDEFGHX"}
         apply_viseme_animation(
             root,
             item.get("viseme_keyframes", []),
-            item.get("viseme_map", {}),
+            viseme_map,
             args.fps,
             scene.frame_end,
         )
