@@ -892,8 +892,11 @@ def main():
     out.mkdir(parents=True, exist_ok=True)
     bpy.ops.wm.read_factory_settings(use_empty=True)
     scene = bpy.context.scene
-    available_engines = scene.render.bl_rna.properties["engine"].enum_items.keys()
     requested_engine = os.environ.get("ANIMATION_RENDER_ENGINE")
+    if requested_engine == "CYCLES":
+        import addon_utils
+        addon_utils.enable("cycles")
+    available_engines = scene.render.bl_rna.properties["engine"].enum_items.keys()
     if requested_engine:
         if requested_engine not in available_engines:
             raise RuntimeError(
