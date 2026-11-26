@@ -112,7 +112,7 @@ def main():
     p.add_argument("--storyboard", required=True, type=Path)
     p.add_argument("--output", required=True, type=Path)
     p.add_argument("--voice", type=Path)
-    p.add_argument("--auto-lip-sync", action="store_true", help="Run Rhubarb on --voice and distribute viseme cues to storyboard subjects with viseme_map")
+    p.add_argument("--auto-lip-sync", action="store_true", help="Run Rhubarb on --voice and distribute viseme cues to 3D blendshapes or named 2D sprite mouth layers")
     p.add_argument("--rhubarb", help="Optional path to Rhubarb Lip Sync CLI")
     p.add_argument("--music", type=Path)
     p.add_argument("--captions", type=Path, help="Optional SRT file burned into the final video")
@@ -219,7 +219,7 @@ def main():
                     subjects_animated += 1
             elapsed += duration
         if subjects_animated == 0:
-            raise ValueError("--auto-lip-sync found no storyboard subject with a viseme_map. Add exact facial shape-key names to the character subject.")
+            raise ValueError("--auto-lip-sync found no storyboard subject with a viseme_map. Add exact 3D shape-key names or named 2D mouth-sprite part names to the character subject.")
         # Keep relative asset paths anchored to the original storyboard directory.
         for shot in shots:
             entries = list(shot.get("subjects", [])) + list(shot.get("props", []))
