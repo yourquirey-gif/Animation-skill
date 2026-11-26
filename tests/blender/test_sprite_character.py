@@ -26,6 +26,8 @@ def main():
 
         assert obj.type == "MESH"
         assert obj.get("story_character_mode") == "2D_SPRITE_IN_3D_WORLD"
+        assert abs(obj.rotation_euler.x - 1.57079632679) < 1e-5
+        assert abs(obj["sprite_aspect_ratio"] - 1.0) < 1e-5
         assert obj.get("sprite_source") == str(image_path)
         material = obj.data.materials[0]
         assert material.use_nodes
@@ -33,10 +35,19 @@ def main():
         assert len(image_nodes) == 1 and image_nodes[0].image is not None
         bsdf = next(node for node in material.node_tree.nodes if node.type == "BSDF_PRINCIPLED")
         assert any(link.to_node == bsdf and link.to_socket.name == "Alpha" for link in material.node_tree.links)
+        second = create_mesh({
+            "name": "Second_Hybrid_2D_Character",
+            "primitive": "sprite",
+            "image_file": str(image_path),
+            "location": [2, 0, 1],
+        }, {}, base_dir=tmp)
+        assert second.data.materials[0] != material, "Sprite materials must not share image textures"
         print("HYBRID_2D_SPRITE_IN_3D_WORLD_OK", {
             "object": obj.name,
             "image": image_path.name,
             "alpha_linked": True,
+            "upright": True,
+            "isolated_materials": True,
             "transform": list(obj.location),
         })
 
