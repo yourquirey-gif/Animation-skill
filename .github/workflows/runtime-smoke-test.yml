@@ -64,6 +64,12 @@ jobs:
       - name: Compile Python orchestration scripts
         run: |
           python3 -m py_compile runtime/animation_runtime.py runtime/render_story.py runtime/story_scene.py runtime/align_visemes.py runtime/asset_catalog.py runtime/rig_retarget.py runtime/environment_builder.py cloud/kaggle_gpu_render.py runtime/export_sheepit.py
+      - name: Verify self-contained SheepIt export package
+        run: |
+          set -euo pipefail
+          python3 runtime/export_sheepit.py --storyboard tests/fixtures/guddu_shop_market.json --output "$RUNNER_TEMP/sheepit-smoke.zip" --width 240 --height 426 --fps 12 --samples 8
+          unzip -l "$RUNNER_TEMP/sheepit-smoke.zip" | grep -q 'shot.blend'
+          unzip -l "$RUNNER_TEMP/sheepit-smoke.zip" | grep -q 'kaggle_gpu_render.py'
       - name: Validate reusable asset catalog
         run: |
           python3 runtime/asset_catalog.py validate
