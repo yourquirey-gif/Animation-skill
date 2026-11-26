@@ -376,7 +376,7 @@
           ],
           "asset_file": "runtime-assets/KinemIQ_Mannequin.fbx",
           "retarget": {
-            "animation_query": "walk",
+            "animation_query": "Walk_forwards.fbx",
             "auto_map_by_name": true,
             "minimum_shared_bones": 12,
             "action_name": "Crowd_Shopper_A"
@@ -425,7 +425,7 @@
           ],
           "asset_file": "runtime-assets/KinemIQ_Mannequin.fbx",
           "retarget": {
-            "animation_query": "idle",
+            "animation_query": "Idle_relaxed.fbx",
             "auto_map_by_name": true,
             "minimum_shared_bones": 12,
             "action_name": "Crowd_Shopper_B"
@@ -474,7 +474,7 @@
           ],
           "asset_file": "runtime-assets/KinemIQ_Mannequin.fbx",
           "retarget": {
-            "animation_query": "walk",
+            "animation_query": "Walk_forwards.fbx",
             "auto_map_by_name": true,
             "minimum_shared_bones": 12,
             "action_name": "Crowd_Shopper_C"
@@ -523,7 +523,7 @@
           ],
           "asset_file": "runtime-assets/KinemIQ_Mannequin.fbx",
           "retarget": {
-            "animation_query": "idle",
+            "animation_query": "Idle_relaxed.fbx",
             "auto_map_by_name": true,
             "minimum_shared_bones": 12,
             "action_name": "Crowd_Shopper_D"
@@ -572,7 +572,7 @@
           ],
           "asset_file": "runtime-assets/KinemIQ_Mannequin.fbx",
           "retarget": {
-            "animation_query": "walk",
+            "animation_query": "Walk_forwards.fbx",
             "auto_map_by_name": true,
             "minimum_shared_bones": 12,
             "action_name": "Crowd_Shopper_E"
@@ -621,7 +621,7 @@
           ],
           "asset_file": "runtime-assets/KinemIQ_Mannequin.fbx",
           "retarget": {
-            "animation_query": "idle",
+            "animation_query": "Idle_relaxed.fbx",
             "auto_map_by_name": true,
             "minimum_shared_bones": 12,
             "action_name": "Crowd_Shopper_F"
@@ -670,7 +670,7 @@
           ],
           "asset_file": "runtime-assets/KinemIQ_Mannequin.fbx",
           "retarget": {
-            "animation_query": "walk",
+            "animation_query": "Walk_forwards.fbx",
             "auto_map_by_name": true,
             "minimum_shared_bones": 12,
             "action_name": "Crowd_Shopper_G"
