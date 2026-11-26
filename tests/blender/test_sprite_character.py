@@ -1,8 +1,11 @@
 """Blender integration test for transparent 2D sprites in a 3D scene."""
 import tempfile
+import sys
 from pathlib import Path
 
 import bpy
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from runtime.story_scene import create_mesh
 
 
