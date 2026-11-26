@@ -373,7 +373,8 @@
                 0
               ]
             }
-          ]
+          ],
+          "asset_file": "runtime-assets/KinemIQ_Mannequin.fbx"
         },
         {
           "name": "Shopper_B",
@@ -415,7 +416,8 @@
                 0
               ]
             }
-          ]
+          ],
+          "asset_file": "runtime-assets/KinemIQ_Mannequin.fbx"
         },
         {
           "name": "Shopper_C",
@@ -457,7 +459,8 @@
                 0
               ]
             }
-          ]
+          ],
+          "asset_file": "runtime-assets/KinemIQ_Mannequin.fbx"
         },
         {
           "name": "Shopper_D",
@@ -499,7 +502,8 @@
                 0
               ]
             }
-          ]
+          ],
+          "asset_file": "runtime-assets/KinemIQ_Mannequin.fbx"
         },
         {
           "name": "Shopper_E",
@@ -541,7 +545,8 @@
                 0
               ]
             }
-          ]
+          ],
+          "asset_file": "runtime-assets/KinemIQ_Mannequin.fbx"
         },
         {
           "name": "Shopper_F",
@@ -583,7 +588,8 @@
                 0
               ]
             }
-          ]
+          ],
+          "asset_file": "runtime-assets/KinemIQ_Mannequin.fbx"
         },
         {
           "name": "Shopper_G",
@@ -625,7 +631,8 @@
                 0
               ]
             }
-          ]
+          ],
+          "asset_file": "runtime-assets/KinemIQ_Mannequin.fbx"
         },
         {
           "name": "Guddu",
