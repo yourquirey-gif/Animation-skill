@@ -39,22 +39,22 @@ on:
       width:
         description: "Optional custom width; leave blank for 1080p profile"
         required: false
-        default: "540"
+        default: "1080"
         type: string
       height:
         description: "Optional custom height; leave blank for 1080p profile"
         required: false
-        default: "960"
+        default: "1920"
         type: string
       fps:
         description: "Frames per second (default 30)"
         required: true
-        default: "12"
+        default: "30"
         type: string
       samples:
         description: "Render samples (default 16)"
         required: true
-        default: "8"
+        default: "16"
         type: string
       voice_path:
         description: "Optional repository-relative narration audio path"
@@ -180,10 +180,10 @@ jobs:
           MUSIC_PATH: ${{ inputs.music_path || '' }}
           CAPTIONS_PATH: ${{ inputs.captions_path || '' }}
           AUTO_LIP_SYNC: ${{ inputs.auto_lip_sync || 'false' }}
-          WIDTH: ${{ inputs.width || '540' }}
-          HEIGHT: ${{ inputs.height || '960' }}
-          FPS: ${{ inputs.fps || '12' }}
-          SAMPLES: ${{ inputs.samples || '8' }}
+          WIDTH: ${{ inputs.width || '1080' }}
+          HEIGHT: ${{ inputs.height || '1920' }}
+          FPS: ${{ inputs.fps || '30' }}
+          SAMPLES: ${{ inputs.samples || '16' }}
         run: |
           set -euo pipefail
           [[ "$OUTPUT_NAME" =~ ^[A-Za-z0-9._-]+$ ]] || { echo "Invalid output_name"; exit 2; }
@@ -214,10 +214,10 @@ jobs:
           STORYBOARD: ${{ inputs.storyboard_path || 'tests/fixtures/guddu_shop_market.json' }}
           OUTPUT_NAME: ${{ inputs.output_name || 'guddu-shop-market-test' }}
           FORMAT: ${{ inputs.format || 'shorts' }}
-          WIDTH: ${{ inputs.width || '540' }}
-          HEIGHT: ${{ inputs.height || '960' }}
-          FPS: ${{ inputs.fps || '12' }}
-          SAMPLES: ${{ inputs.samples || '8' }}
+          WIDTH: ${{ inputs.width || '1080' }}
+          HEIGHT: ${{ inputs.height || '1920' }}
+          FPS: ${{ inputs.fps || '30' }}
+          SAMPLES: ${{ inputs.samples || '16' }}
           VOICE_PATH: ${{ inputs.voice_path || '' }}
           MUSIC_PATH: ${{ inputs.music_path || '' }}
           CAPTIONS_PATH: ${{ inputs.captions_path || '' }}
