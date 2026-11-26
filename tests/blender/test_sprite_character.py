@@ -6,7 +6,7 @@ from pathlib import Path
 import bpy
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
-from runtime.story_scene import create_mesh
+from runtime.story_scene import apply_viseme_animation, create_mesh
 
 
 def main():
@@ -46,12 +46,43 @@ def main():
             "location": [2, 0, 1],
         }, material_cache, base_dir=tmp)
         assert second.data.materials[0] != material, "Sprite materials must not share image textures"
+        puppet_root = bpy.data.objects.new("LipSync_Puppet_Root", None)
+        bpy.context.scene.collection.objects.link(puppet_root)
+        mouth_a = create_mesh({
+            "name": "Mouth_A",
+            "primitive": "sprite",
+            "image_file": str(image_path),
+            "location": [0, 0, 2],
+        }, material_cache, base_dir=tmp)
+        mouth_b = create_mesh({
+            "name": "Mouth_B",
+            "primitive": "sprite",
+            "image_file": str(image_path),
+            "location": [0, 0, 2],
+        }, material_cache, base_dir=tmp)
+        mouth_a.parent = puppet_root
+        mouth_b.parent = puppet_root
+        apply_viseme_animation(
+            puppet_root,
+            [
+                {"time_seconds": 0.0, "viseme": "A", "strength": 1.0},
+                {"time_seconds": 0.5, "viseme": "B", "strength": 1.0},
+            ],
+            {"A": "Mouth_A", "B": "Mouth_B"},
+            fps=24,
+            total_frames=48,
+        )
+        bpy.context.scene.frame_set(1)
+        assert not mouth_a.hide_render and mouth_b.hide_render
+        bpy.context.scene.frame_set(13)
+        assert mouth_a.hide_render and not mouth_b.hide_render
         print("HYBRID_2D_SPRITE_IN_3D_WORLD_OK", {
             "object": obj.name,
             "image": image_path.name,
             "alpha_linked": True,
             "upright": True,
             "isolated_materials": True,
+            "audio_driven_viseme_layers": True,
             "transform": list(obj.location),
         })
 
