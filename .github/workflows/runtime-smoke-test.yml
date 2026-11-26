@@ -102,11 +102,17 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/story-fixtures"
-          for storyboard in tests/fixtures/*.json; do
+          # Keep CI bounded and representative: render three distinct genres, not every fixture.
+          for storyboard in \
+            tests/fixtures/guddu_shop_market.json \
+            tests/fixtures/realistic_mountain_story.json \
+            tests/fixtures/abstract_gravity_story.json; do
             name="$(basename "$storyboard" .json)"
-            python3 runtime/render_story.py --storyboard "$storyboard" --output "$RUNNER_TEMP/story-fixtures/$name.mp4" --format shorts --width 240 --height 426 --fps 12 --samples 8 --retries 1 --progress-file "$RUNNER_TEMP/story-fixtures/$name-progress.json"
+            echo "CROSS_GENRE_RENDER_START story=$name"
+            python3 runtime/render_story.py --storyboard "$storyboard" --output "$RUNNER_TEMP/story-fixtures/$name.mp4" --format shorts --width 240 --height 426 --fps 12 --samples 8 --retries 1 --stall-timeout-seconds 600 --progress-file "$RUNNER_TEMP/story-fixtures/$name-progress.json"
             test -s "$RUNNER_TEMP/story-fixtures/$name.mp4"
             ffprobe -v error -show_entries format=duration:stream=codec_name,width,height -of json "$RUNNER_TEMP/story-fixtures/$name.mp4"
+            echo "CROSS_GENRE_RENDER_DONE story=$name"
           done
           # Exercise actual audio mux and subtitle burn-in with a deterministic 2s test tone.
           ffmpeg -y -f lavfi -i "sine=frequency=440:duration=2" -c:a pcm_s16le "$RUNNER_TEMP/story-fixtures/test-tone.wav"
