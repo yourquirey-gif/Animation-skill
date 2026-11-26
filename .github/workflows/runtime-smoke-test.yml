@@ -98,40 +98,6 @@ jobs:
       - name: Render animated Blender smoke test
         run: |
           python3 runtime/animation_runtime.py smoke-test --workdir "$RUNNER_TEMP/blender-smoke" --width 240 --height 426 --fps 12 --frames 24
-      - name: Render three structurally different stories
-        run: |
-          set -euo pipefail
-          mkdir -p "$RUNNER_TEMP/story-fixtures"
-          # Keep CI bounded and representative: render three distinct genres, not every fixture.
-          for storyboard in \
-            tests/fixtures/guddu_shop_market.json \
-            tests/fixtures/realistic_mountain_story.json \
-            tests/fixtures/abstract_gravity_story.json; do
-            name="$(basename "$storyboard" .json)"
-            echo "CROSS_GENRE_RENDER_START story=$name"
-            workdir="$RUNNER_TEMP/story-fixtures/$name-work"
-            python3 runtime/render_story.py --storyboard "$storyboard" --output "$RUNNER_TEMP/story-fixtures/$name.mp4" --workdir "$workdir" --format shorts --width 240 --height 426 --fps 12 --samples 8 --retries 1 --stall-timeout-seconds 600 --progress-file "$RUNNER_TEMP/story-fixtures/$name-progress.json" &
-            render_pid=$!
-            last_progress=""
-            while kill -0 "$render_pid" 2>/dev/null; do
-              for progress_file in "$workdir"/shot_*/frame_progress.json; do
-                [ -f "$progress_file" ] || continue
-                progress="$(python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); print("shot_frame={}/{} ({:.1f}%) elapsed={}s eta={}s fps={}".format(d.get("completed_frames",0),d.get("total_frames",0),d.get("percent",0),d.get("elapsed_seconds","?"),d.get("eta_seconds","?"),d.get("rendered_frames_per_second","?")))' "$progress_file")"
-                if [ "$progress" != "$last_progress" ]; then
-                  echo "LIVE_RENDER_PROGRESS story=$name $progress"
-                  last_progress="$progress"
-                fi
-              done
-              sleep 10
-            done
-            wait "$render_pid"
-            test -s "$RUNNER_TEMP/story-fixtures/$name.mp4"
-            ffprobe -v error -show_entries format=duration:stream=codec_name,width,height -of json "$RUNNER_TEMP/story-fixtures/$name.mp4"
-            echo "CROSS_GENRE_RENDER_DONE story=$name"
-          done
-          # Validate audio mux and subtitle burn-in without launching a fourth expensive Blender scene.
-          ffmpeg -y -f lavfi -i "color=c=black:s=240x426:r=12:d=2" -f lavfi -i "sine=frequency=440:duration=2" -vf "drawtext=text='Audio pipeline test':fontcolor=white:fontsize=16:x=(w-text_w)/2:y=h-40" -c:v libx264 -pix_fmt yuv420p -c:a aac -shortest "$RUNNER_TEMP/story-fixtures/audio-mux-test.mp4"
-          ffprobe -v error -select_streams a:0 -show_entries stream=codec_name -of json "$RUNNER_TEMP/story-fixtures/audio-mux-test.mp4" | grep -q aac
       - name: Upload Blender smoke and cross-genre render artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -139,7 +105,62 @@ jobs:
           name: blender-cross-genre-smoke-renders
           path: |
             ${{ runner.temp }}/blender-smoke/
-            ${{ runner.temp }}/story-fixtures/
             ${{ github.workspace }}/tests/fixtures/runtime-assets/ara-cast/
+          if-no-files-found: warn
+          retention-days: 7
+
+  render-story:
+    name: Render ${{ matrix.name }} (parallel worker)
+    needs: blender-render
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        include:
+          - name: guddu-shop-market
+            storyboard: tests/fixtures/guddu_shop_market.json
+          - name: realistic-mountain
+            storyboard: tests/fixtures/realistic_mountain_story.json
+          - name: abstract-gravity
+            storyboard: tests/fixtures/abstract_gravity_story.json
+    env:
+      ANIMATION_RENDER_ENGINE: BLENDER_EEVEE
+      LIBGL_ALWAYS_SOFTWARE: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Blender and FFmpeg
+        run: bash scripts/install_blender.sh
+      - name: Download verified CC0 animation assets
+        run: |
+          set -euo pipefail
+          mkdir -p tests/fixtures/runtime-assets/animations "$RUNNER_TEMP/kinemiq-assets"
+          curl -fL --retry 3 -o "$RUNNER_TEMP/kinemiq-assets/animations.zip" https://github.com/Kinemiq/free-game-animations/releases/download/v1.0/KinemIQ_Free_Animations_CC0_FBX.zip
+          echo "4ecea37e2117a762c8d2be10c7e0f06d9c7c9005af0f9caa64c8ce5d424efb0e  $RUNNER_TEMP/kinemiq-assets/animations.zip" | sha256sum -c -
+          unzip -q "$RUNNER_TEMP/kinemiq-assets/animations.zip" -d "$RUNNER_TEMP/kinemiq-assets/unpacked"
+          MANNEQUIN="$(find "$RUNNER_TEMP/kinemiq-assets/unpacked" -type f -iname 'KinemIQ_Mannequin.fbx' -print -quit)"
+          test -n "$MANNEQUIN"
+          cp "$MANNEQUIN" tests/fixtures/runtime-assets/KinemIQ_Mannequin.fbx
+          cp "$RUNNER_TEMP/kinemiq-assets/unpacked/FBX/"*.fbx tests/fixtures/runtime-assets/animations/
+      - name: Render story on its own parallel worker
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/story-output"
+          python3 runtime/render_story.py \
+            --storyboard "${{ matrix.storyboard }}" \
+            --output "$RUNNER_TEMP/story-output/${{ matrix.name }}.mp4" \
+            --workdir "$RUNNER_TEMP/story-output/work" \
+            --format shorts --width 240 --height 426 --fps 12 --samples 8 \
+            --retries 1 --stall-timeout-seconds 600 \
+            --progress-file "$RUNNER_TEMP/story-output/progress.json"
+          test -s "$RUNNER_TEMP/story-output/${{ matrix.name }}.mp4"
+          ffprobe -v error -show_entries format=duration:stream=codec_name,width,height -of json "$RUNNER_TEMP/story-output/${{ matrix.name }}.mp4"
+      - name: Upload rendered story
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: story-render-${{ matrix.name }}
+          path: ${{ runner.temp }}/story-output/
           if-no-files-found: warn
           retention-days: 7
