@@ -146,7 +146,7 @@ jobs:
 
       - name: Validate generated character rigs, animation clips and facial blend shapes in Blender
         run: |
-          blender -b --python-exit-code 1 runtime/validate_character_assets.py -- --asset-dir "$GITHUB_WORKSPACE/tests/fixtures/runtime-assets/ara-cast" --min-assets 6
+          blender -b --python-exit-code 1 --python runtime/validate_character_assets.py -- --asset-dir "$GITHUB_WORKSPACE/tests/fixtures/runtime-assets/ara-cast" --min-assets 6
 
       - name: Install Rhubarb Lip Sync CLI (only when requested)
         if: ${{ inputs.auto_lip_sync == true }}
@@ -253,6 +253,7 @@ jobs:
           name: ${{ inputs.output_name || 'guddu-shop-market-test' }}-${{ github.run_number }}
           path: |
             ${{ runner.temp }}/video-output/
+            ${{ github.workspace }}/tests/fixtures/runtime-assets/ara-cast/
             ${{ runner.temp }}/video-work/final_report.json
             ${{ runner.temp }}/video-work/progress.json
             ${{ runner.temp }}/video-work/shot_*/blender_attempt_*.log
