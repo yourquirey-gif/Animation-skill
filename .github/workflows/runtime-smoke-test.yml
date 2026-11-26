@@ -70,6 +70,24 @@ jobs:
           python3 runtime/export_sheepit.py --storyboard tests/fixtures/guddu_shop_market.json --output "$RUNNER_TEMP/sheepit-smoke.zip" --width 240 --height 426 --fps 12 --samples 8
           unzip -l "$RUNNER_TEMP/sheepit-smoke.zip" | grep -q 'shot.blend'
           unzip -l "$RUNNER_TEMP/sheepit-smoke.zip" | grep -q 'kaggle_gpu_render.py'
+      - name: Validate Kaggle notebook Python cells
+        run: |
+          python3 - <<'PY'
+          import ast, json
+          from pathlib import Path
+          notebook = json.loads(Path("cloud/kaggle_blender_renderer.ipynb").read_text(encoding="utf-8"))
+          checked = 0
+          for index, cell in enumerate(notebook.get("cells", [])):
+              if cell.get("cell_type") != "code":
+                  continue
+              source = "".join(cell.get("source", []))
+              source = "\\n".join(line for line in source.splitlines() if not line.lstrip().startswith("!"))
+              if source.strip():
+                  ast.parse(source, filename="kaggle-cell-%d" % index)
+                  checked += 1
+          assert checked >= 2, "Expected executable Kaggle renderer cells"
+          print("Validated", checked, "Kaggle Python cells")
+          PY
       - name: Validate reusable asset catalog
         run: |
           python3 runtime/asset_catalog.py validate
