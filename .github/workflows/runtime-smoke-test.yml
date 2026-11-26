@@ -132,6 +132,21 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install Blender and FFmpeg
         run: bash scripts/install_blender.sh
+      - name: Download generated Ara 3D cast from prerequisite job
+        uses: actions/download-artifact@v4
+        with:
+          name: blender-cross-genre-smoke-renders
+          path: ${{ runner.temp }}/shared-render-assets
+      - name: Install generated character cast for this worker
+        run: |
+          set -euo pipefail
+          SOURCE="$(find "$RUNNER_TEMP/shared-render-assets" -type f -name 'random_1.glb' -print -quit)"
+          test -n "$SOURCE"
+          CAST_DIR="$(dirname "$SOURCE")"
+          mkdir -p tests/fixtures/runtime-assets/ara-cast
+          cp "$CAST_DIR"/*.glb tests/fixtures/runtime-assets/ara-cast/
+          test "$(find tests/fixtures/runtime-assets/ara-cast -maxdepth 1 -name '*.glb' | wc -l)" -ge 6
+          echo "ARA_CAST_READY files=$(find tests/fixtures/runtime-assets/ara-cast -maxdepth 1 -name '*.glb' | wc -l)"
       - name: Download verified CC0 animation assets
         run: |
           set -euo pipefail
