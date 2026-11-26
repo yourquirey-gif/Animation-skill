@@ -911,6 +911,9 @@ def main():
     eevee = getattr(scene, "eevee", None)
     if eevee is not None and hasattr(eevee, "taa_render_samples"):
         eevee.taa_render_samples = max(8, args.samples)
+    if scene.render.engine == "CYCLES":
+        scene.cycles.samples = max(1, args.samples)
+        scene.cycles.use_denoising = True
     scene.render.resolution_x = args.width
     scene.render.resolution_y = args.height
     scene.render.resolution_percentage = 100
@@ -1040,6 +1043,8 @@ def main():
     # expensive frame rendering. SheepIt renders saved Blender projects, not custom
     # owner scripts, so the full scene must be baked into this file.
     if args.export_blend_only:
+        # Use a project-relative frame prefix so SheepIt writes frames beside the uploaded .blend.
+        scene.render.filepath = "//frame_"
         blend_path = (out / "shot.blend").resolve()
         try:
             bpy.ops.file.pack_all()
