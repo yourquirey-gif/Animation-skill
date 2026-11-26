@@ -898,13 +898,14 @@ def main():
         addon_utils.enable("cycles")
     available_engines = scene.render.bl_rna.properties["engine"].enum_items.keys()
     if requested_engine:
-        if requested_engine not in available_engines:
+        try:
+            scene.render.engine = requested_engine
+        except (TypeError, ValueError) as exc:
             raise RuntimeError(
                 "Requested Blender render engine '" + requested_engine +
-                "' is not available in this Blender build. Available engines: " +
+                "' could not be activated. Available engines: " +
                 ", ".join(available_engines)
-            )
-        scene.render.engine = requested_engine
+            ) from exc
     elif "BLENDER_EEVEE_NEXT" in available_engines:
         scene.render.engine = "BLENDER_EEVEE_NEXT"
     elif "BLENDER_EEVEE" in available_engines:
