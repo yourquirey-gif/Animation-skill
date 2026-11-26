@@ -1,13 +1,6 @@
 name: Cloud Blender Video Render
 
 on:
-  push:
-    branches:
-      - blender-cloud-production
-    paths:
-      - "runtime/**"
-      - "tests/fixtures/**"
-      - ".github/workflows/cloud-render.yml"
   workflow_dispatch:
     inputs:
       storyboard_path:
