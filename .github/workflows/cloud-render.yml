@@ -106,6 +106,11 @@ jobs:
           ffmpeg -version | head -n 2
           ffprobe -version | head -n 1
 
+      - name: Set up Node for procedural production character generation
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
       - name: Download verified CC0 rigged character and animation pack
         run: |
           set -euo pipefail
@@ -128,6 +133,16 @@ jobs:
           echo "Mannequin: $GITHUB_WORKSPACE/tests/fixtures/runtime-assets/KinemIQ_Mannequin.fbx"
           echo "Animation clips copied:"
           find "$GITHUB_WORKSPACE/tests/fixtures/runtime-assets/animations" -maxdepth 1 -type f -printf '%f\n' | sort
+
+      - name: Generate rigged human cast with Ara 3D Gen
+        run: |
+          set -euo pipefail
+          mkdir -p "$GITHUB_WORKSPACE/tests/fixtures/runtime-assets/ara-cast"
+          npx --yes ara3d@0.9.0 export --random 1-6 --detail medium --animations walk,run,idle --formats glb --out "$GITHUB_WORKSPACE/tests/fixtures/runtime-assets/ara-cast"
+          mapfile -t CAST_MODELS < <(find "$GITHUB_WORKSPACE/tests/fixtures/runtime-assets/ara-cast" -maxdepth 1 -type f -iname "*.glb" | sort)
+          test "${#CAST_MODELS[@]}" -ge 6
+          printf "Generated production human cast models:\n"
+          printf "%s\n" "${CAST_MODELS[@]}"
 
       - name: Install Rhubarb Lip Sync CLI (only when requested)
         if: ${{ inputs.auto_lip_sync == true }}
