@@ -937,8 +937,18 @@ def main():
     cache = {}
 
     env = shot.get("environment", {})
+    from environment_builder import generate_environment_specs
+    story_identity = str(story.get("story_id") or story.get("title") or story_path.stem)
+    shot_identity = str(shot.get("id") or args.shot_index)
+    generated_environment = generate_environment_specs(env, story_identity, shot_identity)
+    environment_items = generated_environment + list(env.get("objects", []))
+    print("STORY_ENVIRONMENT_IDENTITY", {
+        "story": story_identity, "shot": shot_identity,
+        "profile": (env.get("procedural", {}) or {}).get("profile", env.get("profile")),
+        "generated_objects": len(generated_environment),
+    }, flush=True)
     static_environment_meshes = []
-    for item in env.get("objects", []):
+    for item in environment_items:
         obj = create_mesh(item, cache, base_dir=story_path.parent)
         apply_keyframes(obj, item.get("keyframes", []), args.fps, scene.frame_end)
         apply_rig_animation(
@@ -1084,6 +1094,8 @@ def main():
         "rendered_frames_per_second": round(scene.frame_end / max(render_elapsed, 0.001), 3),
         "static_environment_source_meshes": static_mesh_count,
         "static_environment_merged_meshes": merged_mesh_count,
+        "environment_profile": (env.get("procedural", {}) or {}).get("profile", env.get("profile")),
+        "generated_environment_objects": len(generated_environment),
         "resolution": [args.width, args.height],
         "rendered_frame_pattern": str((out / "frame_%04d.png").resolve()),
         "scene_object_count": len(scene.objects),
