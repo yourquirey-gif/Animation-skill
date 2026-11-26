@@ -30,8 +30,7 @@ jobs:
           node-version: "20"
       - name: Install Blender and FFmpeg
         run: |
-          sudo apt-get update
-          sudo apt-get install -y blender ffmpeg unzip curl python3-numpy libegl1 libgl1 libegl-mesa0 libglx-mesa0 libgl1-mesa-dri
+          bash scripts/install_blender.sh
       - name: Download verified CC0 mannequin asset for story fixtures
         run: |
           set -euo pipefail
