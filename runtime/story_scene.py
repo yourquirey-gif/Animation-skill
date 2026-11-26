@@ -37,6 +37,7 @@ def parse_args():
     parser.add_argument("--fps", type=int, default=24)
     parser.add_argument("--samples", type=int, default=32)
     parser.add_argument("--progress-file", default=None, help="Write per-frame render progress JSON")
+    parser.add_argument("--export-blend-only", action="store_true", help="Build and pack the shot .blend without rendering; for external render farms")
     return parser.parse_args(sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else [])
 
 
@@ -1035,6 +1036,30 @@ def main():
 
     build_camera(shot.get("camera", {}))
     add_lights(shot.get("lighting", []))
+    # External render-farm export: make the .blend self-contained and exit before
+    # expensive frame rendering. SheepIt renders saved Blender projects, not custom
+    # owner scripts, so the full scene must be baked into this file.
+    if args.export_blend_only:
+        blend_path = (out / "shot.blend").resolve()
+        try:
+            bpy.ops.file.pack_all()
+        except Exception as exc:
+            print("PACK_EXTERNAL_ASSETS_WARNING", str(exc), flush=True)
+        bpy.ops.wm.save_as_mainfile(filepath=str(blend_path))
+        export_report = {
+            "status": "BLEND_EXPORTED",
+            "shot_id": shot.get("id", str(args.shot_index + 1)),
+            "blend_file": str(blend_path),
+            "frames": scene.frame_end,
+            "fps": args.fps,
+            "resolution": [args.width, args.height],
+            "render_engine": scene.render.engine,
+            "scene_object_count": len(scene.objects),
+            "packed_files": len(bpy.data.images),
+        }
+        (out / "shot_report.json").write_text(json.dumps(export_report, indent=2), encoding="utf-8")
+        print("EXTERNAL_RENDER_FARM_EXPORT " + json.dumps(export_report), flush=True)
+        return
     # Render as one animation job so Blender can retain scene/render data
     # between frames. This is still a genuine per-frame 3D render, not a still pan.
     if hasattr(scene.render, "use_persistent_data"):
