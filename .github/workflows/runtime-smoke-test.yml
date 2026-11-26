@@ -151,7 +151,7 @@ jobs:
             --storyboard "${{ matrix.storyboard }}" \
             --output "$RUNNER_TEMP/story-output/${{ matrix.name }}.mp4" \
             --workdir "$RUNNER_TEMP/story-output/work" \
-            --format shorts --width 240 --height 426 --fps 12 --samples 8 \
+            --format shorts --width 240 --height 426 --fps 12 --samples 8 --parallel-shots 2 \
             --retries 1 --stall-timeout-seconds 600 \
             --progress-file "$RUNNER_TEMP/story-output/progress.json"
           test -s "$RUNNER_TEMP/story-output/${{ matrix.name }}.mp4"
