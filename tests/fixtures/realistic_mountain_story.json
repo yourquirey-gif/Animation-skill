@@ -11,12 +11,20 @@
       "id": "mountain-reveal",
       "duration_seconds": 2,
       "environment": {
-        "world_color": [0.12, 0.2, 0.32],
+        "world_color": [
+          0.12,
+          0.2,
+          0.32
+        ],
         "objects": [
           {
             "name": "Connected Mountain Range",
             "primitive": "terrain",
-            "location": [0, 0, -0.2],
+            "location": [
+              0,
+              0,
+              -0.2
+            ],
             "terrain": {
               "segments_x": 40,
               "segments_y": 40,
@@ -26,36 +34,147 @@
               "ridge_amplitude": 0.3,
               "seed": 13,
               "peaks": [
-                {"x": -6, "y": 2, "height": 4.8, "radius_x": 3.8, "radius_y": 5},
-                {"x": -1, "y": 3, "height": 7.2, "radius_x": 3.1, "radius_y": 4.2},
-                {"x": 5, "y": 2, "height": 5.5, "radius_x": 3.5, "radius_y": 4.5}
+                {
+                  "x": -6,
+                  "y": 2,
+                  "height": 4.8,
+                  "radius_x": 3.8,
+                  "radius_y": 5
+                },
+                {
+                  "x": -1,
+                  "y": 3,
+                  "height": 7.2,
+                  "radius_x": 3.1,
+                  "radius_y": 4.2
+                },
+                {
+                  "x": 5,
+                  "y": 2,
+                  "height": 5.5,
+                  "radius_x": 3.5,
+                  "radius_y": 4.5
+                }
               ]
             },
-            "material": {"color": [0.22, 0.29, 0.31], "roughness": 0.94}
+            "material": {
+              "color": [
+                0.22,
+                0.29,
+                0.31
+              ],
+              "roughness": 0.94
+            }
           },
           {
             "name": "Foreground Rock",
             "primitive": "ico_sphere",
-            "location": [-4, -4, 0.3],
-            "scale": [1.5, 1.1, 0.7],
-            "material": {"color": [0.16, 0.19, 0.2], "roughness": 1}
+            "location": [
+              -4,
+              -4,
+              0.3
+            ],
+            "scale": [
+              1.5,
+              1.1,
+              0.7
+            ],
+            "material": {
+              "color": [
+                0.16,
+                0.19,
+                0.2
+              ],
+              "roughness": 1
+            }
           }
-        ]
+        ],
+        "procedural": {
+          "profile": "snow",
+          "seed": "realistic_mountain_story",
+          "dressing_count": 12,
+          "width": 30,
+          "depth": 30
+        }
       },
       "subjects": [],
       "props": [],
       "camera": {
-        "location": [15, -21, 10],
-        "target": [0, 1, 2.1],
+        "location": [
+          15,
+          -21,
+          10
+        ],
+        "target": [
+          0,
+          1,
+          2.1
+        ],
         "lens": 42,
         "keyframes": [
-          {"time_seconds": 0, "location": [15, -21, 10], "target": [0, 1, 2.1]},
-          {"time_seconds": 2, "location": [10, -18, 8], "target": [0, 1.5, 2.6]}
+          {
+            "time_seconds": 0,
+            "location": [
+              15,
+              -21,
+              10
+            ],
+            "target": [
+              0,
+              1,
+              2.1
+            ]
+          },
+          {
+            "time_seconds": 2,
+            "location": [
+              10,
+              -18,
+              8
+            ],
+            "target": [
+              0,
+              1.5,
+              2.6
+            ]
+          }
         ]
       },
       "lighting": [
-        {"type": "SUN", "location": [5, -7, 12], "energy": 2.0, "color": [1, 0.82, 0.64], "target": [0, 0, 0]},
-        {"type": "AREA", "location": [-8, -4, 8], "energy": 650, "size": 8, "color": [0.5, 0.65, 1]}
+        {
+          "type": "SUN",
+          "location": [
+            5,
+            -7,
+            12
+          ],
+          "energy": 2,
+          "color": [
+            1,
+            0.82,
+            0.64
+          ],
+          "target": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "type": "AREA",
+          "location": [
+            -8,
+            -4,
+            8
+          ],
+          "energy": 650,
+          "size": 8,
+          "color": [
+            0.5,
+            0.65,
+            1
+          ]
+        }
       ]
     }
   ]
