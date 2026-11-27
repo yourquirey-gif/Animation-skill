@@ -32,6 +32,14 @@ jobs:
       - name: Install Blender and FFmpeg
         run: |
           bash scripts/install_blender.sh
+      - name: Generate Aryan 3D hero and 16 facial-expression showcase
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/character-showcase"
+          blender -b --factory-startup --python-exit-code 1 --python runtime/generate_character_showcase.py -- --output-dir "$RUNNER_TEMP/character-showcase"
+          test -s "$RUNNER_TEMP/character-showcase/aryan_character.blend"
+          test -s "$RUNNER_TEMP/character-showcase/aryan_character_16_emotions.png"
+          test -s "$RUNNER_TEMP/character-showcase/character_report.json"
       - name: Download verified CC0 mannequin asset for story fixtures
         run: |
           set -euo pipefail
@@ -107,6 +115,7 @@ jobs:
           name: blender-cross-genre-smoke-renders
           path: |
             ${{ runner.temp }}/blender-smoke/
+            ${{ runner.temp }}/character-showcase/
             ${{ github.workspace }}/tests/fixtures/runtime-assets/ara-cast/
           if-no-files-found: warn
           retention-days: 7
